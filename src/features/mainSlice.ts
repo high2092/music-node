@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Music } from '../types/music';
 import { MusicNode } from '../types/musicNode';
-import { XYPosition } from 'reactflow';
+import { ReactFlowInstance, XYPosition } from 'reactflow';
 import { musicNodeService } from '../server/MusicNodeService';
 import { musicService } from '../server/MusicService';
 import { getLastSequence } from '../utils/encoding';
@@ -13,6 +13,7 @@ interface MainState {
   pointer: number;
   requirePlayerRewind: boolean;
   newNode: MusicNode;
+  reactFlowInstance: ReactFlowInstance;
 }
 
 const initialState: MainState = {
@@ -22,6 +23,7 @@ const initialState: MainState = {
   pointer: null,
   requirePlayerRewind: false,
   newNode: null,
+  reactFlowInstance: null,
 };
 
 interface ConnectNodePayload {
@@ -111,6 +113,10 @@ export const mainSlice = createSlice({
         musicNode.next = null;
       });
     },
+
+    setReactFLowInstance(state, action: PayloadAction<ReactFlowInstance>) {
+      state.reactFlowInstance = action.payload;
+    },
   },
 });
 
@@ -125,4 +131,4 @@ function getNextPointer(pointer: number, query: PlayQuery, musicNodes: Record<nu
   }
 }
 
-export const { addMusic, createMusicNode, connectNode, moveNode, load, setRequireReactFlowUpdate, playNode, setRequirePlayerRewind, deleteNodes, deleteEdges } = mainSlice.actions;
+export const { addMusic, createMusicNode, connectNode, moveNode, load, setRequireReactFlowUpdate, playNode, setRequirePlayerRewind, deleteNodes, deleteEdges, setReactFLowInstance } = mainSlice.actions;

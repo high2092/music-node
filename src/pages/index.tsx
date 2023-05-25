@@ -13,7 +13,7 @@ import { musicNodeService } from '../server/MusicNodeService';
 
 function Home() {
   const dispatch = useAppDispatch();
-  const { musics, musicNodes } = useAppSelector((state) => state.main);
+  const { musics, musicNodes, reactFlowInstance } = useAppSelector((state) => state.main);
 
   useEffect(() => {
     const code = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -52,7 +52,8 @@ function Home() {
 
       const { title } = await response.json();
       const music = musicService.createMusic(title, videoId);
-      const musicNode = musicNodeService.createMusicNode(title, videoId);
+      const position = reactFlowInstance.project({ x: e.clientX, y: e.clientY });
+      const musicNode = musicNodeService.createMusicNode(title, videoId, position);
 
       dispatch(addMusic(music));
       dispatch(createMusicNode(musicNode));

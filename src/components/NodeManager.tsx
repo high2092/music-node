@@ -3,14 +3,14 @@ import ReactFlow, { Node, Edge, useNodesState, useEdgesState, NodePositionChange
 import { musicNodeService } from '../server/MusicNodeService';
 import { convertMusicNodeToReactFlowNode, convertMusicNodesToReactFlowObjects } from '../utils/reactFlow';
 import { useAppDispatch, useAppSelector } from '../features/store';
-import { connectNode, createMusicNode, deleteEdges, deleteNodes, moveNode, playNode, setRequireReactFlowUpdate } from '../features/mainSlice';
+import { connectNode, createMusicNode, deleteEdges, deleteNodes, moveNode, playNode, setReactFLowInstance, setRequireReactFlowUpdate } from '../features/mainSlice';
 import { useEffect, useRef, useState } from 'react';
 import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
 import { ReactFlowObjectTypes } from '../constants/reactFlow';
 
 export function NodeManager() {
   const dispatch = useAppDispatch();
-  const { musicNodes, requireReactFlowUpdate, newNode } = useAppSelector((state) => state.main);
+  const { musicNodes, requireReactFlowUpdate, newNode, reactFlowInstance } = useAppSelector((state) => state.main);
 
   const [latestClickedObjectType, setLatestClickedObjectType] = useState<string>();
 
@@ -61,7 +61,8 @@ export function NodeManager() {
     const data = e.dataTransfer.getData(MUSIC_DATA_TRANSFER_KEY);
     if (!data) return;
     const { name, videoId } = JSON.parse(data);
-    const musicNode = musicNodeService.createMusicNode(name, videoId);
+    const position = reactFlowInstance.project({ x: e.clientX, y: e.clientY });
+    const musicNode = musicNodeService.createMusicNode(name, videoId, position);
     dispatch(createMusicNode(musicNode));
   };
 
@@ -101,6 +102,7 @@ export function NodeManager() {
         onDrop={handleDrop}
         onNodeDoubleClick={handleNodeDoubleClick}
         onMouseDownCapture={handleReactFlowMouseDownCapture}
+        onInit={(instance) => dispatch(setReactFLowInstance(instance))}
       />
     </div>
   );
