@@ -1,0 +1,17 @@
+{
+  "name": "musicnode-demo",
+  "packageManager": "yarn@3.5.1",
+  "scripts": {
+    "dev": "next dev"
+  },
+  "dependencies": {
+    "next": "^13.4.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.2.3",
+    "@types/react": "18.2.7",
+    "typescript": "5.0.4"
+  }
+}
