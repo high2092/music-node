@@ -4,12 +4,15 @@ import { musicNodeService } from '../server/MusicNodeService';
 import { convertMusicNodeToReactFlowNode, convertMusicNodesToReactFlowObjects } from '../utils/reactFlow';
 import { useAppDispatch, useAppSelector } from '../features/store';
 import { connectNode, createMusicNode, moveNode, playNode, setRequireReactFlowUpdate } from '../features/mainSlice';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
+import { ReactFlowObjectTypes } from '../constants/reactFlow';
 
 export function NodeManager() {
   const dispatch = useAppDispatch();
   const { musicNodes, requireReactFlowUpdate, newNode } = useAppSelector((state) => state.main);
+
+  const [latestClickedObjectType, setLatestClickedObjectType] = useState<string>();
 
   const timeoutRef = useRef<NodeJS.Timeout>(null);
 
@@ -45,7 +48,11 @@ export function NodeManager() {
   };
 
   const onConnect: OnConnect = (connection) => {
-    setEdges((eds) => addEdge(connection, eds));
+    if (latestClickedObjectType === ReactFlowObjectTypes.EDGE_TARGET) return;
+    setEdges((eds) => {
+      eds = eds.filter((edge) => edge.source !== connection.source);
+      return addEdge(connection, eds);
+    });
     dispatch(connectNode(connection));
   };
 
@@ -62,9 +69,29 @@ export function NodeManager() {
     dispatch(playNode(Number(id)));
   };
 
+  const handleReactFlowMouseDownCapture = ({ target }) => {
+    for (const type of Object.values(ReactFlowObjectTypes)) {
+      if (target.classList.value.includes(type)) {
+        setLatestClickedObjectType(type);
+        return;
+      }
+    }
+    setLatestClickedObjectType(null);
+  };
+
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <ReactFlow nodes={nodes} edges={edges} onNodesChange={_onNodesChange} onEdgesChange={onEdgesChange} onConnect={onConnect} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop} onNodeDoubleClick={handleNodeDoubleClick} />
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={_onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={handleDrop}
+        onNodeDoubleClick={handleNodeDoubleClick}
+        onMouseDownCapture={handleReactFlowMouseDownCapture}
+      />
     </div>
   );
 }
