@@ -3,7 +3,7 @@ import ReactFlow, { Node, useNodesState, useEdgesState, NodePositionChange, OnCo
 import { musicNodeService } from '../server/MusicNodeService';
 import { convertMusicNodeToReactFlowNode, convertMusicNodesToReactFlowObjects } from '../utils/reactFlow';
 import { useAppDispatch, useAppSelector } from '../features/store';
-import { connectNode, createMusicNode, moveNode, setRequireReactFlowUpdate } from '../features/mainSlice';
+import { connectNode, createMusicNode, moveNode, playNode, setRequireReactFlowUpdate } from '../features/mainSlice';
 import { useEffect, useRef } from 'react';
 import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
 
@@ -53,7 +53,7 @@ export function NodeManager() {
   };
 
   const handleNodeDoubleClick = (e: React.MouseEvent, { id }: Node) => {
-    console.log(musicNodes[Number(id)].videoId);
+    dispatch(playNode(Number(id)));
   };
 
   return (

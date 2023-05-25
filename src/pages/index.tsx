@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '../features/store';
 import { LOCAL_STORAGE_KEY } from '../constants/interface';
 import { decodeV1, encodeV1 } from '../utils/encoding';
 import { load } from '../features/mainSlice';
+import { Player } from '../components/Player';
 
 function Home() {
   const dispatch = useAppDispatch();
@@ -39,7 +40,9 @@ function Home() {
         <S.SearchSection>
           <SearchManager />
         </S.SearchSection>
-        <S.PlayerSection />
+        <S.PlayerSection>
+          <Player />
+        </S.PlayerSection>
       </S.UiSection>
     </S.Home>
   );

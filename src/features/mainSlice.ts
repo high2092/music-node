@@ -9,12 +9,16 @@ interface MainState {
   musics: Record<number, Music>;
   musicNodes: Record<number, MusicNode>;
   requireReactFlowUpdate: boolean;
+  pointer: number;
+  requirePlayerRewind: boolean;
 }
 
 const initialState: MainState = {
   musics: {},
   musicNodes: {},
   requireReactFlowUpdate: false,
+  pointer: null,
+  requirePlayerRewind: false,
 };
 
 interface ConnectNodePayload {
@@ -31,6 +35,8 @@ interface LoadPayload {
   musics: Record<number, Music>;
   musicNodes: Record<number, MusicNode>;
 }
+
+type PlayQuery = 'next' | number;
 
 export const mainSlice = createSlice({
   name: 'main',
@@ -69,7 +75,33 @@ export const mainSlice = createSlice({
     setRequireReactFlowUpdate(state, action: PayloadAction<boolean>) {
       state.requireReactFlowUpdate = action.payload;
     },
+
+    playNode(state, action: PayloadAction<PlayQuery>) {
+      const next = getNextPointer(state.pointer, action.payload, state.musicNodes);
+
+      if (next) {
+        state.pointer = next;
+        state.requirePlayerRewind = true;
+      } else {
+        alert('마지막 노드입니다.');
+      }
+    },
+
+    setRequirePlayerRewind(state, action: PayloadAction<boolean>) {
+      state.requirePlayerRewind = action.payload;
+    },
   },
 });
 
-export const { addMusic, createMusicNode, connectNode, moveNode, load, setRequireReactFlowUpdate } = mainSlice.actions;
+function getNextPointer(pointer: number, query: PlayQuery, musicNodes: Record<number, MusicNode>) {
+  switch (query) {
+    case 'next': {
+      return musicNodes[pointer]?.next ?? null;
+    }
+    default: {
+      return query;
+    }
+  }
+}
+
+export const { addMusic, createMusicNode, connectNode, moveNode, load, setRequireReactFlowUpdate, playNode, setRequirePlayerRewind } = mainSlice.actions;
