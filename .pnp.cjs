@@ -36,6 +36,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["next", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:13.4.3"],\
             ["react", "npm:18.2.0"],\
             ["react-dom", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:18.2.0"],\
+            ["react-hook-form", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:7.43.9"],\
             ["react-redux", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:8.0.5"],\
             ["react-youtube", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:10.1.0"],\
             ["reactflow", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:11.7.2"],\
@@ -1477,6 +1478,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["next", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:13.4.3"],\
             ["react", "npm:18.2.0"],\
             ["react-dom", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:18.2.0"],\
+            ["react-hook-form", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:7.43.9"],\
             ["react-redux", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:8.0.5"],\
             ["react-youtube", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:10.1.0"],\
             ["reactflow", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:11.7.2"],\
@@ -1661,6 +1663,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["loose-envify", "npm:1.4.0"],\
             ["react", "npm:18.2.0"],\
             ["scheduler", "npm:0.23.0"]\
+          ],\
+          "packagePeers": [\
+            "@types/react",\
+            "react"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["react-hook-form", [\
+        ["npm:7.43.9", {\
+          "packageLocation": "./.yarn/cache/react-hook-form-npm-7.43.9-3a3f4f3335-65b94de625.zip/node_modules/react-hook-form/",\
+          "packageDependencies": [\
+            ["react-hook-form", "npm:7.43.9"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:7.43.9", {\
+          "packageLocation": "./.yarn/__virtual__/react-hook-form-virtual-65774f56ff/0/cache/react-hook-form-npm-7.43.9-3a3f4f3335-65b94de625.zip/node_modules/react-hook-form/",\
+          "packageDependencies": [\
+            ["react-hook-form", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:7.43.9"],\
+            ["@types/react", "npm:18.2.7"],\
+            ["react", "npm:18.2.0"]\
           ],\
           "packagePeers": [\
             "@types/react",\
