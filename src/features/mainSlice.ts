@@ -2,15 +2,19 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Music } from '../types/music';
 import { MusicNode } from '../types/musicNode';
 import { XYPosition } from 'reactflow';
+import { musicNodeService } from '../server/MusicNodeService';
+import { musicService } from '../server/MusicService';
 
 interface MainState {
   musics: Record<number, Music>;
   musicNodes: Record<number, MusicNode>;
+  requireReactFlowUpdate: boolean;
 }
 
 const initialState: MainState = {
   musics: {},
   musicNodes: {},
+  requireReactFlowUpdate: false,
 };
 
 interface ConnectNodePayload {
@@ -21,6 +25,11 @@ interface ConnectNodePayload {
 interface MoveNodePayload {
   id: string;
   position: XYPosition;
+}
+
+interface LoadPayload {
+  musics: Record<number, Music>;
+  musicNodes: Record<number, MusicNode>;
 }
 
 export const mainSlice = createSlice({
@@ -47,7 +56,20 @@ export const mainSlice = createSlice({
         state.musicNodes[Number(id)].position = position;
       });
     },
+
+    load(state, action: PayloadAction<LoadPayload>) {
+      const { musics, musicNodes } = action.payload;
+      musicService.sequence = Object.values(musics).length + 1;
+      musicNodeService.sequence = Object.values(musicNodes).length + 1;
+      state.musics = musics;
+      state.musicNodes = musicNodes;
+      state.requireReactFlowUpdate = true;
+    },
+
+    setRequireReactFlowUpdate(state, action: PayloadAction<boolean>) {
+      state.requireReactFlowUpdate = action.payload;
+    },
   },
 });
 
-export const { addMusic, createMusicNode, connectNode, moveNode } = mainSlice.actions;
+export const { addMusic, createMusicNode, connectNode, moveNode, load, setRequireReactFlowUpdate } = mainSlice.actions;

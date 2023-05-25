@@ -1,20 +1,28 @@
 import 'reactflow/dist/style.css';
 import ReactFlow, { Node, useNodesState, useEdgesState, NodePositionChange, OnConnect, addEdge } from 'reactflow';
 import { musicNodeService } from '../server/MusicNodeService';
-import { convertMusicNodeToReactFlowNode } from '../utils/reactFlow';
+import { convertMusicNodeToReactFlowNode, convertMusicNodesToReactFlowObjects } from '../utils/reactFlow';
 import { useAppDispatch, useAppSelector } from '../features/store';
-import { connectNode, createMusicNode, moveNode } from '../features/mainSlice';
-import { useRef } from 'react';
+import { connectNode, createMusicNode, moveNode, setRequireReactFlowUpdate } from '../features/mainSlice';
+import { useEffect, useRef } from 'react';
 import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
 
 export function NodeManager() {
   const dispatch = useAppDispatch();
-  const { musicNodes } = useAppSelector((state) => state.main);
+  const { musicNodes, requireReactFlowUpdate } = useAppSelector((state) => state.main);
 
   const timeoutRef = useRef<NodeJS.Timeout>(null);
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
+  useEffect(() => {
+    if (!requireReactFlowUpdate) return;
+    const { nodes, edges } = convertMusicNodesToReactFlowObjects(musicNodes);
+    setNodes(nodes);
+    setEdges(edges);
+    setRequireReactFlowUpdate(false);
+  }, [requireReactFlowUpdate]);
 
   const _onNodesChange = (nodesChange: NodePositionChange[]) => {
     onNodesChange(nodesChange);
