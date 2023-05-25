@@ -63,7 +63,9 @@ export const mainSlice = createSlice({
 
     moveNode(state, action: PayloadAction<MoveNodePayload[]>) {
       action.payload.forEach(({ id, position }) => {
-        state.musicNodes[Number(id)].position = position;
+        const musicNode = state.musicNodes[Number(id)];
+        if (!musicNode) return;
+        musicNode.position = position;
       });
     },
 
