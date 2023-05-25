@@ -1,9 +1,9 @@
 import 'reactflow/dist/style.css';
-import ReactFlow, { Node, useNodesState, useEdgesState, NodePositionChange, OnConnect, addEdge } from 'reactflow';
+import ReactFlow, { Node, Edge, useNodesState, useEdgesState, NodePositionChange, OnConnect, addEdge, OnNodesDelete, OnEdgesDelete } from 'reactflow';
 import { musicNodeService } from '../server/MusicNodeService';
 import { convertMusicNodeToReactFlowNode, convertMusicNodesToReactFlowObjects } from '../utils/reactFlow';
 import { useAppDispatch, useAppSelector } from '../features/store';
-import { connectNode, createMusicNode, moveNode, playNode, setRequireReactFlowUpdate } from '../features/mainSlice';
+import { connectNode, createMusicNode, deleteEdges, deleteNodes, moveNode, playNode, setRequireReactFlowUpdate } from '../features/mainSlice';
 import { useEffect, useRef, useState } from 'react';
 import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
 import { ReactFlowObjectTypes } from '../constants/reactFlow';
@@ -79,6 +79,14 @@ export function NodeManager() {
     setLatestClickedObjectType(null);
   };
 
+  const handleNodesDelete: OnNodesDelete = (nodes: Node[]) => {
+    dispatch(deleteNodes(nodes.map(({ id }) => Number(id))));
+  };
+
+  const handleEdgesDelete: OnEdgesDelete = (nodes: Edge[]) => {
+    dispatch(deleteEdges(nodes.map(({ source }) => Number(source))));
+  };
+
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <ReactFlow
@@ -86,6 +94,8 @@ export function NodeManager() {
         edges={edges}
         onNodesChange={_onNodesChange}
         onEdgesChange={onEdgesChange}
+        onNodesDelete={handleNodesDelete}
+        onEdgesDelete={handleEdgesDelete}
         onConnect={onConnect}
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}

@@ -93,6 +93,21 @@ export const mainSlice = createSlice({
     setRequirePlayerRewind(state, action: PayloadAction<boolean>) {
       state.requirePlayerRewind = action.payload;
     },
+
+    deleteNodes(state, action: PayloadAction<number[]>) {
+      console.log(action.payload);
+      action.payload.forEach((id) => {
+        delete state.musicNodes[id];
+      });
+    },
+
+    deleteEdges(state, action: PayloadAction<number[]>) {
+      action.payload.forEach((id) => {
+        const musicNode = state.musicNodes[id];
+        if (!musicNode) return;
+        musicNode.next = null;
+      });
+    },
   },
 });
 
@@ -107,4 +122,4 @@ function getNextPointer(pointer: number, query: PlayQuery, musicNodes: Record<nu
   }
 }
 
-export const { addMusic, createMusicNode, connectNode, moveNode, load, setRequireReactFlowUpdate, playNode, setRequirePlayerRewind } = mainSlice.actions;
+export const { addMusic, createMusicNode, connectNode, moveNode, load, setRequireReactFlowUpdate, playNode, setRequirePlayerRewind, deleteNodes, deleteEdges } = mainSlice.actions;
