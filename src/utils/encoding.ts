@@ -13,3 +13,7 @@ export const decodeV1 = (encoded: string) => {
   const plain = zlib.inflateSync(compressedBuffer).toString('utf-8');
   return plain;
 };
+
+export function getLastSequence(record: Record<number, any>) {
+  return Math.max(...Object.keys(record).map(Number));
+}

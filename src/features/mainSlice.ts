@@ -4,6 +4,7 @@ import { MusicNode } from '../types/musicNode';
 import { XYPosition } from 'reactflow';
 import { musicNodeService } from '../server/MusicNodeService';
 import { musicService } from '../server/MusicService';
+import { getLastSequence } from '../utils/encoding';
 
 interface MainState {
   musics: Record<number, Music>;
@@ -68,8 +69,8 @@ export const mainSlice = createSlice({
 
     load(state, action: PayloadAction<LoadPayload>) {
       const { musics, musicNodes } = action.payload;
-      musicService.sequence = Object.values(musics).length + 1;
-      musicNodeService.sequence = Object.values(musicNodes).length + 1;
+      musicService.sequence = getLastSequence(musics) + 1;
+      musicNodeService.sequence = getLastSequence(musicNodes) + 1;
       state.musics = musics;
       state.musicNodes = musicNodes;
       state.requireReactFlowUpdate = true;
