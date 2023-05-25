@@ -10,7 +10,9 @@ export function MusicManager() {
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    const { name, videoId } = JSON.parse(e.dataTransfer.getData(MUSIC_DATA_TRANSFER_KEY));
+    const data = e.dataTransfer.getData(MUSIC_DATA_TRANSFER_KEY);
+    if (!data) return;
+    const { name, videoId } = JSON.parse(data);
     const music = musicService.createMusic(name, videoId);
     dispatch(addMusic(music));
   };

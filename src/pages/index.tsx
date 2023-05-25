@@ -6,8 +6,10 @@ import * as S from '../styles/pages/index';
 import { useAppDispatch, useAppSelector } from '../features/store';
 import { LOCAL_STORAGE_KEY } from '../constants/interface';
 import { decodeV1, encodeV1 } from '../utils/encoding';
-import { load } from '../features/mainSlice';
+import { addMusic, createMusicNode, load } from '../features/mainSlice';
 import { Player } from '../components/Player';
+import { musicService } from '../server/MusicService';
+import { musicNodeService } from '../server/MusicNodeService';
 
 function Home() {
   const dispatch = useAppDispatch();
@@ -27,6 +29,42 @@ function Home() {
     const code = encodeV1(JSON.stringify({ musics, musicNodes }));
     localStorage.setItem(LOCAL_STORAGE_KEY, code);
   }, [musics, musicNodes]);
+
+  useEffect(() => {
+    const preventDefault = (e: DragEvent) => {
+      e.preventDefault();
+    };
+
+    const handleAnchorDrag = async (e: DragEvent) => {
+      const url = e.dataTransfer.getData('text/plain') || e.dataTransfer.getData('text/uri-list');
+      const regex = /^https?:\/\/(?:www\.)?youtube\.com\/watch\?v=([^&]+)/;
+
+      const match = url.match(regex);
+
+      if (!match) return;
+      const videoId = match[1];
+
+      const response = await fetch(`/api/video-title?videoId=${videoId}`);
+      if (!response.ok) {
+        console.error(response.statusText);
+        return;
+      }
+
+      const { title } = await response.json();
+      const music = musicService.createMusic(title, videoId);
+      const musicNode = musicNodeService.createMusicNode(title, videoId);
+
+      dispatch(addMusic(music));
+      dispatch(createMusicNode(musicNode));
+    };
+
+    window.addEventListener('dragover', preventDefault);
+    window.addEventListener('drop', handleAnchorDrag);
+    return () => {
+      window.removeEventListener('dragover', preventDefault);
+      window.removeEventListener('drop', handleAnchorDrag);
+    };
+  }, []);
 
   return (
     <S.Home>

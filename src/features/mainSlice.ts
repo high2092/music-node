@@ -11,6 +11,7 @@ interface MainState {
   requireReactFlowUpdate: boolean;
   pointer: number;
   requirePlayerRewind: boolean;
+  newNode: MusicNode;
 }
 
 const initialState: MainState = {
@@ -19,6 +20,7 @@ const initialState: MainState = {
   requireReactFlowUpdate: false,
   pointer: null,
   requirePlayerRewind: false,
+  newNode: null,
 };
 
 interface ConnectNodePayload {
@@ -50,6 +52,7 @@ export const mainSlice = createSlice({
     createMusicNode(state, action: PayloadAction<MusicNode>) {
       const musicNode = action.payload;
       state.musicNodes[musicNode.id] = musicNode;
+      state.newNode = musicNode;
     },
 
     connectNode(state, action: PayloadAction<ConnectNodePayload>) {

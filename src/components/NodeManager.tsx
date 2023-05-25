@@ -9,7 +9,7 @@ import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
 
 export function NodeManager() {
   const dispatch = useAppDispatch();
-  const { musicNodes, requireReactFlowUpdate } = useAppSelector((state) => state.main);
+  const { musicNodes, requireReactFlowUpdate, newNode } = useAppSelector((state) => state.main);
 
   const timeoutRef = useRef<NodeJS.Timeout>(null);
 
@@ -23,6 +23,11 @@ export function NodeManager() {
     setEdges(edges);
     setRequireReactFlowUpdate(false);
   }, [requireReactFlowUpdate]);
+
+  useEffect(() => {
+    if (!newNode) return;
+    setNodes((nodes) => nodes.concat(convertMusicNodeToReactFlowNode(newNode)));
+  }, [newNode]);
 
   const _onNodesChange = (nodesChange: NodePositionChange[]) => {
     onNodesChange(nodesChange);
@@ -46,9 +51,10 @@ export function NodeManager() {
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    const { name, videoId } = JSON.parse(e.dataTransfer.getData(MUSIC_DATA_TRANSFER_KEY));
+    const data = e.dataTransfer.getData(MUSIC_DATA_TRANSFER_KEY);
+    if (!data) return;
+    const { name, videoId } = JSON.parse(data);
     const musicNode = musicNodeService.createMusicNode(name, videoId);
-    setNodes((nodes) => nodes.concat(convertMusicNodeToReactFlowNode(musicNode)));
     dispatch(createMusicNode(musicNode));
   };
 
