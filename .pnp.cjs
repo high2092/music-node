@@ -33,6 +33,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["next", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:13.4.3"],\
             ["react", "npm:18.2.0"],\
             ["react-dom", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:18.2.0"],\
+            ["react-flow", "npm:1.0.3"],\
             ["react-youtube", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:10.1.0"],\
             ["typescript", "patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=b5f058"]\
           ],\
@@ -294,6 +295,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["next", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:13.4.3"],\
             ["react", "npm:18.2.0"],\
             ["react-dom", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:18.2.0"],\
+            ["react-flow", "npm:1.0.3"],\
             ["react-youtube", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:10.1.0"],\
             ["typescript", "patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=b5f058"]\
           ],\
@@ -439,6 +441,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packagePeers": [\
             "@types/react",\
             "react"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["react-flow", [\
+        ["npm:1.0.3", {\
+          "packageLocation": "./.yarn/cache/react-flow-npm-1.0.3-1bcbccccc9-7c48a14543.zip/node_modules/react-flow/",\
+          "packageDependencies": [\
+            ["react-flow", "npm:1.0.3"]\
           ],\
           "linkType": "HARD"\
         }]\
