@@ -15,6 +15,10 @@ export function MusicManager() {
     dispatch(addMusic(music));
   };
 
+  const handleDragStart = (e: React.DragEvent, { name, videoId }) => {
+    e.dataTransfer.setData(MUSIC_DATA_TRANSFER_KEY, JSON.stringify({ name, videoId }));
+  };
+
   return (
     <>
       <div style={{ height: '7%', display: 'flex', alignItems: 'center' }}>
@@ -22,8 +26,10 @@ export function MusicManager() {
         <input />
       </div>
       <div style={{ height: '93%', background: '#dddddd' }} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
-        {Object.values(musics).map(({ id, name }) => (
-          <Div key={`music-${id}`}>{name}</Div>
+        {Object.values(musics).map(({ id, name, videoId }) => (
+          <Div key={`music-${id}`} onDragStart={(e) => handleDragStart(e, { name, videoId })} draggable>
+            {name}
+          </Div>
         ))}
       </div>
     </>
