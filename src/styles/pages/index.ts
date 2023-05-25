@@ -10,12 +10,12 @@ export const Home = styled.div`
 
 // Home ~
 export const NodeManagerSection = styled.div`
-  flex: 4;
+  flex-grow: 1;
   background-color: oldlace;
 `;
 
 export const UiSection = styled.div`
-  flex: 3;
+  height: 20rem;
 
   display: flex;
 `;
