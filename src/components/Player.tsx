@@ -5,13 +5,13 @@ import { useEffect, useRef, useState } from 'react';
 
 export function Player() {
   const dispatch = useAppDispatch();
-  const { musicNodes, pointer, requirePlayerRewind } = useAppSelector((state) => state.main);
+  const { musicNodes, musics, pointer, requirePlayerRewind } = useAppSelector((state) => state.main);
 
   const [height, setHeight] = useState(0);
 
   const playerRef = useRef<YouTubePlayer>();
 
-  const videoId = musicNodes[pointer]?.videoId;
+  const videoId = musics[musicNodes[pointer]?.musicId]?.videoId;
 
   useEffect(() => {
     setHeight(12 * parseFloat(getComputedStyle(document.documentElement).fontSize));

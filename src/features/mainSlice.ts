@@ -2,9 +2,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Music } from '../types/music';
 import { MusicNode } from '../types/musicNode';
 import { ReactFlowInstance, XYPosition } from 'reactflow';
-import { musicNodeService } from '../server/MusicNodeService';
-import { musicService } from '../server/MusicService';
-import { getLastSequence } from '../utils/encoding';
 
 interface MainState {
   musics: Record<number, Music>;
@@ -49,7 +46,7 @@ export const mainSlice = createSlice({
   reducers: {
     addMusic(state, action: PayloadAction<Music>) {
       const music = action.payload;
-      state.musics[music.id] = music;
+      state.musics[music.id] ??= music;
     },
 
     createMusicNode(state, action: PayloadAction<MusicNode>) {
@@ -73,8 +70,6 @@ export const mainSlice = createSlice({
 
     load(state, action: PayloadAction<LoadPayload>) {
       const { musics, musicNodes } = action.payload;
-      musicService.sequence = getLastSequence(musics) + 1;
-      musicNodeService.sequence = getLastSequence(musicNodes) + 1;
       state.musics = musics;
       state.musicNodes = musicNodes;
       state.requireReactFlowUpdate = true;
@@ -100,7 +95,6 @@ export const mainSlice = createSlice({
     },
 
     deleteNodes(state, action: PayloadAction<number[]>) {
-      console.log(action.payload);
       action.payload.forEach((id) => {
         delete state.musicNodes[id];
       });

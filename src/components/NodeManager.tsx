@@ -1,16 +1,16 @@
 import 'reactflow/dist/style.css';
 import ReactFlow, { Node, Edge, useNodesState, useEdgesState, NodePositionChange, OnConnect, addEdge, OnNodesDelete, OnEdgesDelete } from 'reactflow';
-import { musicNodeService } from '../server/MusicNodeService';
 import { convertMusicNodeToReactFlowNode, convertMusicNodesToReactFlowObjects } from '../utils/reactFlow';
 import { useAppDispatch, useAppSelector } from '../features/store';
-import { connectNode, createMusicNode, deleteEdges, deleteNodes, moveNode, playNode, setReactFLowInstance, setRequireReactFlowUpdate } from '../features/mainSlice';
+import { addMusic, connectNode, createMusicNode, deleteEdges, deleteNodes, moveNode, playNode, setReactFLowInstance, setRequireReactFlowUpdate } from '../features/mainSlice';
 import { useEffect, useRef, useState } from 'react';
 import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
 import { ReactFlowObjectTypes } from '../constants/reactFlow';
+import { http } from '../utils/api';
 
 export function NodeManager() {
   const dispatch = useAppDispatch();
-  const { musicNodes, requireReactFlowUpdate, newNode, reactFlowInstance } = useAppSelector((state) => state.main);
+  const { musicNodes, musics, requireReactFlowUpdate, newNode, reactFlowInstance } = useAppSelector((state) => state.main);
 
   const [latestClickedObjectType, setLatestClickedObjectType] = useState<string>();
 
@@ -21,7 +21,7 @@ export function NodeManager() {
 
   useEffect(() => {
     if (!requireReactFlowUpdate) return;
-    const { nodes, edges } = convertMusicNodesToReactFlowObjects(musicNodes);
+    const { nodes, edges } = convertMusicNodesToReactFlowObjects(musicNodes, musics);
     setNodes(nodes);
     setEdges(edges);
     setRequireReactFlowUpdate(false);
@@ -29,7 +29,7 @@ export function NodeManager() {
 
   useEffect(() => {
     if (!newNode) return;
-    setNodes((nodes) => nodes.concat(convertMusicNodeToReactFlowNode(newNode)));
+    setNodes((nodes) => nodes.concat(convertMusicNodeToReactFlowNode(newNode, musics)));
   }, [newNode]);
 
   const _onNodesChange = (nodesChange: NodePositionChange[]) => {
@@ -38,11 +38,12 @@ export function NodeManager() {
     if (nodesChange[0].type !== 'position') return;
 
     clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => {
+    timeoutRef.current = setTimeout(async () => {
       const nodeMoves = nodesChange.map((nodeChange) => {
         const { id, position } = nodes.find((node) => node.id === nodeChange.id);
         return { id, position };
       });
+      await http.post('/api/node/move', { nodeMoves });
       dispatch(moveNode(nodeMoves));
     }, 500);
   };
@@ -56,13 +57,18 @@ export function NodeManager() {
     dispatch(connectNode(connection));
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     const data = e.dataTransfer.getData(MUSIC_DATA_TRANSFER_KEY);
     if (!data) return;
-    const { name, videoId } = JSON.parse(data);
+    let { musicId, name, videoId } = JSON.parse(data);
+    if (!musicId) {
+      const { music } = await http.post('/api/music', { name, videoId });
+      dispatch(addMusic(music));
+      musicId = music.id;
+    }
     const position = reactFlowInstance.project({ x: e.clientX, y: e.clientY });
-    const musicNode = musicNodeService.createMusicNode(name, videoId, position);
+    const { musicNode } = await http.post('/api/node', { musicId, position });
     dispatch(createMusicNode(musicNode));
   };
 
@@ -81,7 +87,9 @@ export function NodeManager() {
   };
 
   const handleNodesDelete: OnNodesDelete = (nodes: Node[]) => {
-    dispatch(deleteNodes(nodes.map(({ id }) => Number(id))));
+    const nodeIdList = nodes.map(({ id }) => Number(id));
+    http.post('/api/node/delete', { nodeIdList });
+    dispatch(deleteNodes(nodeIdList));
   };
 
   const handleEdgesDelete: OnEdgesDelete = (nodes: Edge[]) => {
