@@ -27,7 +27,7 @@ export function MusicManager() {
         <label>필터</label>
         <input />
       </div>
-      <div style={{ height: '93%', background: '#dddddd' }} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
+      <div style={{ height: '93%', background: '#dddddd', overflow: 'scroll' }} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
         {Object.values(musics).map(({ id, name, videoId }) => (
           <Div key={`music-${id}`} onDragStart={(e) => handleDragStart(e, { name, videoId })} draggable>
             {name}
