@@ -1,12 +1,18 @@
+import { useState } from 'react';
 import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
 import { addMusic } from '../features/mainSlice';
 import { useAppDispatch, useAppSelector } from '../features/store';
 import { Div } from '../styles/common/Div';
 import { http } from '../utils/api';
+import { trim } from '../utils/string';
 
 export function MusicManager() {
   const dispatch = useAppDispatch();
   const { musics } = useAppSelector((state) => state.main);
+
+  const [filterQuery, setFilterQuery] = useState('');
+
+  const filteredMusicList = Object.values(musics).filter(({ name }) => trim(name).includes(trim(filterQuery)));
 
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
@@ -25,10 +31,10 @@ export function MusicManager() {
     <>
       <div style={{ height: '7%', display: 'flex', alignItems: 'center' }}>
         <label>필터</label>
-        <input />
+        <input onChange={(e) => setFilterQuery(e.target.value)} value={filterQuery} />
       </div>
       <div style={{ height: '93%', background: '#dddddd', overflow: 'scroll' }} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
-        {Object.values(musics).map(({ id, name, videoId }) => (
+        {filteredMusicList.map(({ id, name, videoId }) => (
           <Div key={`music-${id}`} onDragStart={(e) => handleDragStart(e, id)} draggable>
             {name}
           </Div>
