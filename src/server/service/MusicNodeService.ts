@@ -15,7 +15,11 @@ class MusicNodeService {
   }
 
   deleteMusicNodes(nodes: number[]) {
+    const musicNodeList = Object.values(musicNodeRepository.findAll());
     nodes.forEach((id) => {
+      musicNodeList.forEach((musicNode) => {
+        if (musicNode.next === id) musicNode.next = null;
+      });
       musicNodeRepository.deleteById(id);
     });
   }

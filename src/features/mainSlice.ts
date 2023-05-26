@@ -96,7 +96,11 @@ export const mainSlice = createSlice({
     },
 
     deleteNodes(state, action: PayloadAction<number[]>) {
+      const musicNodeList = Object.values(state.musicNodes);
       action.payload.forEach((id) => {
+        musicNodeList.forEach((musicNode) => {
+          if (musicNode.next === id) state.musicNodes[musicNode.id].next = null;
+        });
         delete state.musicNodes[id];
       });
     },
