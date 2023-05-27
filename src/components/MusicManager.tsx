@@ -29,11 +29,11 @@ export function MusicManager() {
 
   return (
     <>
-      <div style={{ height: '7%', display: 'flex', alignItems: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
         <label>필터</label>
         <input onChange={(e) => setFilterQuery(e.target.value)} value={filterQuery} />
       </div>
-      <div style={{ height: '93%', background: '#dddddd', overflow: 'scroll' }} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
+      <div style={{ height: '88%', overflow: 'scroll' }} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
         {filteredMusicList.map(({ id, name, videoId }) => (
           <Div key={`music-${id}`} onDragStart={(e) => handleDragStart(e, id)} draggable>
             {name}

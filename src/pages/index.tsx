@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { MusicManager } from '../components/MusicManager';
 import { NodeManager } from '../components/NodeManager';
 import { SearchManager } from '../components/SearchManager';
@@ -9,10 +9,15 @@ import { addMusic, createMusicNode, load } from '../features/mainSlice';
 import { Player } from '../components/Player';
 import { http } from '../utils/api';
 import { encodeV1 } from '../utils/encoding';
+import { IconDiv } from '../components/icons/IconDiv';
+import { UpIcon } from '../components/icons/UpIcon';
+import { DownIcon } from '../components/icons/DownIcon';
 
 function Home() {
   const dispatch = useAppDispatch();
   const { musics, musicNodes, reactFlowInstance } = useAppSelector((state) => state.main);
+
+  const [isUiOpen, setIsUiOpen] = useState(true);
 
   useEffect(() => {
     http.post('/api/load', { code: localStorage.getItem(LOCAL_STORAGE_KEY) }).then(({ musics, musicNodes }) => {
@@ -56,17 +61,20 @@ function Home() {
       <S.NodeManagerSection>
         <NodeManager />
       </S.NodeManagerSection>
-      <S.UiSection>
-        <S.NodeListSection>
-          <MusicManager />
-        </S.NodeListSection>
-        <S.SearchSection>
-          <SearchManager />
-        </S.SearchSection>
-        <S.PlayerSection>
-          <Player />
-        </S.PlayerSection>
-      </S.UiSection>
+      <S.UiSectionContainer open={isUiOpen}>
+        <IconDiv onClick={() => setIsUiOpen(!isUiOpen)}>{isUiOpen ? <DownIcon /> : <UpIcon />}</IconDiv>
+        <S.UiSection>
+          <S.NodeListSection>
+            <MusicManager />
+          </S.NodeListSection>
+          <S.SearchSection>
+            <SearchManager />
+          </S.SearchSection>
+          <S.PlayerSection>
+            <Player />
+          </S.PlayerSection>
+        </S.UiSection>
+      </S.UiSectionContainer>
     </S.Home>
   );
 }

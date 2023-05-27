@@ -4,6 +4,11 @@ export const Home = styled.div`
   width: 100vw;
   height: 100vh;
 
+  background: url('image/background.jpg');
+  background-size: cover;
+  background-position: center center;
+  color: white;
+
   display: flex;
   flex-direction: column;
 `;
@@ -11,13 +16,32 @@ export const Home = styled.div`
 // Home ~
 export const NodeManagerSection = styled.div`
   flex-grow: 1;
-  background-color: oldlace;
+`;
+
+export const PLAYER_HEIGHT_REM = 12;
+const UI_SECTION_HEIGHT_REM = PLAYER_HEIGHT_REM;
+
+export const UiSectionContainer = styled.div<{ open: boolean }>`
+  position: absolute;
+  bottom: ${({ open }) => (open ? 0 : `-${UI_SECTION_HEIGHT_REM}rem`)};
+  transition: bottom 1s;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 export const UiSection = styled.div`
-  height: 20rem;
+  width: 100vw;
+  height: ${UI_SECTION_HEIGHT_REM}rem;
+
+  background-color: rgba(0, 0, 0, 0.5);
 
   display: flex;
+
+  & > * {
+    padding: 0.5rem;
+  }
 `;
 // ~ Home
 
@@ -28,10 +52,9 @@ export const NodeListSection = styled.div`
 
 export const SearchSection = styled.div`
   flex: 8;
-  background-color: orange;
 `;
 
 export const PlayerSection = styled.div`
-  flex: 9;
+  /* flex: 9; */
 `;
 // ~ UiSection

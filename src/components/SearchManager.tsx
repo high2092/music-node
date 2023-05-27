@@ -31,11 +31,13 @@ export function SearchManager() {
 
   return (
     <>
-      <form style={{ height: '7%', display: 'flex' }} onSubmit={handleSubmit(handleSearch)}>
-        <input style={{ flexGrow: 1 }} {...register('query')} />
-        <button style={{ width: 'max-content' }}>검색</button>
-      </form>
-      <div style={{ height: '93%', overflow: 'scroll' }}>
+      <div onSubmit={handleSubmit(handleSearch)}>
+        <form style={{ display: 'flex' }}>
+          <input style={{ flexGrow: 1 }} {...register('query')} />
+          <button style={{ width: 'max-content' }}>검색</button>
+        </form>
+      </div>
+      <div style={{ height: '88%', overflow: 'scroll' }}>
         {searchResultList.map(({ title: name, videoId }, idx) => (
           <Div key={`searchResult-${videoId}-${idx}`} onDragStart={(e) => handleDragStart(e, { name, videoId })} draggable>
             <div>{name}</div>
