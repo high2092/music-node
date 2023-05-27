@@ -20,8 +20,12 @@ function Home() {
   const [isUiOpen, setIsUiOpen] = useState(true);
 
   useEffect(() => {
-    const { musics, musicNodes } = JSON.parse(decodeV1(localStorage.getItem(LOCAL_STORAGE_KEY)));
-    dispatch(load({ musics, musicNodes }));
+    const code = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (!code) return;
+    try {
+      const { musics, musicNodes } = JSON.parse(decodeV1(code));
+      dispatch(load({ musics, musicNodes }));
+    } catch {}
   }, []);
 
   useEffect(() => {
