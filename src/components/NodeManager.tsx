@@ -23,7 +23,7 @@ export function NodeManager() {
     const { nodes, edges } = convertMusicNodesToReactFlowObjects(musicNodes, musics);
     setNodes(nodes);
     setEdges(edges);
-    setRequireReactFlowUpdate(false);
+    dispatch(setRequireReactFlowUpdate(false));
   }, [requireReactFlowUpdate]);
 
   useEffect(() => {

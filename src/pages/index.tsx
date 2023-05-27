@@ -5,7 +5,7 @@ import { SearchManager } from '../components/SearchManager';
 import * as S from '../styles/pages/index';
 import { useAppDispatch, useAppSelector } from '../features/store';
 import { LOCAL_STORAGE_KEY } from '../constants/interface';
-import { addMusic, createMusicNode, load } from '../features/mainSlice';
+import { addMusic, createMusicNode, load, reset } from '../features/mainSlice';
 import { Player } from '../components/Player';
 import { decodeV1, encodeV1 } from '../utils/encoding';
 import { IconDiv } from '../components/icons/IconDiv';
@@ -16,6 +16,7 @@ import { ImportIcon } from '../components/icons/ImportIcon';
 import { ExportIcon } from '../components/icons/ExportIcon';
 import { openModal } from '../features/modalSlice';
 import { ModalTypes } from '../types/modal';
+import { ResetIcon } from '../components/icons/ResetIcon';
 
 function Home() {
   const dispatch = useAppDispatch();
@@ -87,6 +88,12 @@ function Home() {
     target.value = '';
   };
 
+  const handleResetButtonClick = () => {
+    const RESET_CONFIRM_MESSAGE = '정말 현재 상태를 초기화할까요?';
+    if (!confirm(RESET_CONFIRM_MESSAGE)) return;
+    dispatch(reset());
+  };
+
   return (
     <S.Home onDrop={handleAnchorDrop}>
       <S.CurrentNodeInfoSection>
@@ -104,6 +111,9 @@ function Home() {
             </IconDiv>
             <IconDiv onClick={() => dispatch(openModal({ type: ModalTypes.EXPORT }))}>
               <ExportIcon />
+            </IconDiv>
+            <IconDiv onClick={handleResetButtonClick}>
+              <ResetIcon />
             </IconDiv>
           </S.ButtonSection>
           <IconDiv onClick={() => setIsUiOpen(!isUiOpen)}>{isUiOpen ? <DownIcon /> : <UpIcon />}</IconDiv>

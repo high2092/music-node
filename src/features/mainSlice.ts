@@ -157,6 +157,16 @@ export const mainSlice = createSlice({
       reactFlowInstance.fitView({ maxZoom: reactFlowInstance.getZoom(), duration: 2000, nodes: [{ id: foundNodeList[state.findDepth].id.toString() }] });
       state.findDepth++;
     },
+
+    reset(state) {
+      state.musics = initialState.musics;
+      state.musicNodes = initialState.musicNodes;
+      state.musicSequence = initialState.musicSequence;
+      state.musicNodeSequence = initialState.musicNodeSequence;
+      state.requireReactFlowUpdate = true;
+      state.pointer = initialState.pointer;
+      state.isPlaying = initialState.isPlaying;
+    },
   },
 });
 
@@ -171,4 +181,4 @@ function getNextPointer(pointer: number, query: PlayQuery, musicNodes: Record<nu
   }
 }
 
-export const { addMusic, createMusicNode, connectNode, moveNode, load, setRequireReactFlowUpdate, playNode, setRequirePlayerRewind, deleteNodes, deleteEdges, setReactFLowInstance, setIsPlaying, findByMusicId } = mainSlice.actions;
+export const { addMusic, createMusicNode, connectNode, moveNode, load, setRequireReactFlowUpdate, playNode, setRequirePlayerRewind, deleteNodes, deleteEdges, setReactFLowInstance, setIsPlaying, findByMusicId, reset } = mainSlice.actions;
