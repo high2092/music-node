@@ -146,16 +146,16 @@ export const mainSlice = createSlice({
       if (state.findMusicId !== action.payload) {
         state.findMusicId = action.payload;
         state.findDepth = 0;
-        state.foundNodeList = Object.values(state.musicNodes).filter(({ musicId }) => musicId === state.findMusicId);
       }
 
+      state.foundNodeList = Object.values(state.musicNodes).filter(({ musicId }) => musicId === state.findMusicId);
       const { foundNodeList, reactFlowInstance } = state;
 
+      if (state.findDepth >= foundNodeList.length) state.findDepth = 0;
       if (foundNodeList.length === 0) {
         alert('노드를 찾을 수 없어요.');
         return;
       }
-      if (state.findDepth >= foundNodeList.length) state.findDepth = 0;
       reactFlowInstance.fitView({ maxZoom: reactFlowInstance.getZoom(), duration: 2000, nodes: [{ id: foundNodeList[state.findDepth].id.toString() }] });
       state.findDepth++;
     },
