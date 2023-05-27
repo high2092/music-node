@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Music } from '../types/music';
 import { MusicNode } from '../types/musicNode';
 import { ReactFlowInstance, XYPosition } from 'reactflow';
+import { getLastSequence } from '../utils/encoding';
 
 interface MainState {
   musics: Record<number, Music>;
@@ -11,6 +12,8 @@ interface MainState {
   requirePlayerRewind: boolean;
   newNode: MusicNode;
   reactFlowInstance: ReactFlowInstance;
+  musicSequence: number;
+  musicNodeSequence: number;
 }
 
 const initialState: MainState = {
@@ -21,6 +24,8 @@ const initialState: MainState = {
   requirePlayerRewind: false,
   newNode: null,
   reactFlowInstance: null,
+  musicSequence: 1,
+  musicNodeSequence: 1,
 };
 
 interface ConnectNodePayload {
@@ -46,13 +51,16 @@ export const mainSlice = createSlice({
   reducers: {
     addMusic(state, action: PayloadAction<Music>) {
       const music = action.payload;
-      state.musics[music.id] ??= music;
+      if (Object.values(state.musics).find(({ videoId }) => videoId === music.videoId)) return;
+      state.musics[music.id] = music;
+      state.musicSequence++;
     },
 
     createMusicNode(state, action: PayloadAction<MusicNode>) {
       const musicNode = action.payload;
       state.musicNodes[musicNode.id] = musicNode;
       state.newNode = musicNode;
+      state.musicNodeSequence++;
     },
 
     connectNode(state, action: PayloadAction<ConnectNodePayload>) {
@@ -72,6 +80,8 @@ export const mainSlice = createSlice({
       const { musics, musicNodes } = action.payload;
       state.musics = musics;
       state.musicNodes = musicNodes;
+      state.musicSequence = getLastSequence(musics) + 1;
+      state.musicNodeSequence = getLastSequence(musicNodes) + 1;
       state.requireReactFlowUpdate = true;
     },
 

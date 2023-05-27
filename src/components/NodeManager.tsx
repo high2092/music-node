@@ -6,11 +6,10 @@ import { addMusic, connectNode, createMusicNode, deleteEdges, deleteNodes, moveN
 import { useEffect, useRef, useState } from 'react';
 import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
 import { ReactFlowObjectTypes } from '../constants/reactFlow';
-import { http } from '../utils/api';
 
 export function NodeManager() {
   const dispatch = useAppDispatch();
-  const { musicNodes, musics, requireReactFlowUpdate, newNode, reactFlowInstance } = useAppSelector((state) => state.main);
+  const { musicNodes, musics, requireReactFlowUpdate, newNode, reactFlowInstance, musicSequence, musicNodeSequence } = useAppSelector((state) => state.main);
 
   const [latestClickedObjectType, setLatestClickedObjectType] = useState<string>();
 
@@ -43,7 +42,6 @@ export function NodeManager() {
         const { id, position } = nodes.find((node) => node.id === nodeChange.id);
         return { id, position };
       });
-      await http.post('/api/node/move', { nodeMoves });
       dispatch(moveNode(nodeMoves));
     }, 500);
   };
@@ -63,12 +61,12 @@ export function NodeManager() {
     if (!data) return;
     let { musicId, name, videoId } = JSON.parse(data);
     if (!musicId) {
-      const { music } = await http.post('/api/music', { name, videoId });
+      const music = { id: musicSequence, name, videoId };
       dispatch(addMusic(music));
       musicId = music.id;
     }
     const position = reactFlowInstance.project({ x: e.clientX, y: e.clientY });
-    const { musicNode } = await http.post('/api/node', { musicId, position });
+    const musicNode = { id: musicNodeSequence, musicId, position, next: null };
     dispatch(createMusicNode(musicNode));
   };
 
@@ -88,7 +86,6 @@ export function NodeManager() {
 
   const handleNodesDelete: OnNodesDelete = (nodes: Node[]) => {
     const nodeIdList = nodes.map(({ id }) => Number(id));
-    http.post('/api/node/delete', { nodeIdList });
     dispatch(deleteNodes(nodeIdList));
   };
 

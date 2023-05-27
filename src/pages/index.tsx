@@ -7,22 +7,20 @@ import { useAppDispatch, useAppSelector } from '../features/store';
 import { LOCAL_STORAGE_KEY } from '../constants/interface';
 import { addMusic, createMusicNode, load } from '../features/mainSlice';
 import { Player } from '../components/Player';
-import { http } from '../utils/api';
-import { encodeV1 } from '../utils/encoding';
+import { decodeV1, encodeV1 } from '../utils/encoding';
 import { IconDiv } from '../components/icons/IconDiv';
 import { UpIcon } from '../components/icons/UpIcon';
 import { DownIcon } from '../components/icons/DownIcon';
 
 function Home() {
   const dispatch = useAppDispatch();
-  const { musics, musicNodes, reactFlowInstance } = useAppSelector((state) => state.main);
+  const { musics, musicNodes, reactFlowInstance, musicSequence, musicNodeSequence } = useAppSelector((state) => state.main);
 
   const [isUiOpen, setIsUiOpen] = useState(true);
 
   useEffect(() => {
-    http.post('/api/load', { code: localStorage.getItem(LOCAL_STORAGE_KEY) }).then(({ musics, musicNodes }) => {
-      dispatch(load({ musics, musicNodes }));
-    });
+    const { musics, musicNodes } = JSON.parse(decodeV1(localStorage.getItem(LOCAL_STORAGE_KEY)));
+    dispatch(load({ musics, musicNodes }));
   }, []);
 
   useEffect(() => {
@@ -48,9 +46,9 @@ function Home() {
     }
 
     const { title: name } = await response.json();
-    const { music } = await http.post('/api/music', { name, videoId });
+    const music = { id: musicSequence, name, videoId };
     const position = reactFlowInstance.project({ x: e.clientX, y: e.clientY });
-    const { musicNode } = await http.post('/api/node', { musicId: music.id, position });
+    const musicNode = { id: musicNodeSequence, musicId: music.id, position, next: null };
 
     dispatch(addMusic(music));
     dispatch(createMusicNode(musicNode));

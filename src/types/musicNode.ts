@@ -1,7 +1,7 @@
 import { XYPosition } from 'reactflow';
 
 export interface MusicNode {
-  id?: number;
+  id: number;
   musicId: number;
   next: number;
 

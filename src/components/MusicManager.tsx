@@ -3,12 +3,11 @@ import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
 import { addMusic } from '../features/mainSlice';
 import { useAppDispatch, useAppSelector } from '../features/store';
 import { Div } from '../styles/common/Div';
-import { http } from '../utils/api';
 import { trim } from '../utils/string';
 
 export function MusicManager() {
   const dispatch = useAppDispatch();
-  const { musics } = useAppSelector((state) => state.main);
+  const { musics, musicSequence } = useAppSelector((state) => state.main);
 
   const [filterQuery, setFilterQuery] = useState('');
 
@@ -19,7 +18,7 @@ export function MusicManager() {
     const data = e.dataTransfer.getData(MUSIC_DATA_TRANSFER_KEY);
     const { name, videoId } = JSON.parse(data);
     if (!name || !videoId) return;
-    const { music } = await http.post('/api/music', { name, videoId });
+    const music = { id: musicSequence, name, videoId };
     dispatch(addMusic(music));
   };
 
