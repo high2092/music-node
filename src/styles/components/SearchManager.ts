@@ -31,3 +31,20 @@ export const WaitingSearchSpinner = styled.div<{ delayed?: boolean }>`
     }
   }
 `;
+
+export const SearchResultListContainer = styled.div`
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const SearchResultList = styled.div`
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;

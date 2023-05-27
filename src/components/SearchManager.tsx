@@ -4,6 +4,7 @@ import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
 import { Music } from '../types/music';
 import { Div } from '../styles/common/Div';
 import * as S from '../styles/components/SearchManager';
+import { shorten } from '../utils/string';
 
 interface SearchResult {
   title: string;
@@ -44,19 +45,19 @@ export function SearchManager() {
           </button>
         </form>
       </div>
-      <div style={{ height: '88%', overflow: 'scroll', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <S.SearchResultListContainer style={{ height: '88%' }}>
         {isWaiting ? (
           <WaitingSearchSpinner />
         ) : (
-          <div>
+          <S.SearchResultList style={{ height: '100%' }}>
             {searchResultList.map(({ title: name, videoId }, idx) => (
               <Div key={`searchResult-${videoId}-${idx}`} onDragStart={(e) => handleDragStart(e, { name, videoId })} draggable>
-                <div>{name}</div>
+                <div>{shorten(name, 50)}</div>
               </Div>
             ))}
-          </div>
+          </S.SearchResultList>
         )}
-      </div>
+      </S.SearchResultListContainer>
     </>
   );
 }

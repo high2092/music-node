@@ -6,6 +6,7 @@ import { Div } from '../styles/common/Div';
 import { trim } from '../utils/string';
 import { IconDiv } from './icons/IconDiv';
 import { ScopeIcon } from './icons/ScopeIcon';
+import * as S from '../styles/components/MusicManager';
 
 export function MusicManager() {
   const dispatch = useAppDispatch();
@@ -34,7 +35,7 @@ export function MusicManager() {
         <label style={{ width: 'max-content' }}>필터</label>
         <input onChange={(e) => setFilterQuery(e.target.value)} value={filterQuery} />
       </div>
-      <div style={{ height: '88%', overflow: 'scroll' }} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
+      <S.MusicList style={{ height: '88%' }} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
         {filteredMusicList.map(({ id, name, videoId }) => (
           <Div key={`music-${id}`} style={{ justifyContent: 'space-between', alignItems: 'center' }} onDragStart={(e) => handleDragStart(e, id)} draggable>
             <div>{name}</div>
@@ -47,7 +48,7 @@ export function MusicManager() {
             </div>
           </Div>
         ))}
-      </div>
+      </S.MusicList>
     </>
   );
 }

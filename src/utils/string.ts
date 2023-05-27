@@ -2,9 +2,10 @@ export function trim(text: string) {
   return text.replace(/\s+/g, '').toLowerCase();
 }
 
-export function shorten(text: string) {
+export function shorten(text: string, maxLen?: number) {
   const MAX_LEN = 40;
+  maxLen ??= MAX_LEN;
   const TAIL = '...';
-  if (text.length + TAIL.length > MAX_LEN - TAIL.length) return text.substring(0, MAX_LEN - TAIL.length) + TAIL;
+  if (text.length + TAIL.length > maxLen - TAIL.length) return text.substring(0, maxLen - TAIL.length) + TAIL;
   return text;
 }
