@@ -70,27 +70,49 @@ function coloring(musicNodes: Record<number, GroupedMusicNode>, roots: number[])
   let color = 'black';
 
   const result: Record<number, string> = {};
-  Object.values(musicNodes).forEach((musicNode) => {
-    result[musicNode.id] = color;
-  });
 
   const dfs = ({ id, prev }: GroupedMusicNode) => {
+    if (result[id]) return;
     result[id] = color;
-    if (musicNodes[id].cycle) return;
+    color = whitening(color, 0.2);
     prev.forEach((p) => dfs(musicNodes[p]));
+  };
+
+  const cycleDfs = ({ id, prev }: GroupedMusicNode) => {
+    if (result[id]) return;
+    result[id] = color;
+    prev.forEach((p) => cycleDfs(musicNodes[p]));
   };
 
   for (const id of roots) {
     color = generateRandomHexColor();
-    dfs(musicNodes[id]);
+    (musicNodes[id].cycle ? cycleDfs : dfs)(musicNodes[id]);
   }
 
   return result;
 }
 
+// 0 ~ 255
+const BRIGHT = 170;
+
 function generateRandomHexColor() {
-  const R = Math.floor(Math.random() * 127 + 128).toString(16);
-  const G = Math.floor(Math.random() * 127 + 128).toString(16);
-  const B = Math.floor(Math.random() * 127 + 128).toString(16);
+  const R = Math.floor(BRIGHT + Math.random() * (255 - BRIGHT)).toString(16);
+  const G = Math.floor(BRIGHT + Math.random() * (255 - BRIGHT)).toString(16);
+  const B = Math.floor(BRIGHT + Math.random() * (255 - BRIGHT)).toString(16);
   return `#${[R, G, B].join('')}`;
+}
+
+function whitening(color: string, ratio: number) {
+  const rgb = colorToRgb(color);
+  const newRgb = rgb.map((c) => Math.round(c + (255 - c) * ratio));
+  return rgbToColor(newRgb);
+}
+
+function colorToRgb(color: string) {
+  const hex = color.slice(1);
+  return [parseInt(hex.slice(0, 2), 16), parseInt(hex.slice(2, 4), 16), parseInt(hex.slice(4, 6), 16)];
+}
+
+function rgbToColor(rgbArr: number[]) {
+  return `#${rgbArr.map((c) => c.toString(16).padStart(2, '0')).join('')}`;
 }
