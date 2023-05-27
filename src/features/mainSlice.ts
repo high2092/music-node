@@ -90,6 +90,7 @@ export const mainSlice = createSlice({
       state.musicNodes = musicNodes;
       state.musicSequence = getLastSequence(musics) + 1;
       state.musicNodeSequence = getLastSequence(musicNodes) + 1;
+      state.pointer = null;
       state.requireReactFlowUpdate = true;
     },
 
