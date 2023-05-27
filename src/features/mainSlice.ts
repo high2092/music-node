@@ -106,6 +106,7 @@ export const mainSlice = createSlice({
         state.reactFlowInstance.fitView({ maxZoom: state.reactFlowInstance.getZoom(), duration: 2000, nodes: [{ id: next.toString() }] });
       } else {
         alert('마지막 노드입니다.');
+        state.isPlaying = false;
       }
     },
 
