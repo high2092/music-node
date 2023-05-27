@@ -11,6 +11,7 @@ import { decodeV1, encodeV1 } from '../utils/encoding';
 import { IconDiv } from '../components/icons/IconDiv';
 import { UpIcon } from '../components/icons/UpIcon';
 import { DownIcon } from '../components/icons/DownIcon';
+import { CurrentNodeInfo } from '../components/CurrentNodeInfo';
 
 function Home() {
   const dispatch = useAppDispatch();
@@ -56,6 +57,9 @@ function Home() {
 
   return (
     <S.Home onDrop={handleAnchorDrop}>
+      <S.CurrentNodeInfoSection>
+        <CurrentNodeInfo />
+      </S.CurrentNodeInfoSection>
       <S.NodeManagerSection>
         <NodeManager />
       </S.NodeManagerSection>

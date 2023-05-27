@@ -8,12 +8,22 @@ export const Home = styled.div`
   background-size: cover;
   background-position: center center;
   color: white;
+  fill: white;
 
   display: flex;
   flex-direction: column;
 `;
 
 // Home ~
+export const CurrentNodeInfoSection = styled.div`
+  position: absolute;
+  top: 0;
+  width: 100vw;
+  z-index: 1;
+
+  background-color: rgba(0, 0, 0, 0.5);
+`;
+
 export const NodeManagerSection = styled.div`
   flex-grow: 1;
 `;

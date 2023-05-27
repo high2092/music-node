@@ -1,12 +1,12 @@
 import YouTube, { YouTubePlayer } from 'react-youtube';
 import { useAppDispatch, useAppSelector } from '../features/store';
-import { playNode, setRequirePlayerRewind } from '../features/mainSlice';
+import { playNode, setIsPlaying, setRequirePlayerRewind } from '../features/mainSlice';
 import { useEffect, useRef, useState } from 'react';
 import { PLAYER_HEIGHT_REM } from '../styles/pages';
 
 export function Player() {
   const dispatch = useAppDispatch();
-  const { musicNodes, musics, pointer, requirePlayerRewind } = useAppSelector((state) => state.main);
+  const { musicNodes, musics, pointer, requirePlayerRewind, isPlaying } = useAppSelector((state) => state.main);
 
   const [height, setHeight] = useState(0);
 
@@ -26,9 +26,26 @@ export function Player() {
     dispatch(setRequirePlayerRewind(false));
   }, [requirePlayerRewind]);
 
+  useEffect(() => {
+    if (!playerRef.current) return;
+
+    if (isPlaying) {
+      playerRef.current.playVideo();
+    } else {
+      playerRef.current.pauseVideo();
+    }
+  }, [isPlaying]);
+
   return (
     <>
-      <YouTube videoId={videoId ?? ''} opts={{ width: height * 2, height, playerVars: { autoplay: 1, rel: 0 } }} onReady={(e) => (playerRef.current = e.target)} onEnd={() => dispatch(playNode('next'))} />
+      <YouTube
+        videoId={videoId ?? ''}
+        opts={{ width: height * 2, height, playerVars: { autoplay: 1, rel: 0 } }}
+        onReady={(e) => (playerRef.current = e.target)}
+        onEnd={() => dispatch(playNode('next'))}
+        onPause={() => dispatch(setIsPlaying(false))}
+        onPlay={() => dispatch(setIsPlaying(true))}
+      />
     </>
   );
 }
