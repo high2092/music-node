@@ -4,3 +4,9 @@
   font-family: 'Poor Story', cursive;
   font-weight: 500;
 }
+
+.react-flow__panel {
+  right: 0.5rem !important;
+  bottom: 1.2rem !important;
+  background-color: transparent !important;
+}

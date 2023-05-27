@@ -9,6 +9,7 @@ export function Player() {
   const { musicNodes, musics, pointer, requirePlayerRewind, isPlaying } = useAppSelector((state) => state.main);
 
   const [height, setHeight] = useState(0);
+  const width = height * 2;
 
   const playerRef = useRef<YouTubePlayer>();
 
@@ -37,15 +38,17 @@ export function Player() {
   }, [isPlaying]);
 
   return (
-    <>
-      <YouTube
-        videoId={videoId ?? ''}
-        opts={{ width: height * 2, height, playerVars: { autoplay: 1, rel: 0 } }}
-        onReady={(e) => (playerRef.current = e.target)}
-        onEnd={() => dispatch(playNode('next'))}
-        onPause={() => dispatch(setIsPlaying(false))}
-        onPlay={() => dispatch(setIsPlaying(true))}
-      />
-    </>
+    <div style={{ width, height, background: 'black' }}>
+      <div hidden={pointer === null}>
+        <YouTube
+          videoId={videoId ?? ''}
+          opts={{ width, height, playerVars: { autoplay: 1, rel: 0 } }}
+          onReady={(e) => (playerRef.current = e.target)}
+          onEnd={() => dispatch(playNode('next'))}
+          onPause={() => dispatch(setIsPlaying(false))}
+          onPlay={() => dispatch(setIsPlaying(true))}
+        />
+      </div>
+    </div>
   );
 }
