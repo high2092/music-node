@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MusicManager } from '../components/MusicManager';
 import { NodeManager } from '../components/NodeManager';
 import { SearchManager } from '../components/SearchManager';
@@ -12,6 +12,10 @@ import { IconDiv } from '../components/icons/IconDiv';
 import { UpIcon } from '../components/icons/UpIcon';
 import { DownIcon } from '../components/icons/DownIcon';
 import { CurrentNodeInfo } from '../components/CurrentNodeInfo';
+import { ImportIcon } from '../components/icons/ImportIcon';
+import { ExportIcon } from '../components/icons/ExportIcon';
+import { openModal } from '../features/modalSlice';
+import { ModalTypes } from '../types/modal';
 
 function Home() {
   const dispatch = useAppDispatch();
@@ -19,11 +23,13 @@ function Home() {
 
   const [isUiOpen, setIsUiOpen] = useState(true);
 
+  const loadInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     const code = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!code) return;
     try {
-      const { musics, musicNodes } = JSON.parse(decodeV1(code));
+      const { musics, musicNodes } = decodeV1(code);
       dispatch(load({ musics, musicNodes }));
     } catch {}
   }, []);
@@ -31,7 +37,7 @@ function Home() {
   useEffect(() => {
     if (Object.values(musics).length == 0 && Object.values(musicNodes).length == 0) return;
 
-    const code = encodeV1(JSON.stringify({ musics, musicNodes }));
+    const code = encodeV1(musics, musicNodes);
     localStorage.setItem(LOCAL_STORAGE_KEY, code);
   }, [musics, musicNodes]);
 
@@ -59,6 +65,28 @@ function Home() {
     dispatch(createMusicNode(musicNode));
   };
 
+  const handleFileInputChange = (e: React.ChangeEvent) => {
+    const target = e.target as HTMLInputElement;
+    const file = target.files[0];
+
+    if (!file) return;
+
+    const LOAD_CONFIRM_MESSAGE = `정말 플레이리스트를 불러올까요? 현재 상태가 덮어 써져요.`;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const code = reader.result as string;
+      try {
+        const { musics, musicNodes } = decodeV1(code);
+        if (!confirm(LOAD_CONFIRM_MESSAGE)) return;
+        dispatch(load({ musics, musicNodes }));
+      } catch (e) {
+        alert(e.message);
+      }
+    };
+    reader.readAsText(file);
+    target.value = '';
+  };
+
   return (
     <S.Home onDrop={handleAnchorDrop}>
       <S.CurrentNodeInfoSection>
@@ -68,7 +96,18 @@ function Home() {
         <NodeManager />
       </S.NodeManagerSection>
       <S.UiSectionContainer open={isUiOpen}>
-        <IconDiv onClick={() => setIsUiOpen(!isUiOpen)}>{isUiOpen ? <DownIcon /> : <UpIcon />}</IconDiv>
+        <div>
+          <input ref={loadInputRef} id="load" type="file" accept=".mnode" onChange={handleFileInputChange} hidden />
+          <S.ButtonSection>
+            <IconDiv onClick={() => loadInputRef.current?.click()}>
+              <ImportIcon />
+            </IconDiv>
+            <IconDiv onClick={() => dispatch(openModal({ type: ModalTypes.EXPORT }))}>
+              <ExportIcon />
+            </IconDiv>
+          </S.ButtonSection>
+          <IconDiv onClick={() => setIsUiOpen(!isUiOpen)}>{isUiOpen ? <DownIcon /> : <UpIcon />}</IconDiv>
+        </div>
         <S.UiSection>
           <S.NodeListSection>
             <MusicManager />

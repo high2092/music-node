@@ -41,6 +41,13 @@ export const UiSectionContainer = styled.div<{ open: boolean }>`
   align-items: center;
 `;
 
+export const ButtonSection = styled.div`
+  position: absolute;
+  left: 0;
+
+  display: flex;
+`;
+
 export const UiSection = styled.div`
   width: 100vw;
   height: ${UI_SECTION_HEIGHT_REM}rem;
