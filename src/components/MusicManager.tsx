@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
-import { addMusic } from '../features/mainSlice';
+import { addMusic, findByMusicId } from '../features/mainSlice';
 import { useAppDispatch, useAppSelector } from '../features/store';
 import { Div } from '../styles/common/Div';
 import { trim } from '../utils/string';
+import { IconDiv } from './icons/IconDiv';
+import { ScopeIcon } from './icons/ScopeIcon';
 
 export function MusicManager() {
   const dispatch = useAppDispatch();
-  const { musics, musicSequence } = useAppSelector((state) => state.main);
+  const { musics, musicSequence, findMusicId, findDepth, foundNodeList } = useAppSelector((state) => state.main);
 
   const [filterQuery, setFilterQuery] = useState('');
 
@@ -34,8 +36,15 @@ export function MusicManager() {
       </div>
       <div style={{ height: '88%', overflow: 'scroll' }} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
         {filteredMusicList.map(({ id, name, videoId }) => (
-          <Div key={`music-${id}`} onDragStart={(e) => handleDragStart(e, id)} draggable>
-            {name}
+          <Div key={`music-${id}`} style={{ justifyContent: 'space-between', alignItems: 'center' }} onDragStart={(e) => handleDragStart(e, id)} draggable>
+            <div>{name}</div>
+            <div style={{ paddingLeft: '1rem', display: 'flex', alignItems: 'center' }}>
+              <div style={{ fontSize: '0.8rem', paddingRight: '0.2rem' }}>{id === findMusicId ? `${findDepth}/${foundNodeList.length}` : ''}</div>
+              <IconDiv onClick={() => dispatch(findByMusicId(id))}>
+                <ScopeIcon />
+              </IconDiv>
+              <div />
+            </div>
           </Div>
         ))}
       </div>

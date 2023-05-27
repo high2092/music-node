@@ -15,6 +15,9 @@ interface MainState {
   musicSequence: number;
   musicNodeSequence: number;
   isPlaying: boolean;
+  findMusicId: number;
+  findDepth: number;
+  foundNodeList: MusicNode[];
 }
 
 const initialState: MainState = {
@@ -28,6 +31,9 @@ const initialState: MainState = {
   musicSequence: 1,
   musicNodeSequence: 1,
   isPlaying: false,
+  findMusicId: 0,
+  findDepth: 0,
+  foundNodeList: [],
 };
 
 interface ConnectNodePayload {
@@ -133,6 +139,24 @@ export const mainSlice = createSlice({
       if (state.pointer === null) return;
       state.isPlaying = action.payload;
     },
+
+    findByMusicId(state, action: PayloadAction<number>) {
+      if (state.findMusicId !== action.payload) {
+        state.findMusicId = action.payload;
+        state.findDepth = 0;
+        state.foundNodeList = Object.values(state.musicNodes).filter(({ musicId }) => musicId === state.findMusicId);
+      }
+
+      const { foundNodeList, reactFlowInstance } = state;
+
+      if (foundNodeList.length === 0) {
+        alert('노드를 찾을 수 없어요.');
+        return;
+      }
+      if (state.findDepth >= foundNodeList.length) state.findDepth = 0;
+      reactFlowInstance.fitView({ maxZoom: reactFlowInstance.getZoom(), duration: 2000, nodes: [{ id: foundNodeList[state.findDepth].id.toString() }] });
+      state.findDepth++;
+    },
   },
 });
 
@@ -147,4 +171,4 @@ function getNextPointer(pointer: number, query: PlayQuery, musicNodes: Record<nu
   }
 }
 
-export const { addMusic, createMusicNode, connectNode, moveNode, load, setRequireReactFlowUpdate, playNode, setRequirePlayerRewind, deleteNodes, deleteEdges, setReactFLowInstance, setIsPlaying } = mainSlice.actions;
+export const { addMusic, createMusicNode, connectNode, moveNode, load, setRequireReactFlowUpdate, playNode, setRequirePlayerRewind, deleteNodes, deleteEdges, setReactFLowInstance, setIsPlaying, findByMusicId } = mainSlice.actions;
