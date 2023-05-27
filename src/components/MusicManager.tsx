@@ -29,7 +29,7 @@ export function MusicManager() {
   return (
     <>
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <label>필터</label>
+        <label style={{ width: 'max-content' }}>필터</label>
         <input onChange={(e) => setFilterQuery(e.target.value)} value={filterQuery} />
       </div>
       <div style={{ height: '88%', overflow: 'scroll' }} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
