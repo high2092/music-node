@@ -36,7 +36,7 @@ export function CurrentNodeInfo() {
           </IconDiv>
         </div>
       </div>
-      <IconDiv style={{ position: 'absolute', right: 0, top: 0 }} onClick={() => reactFlowInstance.fitView({ maxZoom: reactFlowInstance.getZoom(), duration: 1000, nodes: [{ id: pointer.toString() }] })}>
+      <IconDiv style={{ position: 'absolute', right: 0, top: 0 }} onClick={() => pointer && reactFlowInstance.fitView({ maxZoom: reactFlowInstance.getZoom(), duration: 1000, nodes: [{ id: pointer.toString() }] })}>
         <ScopeIcon />
       </IconDiv>
     </div>
