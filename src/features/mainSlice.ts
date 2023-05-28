@@ -15,6 +15,7 @@ interface MainState {
   musicSequence: number;
   musicNodeSequence: number;
   isPlaying: boolean;
+  isLoading: boolean;
   findMusicId: number;
   findDepth: number;
   foundNodeList: MusicNode[];
@@ -31,6 +32,7 @@ const initialState: MainState = {
   musicSequence: 1,
   musicNodeSequence: 1,
   isPlaying: false,
+  isLoading: false,
   findMusicId: 0,
   findDepth: 0,
   foundNodeList: [],
@@ -99,12 +101,15 @@ export const mainSlice = createSlice({
     },
 
     playNode(state, action: PayloadAction<PlayQuery>) {
+      if (state.isLoading) return;
+
       const next = getNextPointer(state.pointer, action.payload, state.musicNodes);
 
       if (next) {
         state.pointer = next;
         state.requirePlayerRewind = true;
         state.reactFlowInstance.fitView({ maxZoom: state.reactFlowInstance.getZoom(), duration: 2000, nodes: [{ id: next.toString() }] });
+        state.isLoading = true;
       } else {
         alert('마지막 노드입니다.');
         state.pointer = null;
@@ -139,8 +144,11 @@ export const mainSlice = createSlice({
     },
 
     setIsPlaying(state, action: PayloadAction<boolean>) {
-      if (state.pointer === null) return;
       state.isPlaying = action.payload;
+    },
+
+    setIsLoading(state, action: PayloadAction<boolean>) {
+      state.isLoading = action.payload;
     },
 
     findByMusicId(state, action: PayloadAction<number>) {
@@ -184,4 +192,5 @@ function getNextPointer(pointer: number, query: PlayQuery, musicNodes: Record<nu
   }
 }
 
-export const { addMusic, createMusicNode, connectNode, moveNode, load, setRequireReactFlowUpdate, playNode, setRequirePlayerRewind, deleteNodes, deleteEdges, setReactFLowInstance, setIsPlaying, findByMusicId, reset } = mainSlice.actions;
+export const { addMusic, createMusicNode, connectNode, moveNode, load, setRequireReactFlowUpdate, playNode, setRequirePlayerRewind, deleteNodes, deleteEdges, setReactFLowInstance, setIsPlaying, setIsLoading, findByMusicId, reset } =
+  mainSlice.actions;
