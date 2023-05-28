@@ -47,6 +47,9 @@ export function Player() {
             playerRef.current = e.target;
             dispatch(setIsLoading(false));
           }}
+          onError={() => {
+            dispatch(setIsLoading(false));
+          }}
           onEnd={() => dispatch(playNode('next'))}
           onPause={() => dispatch(setIsPlaying(false))}
           onPlay={() => dispatch(setIsPlaying(true))}
