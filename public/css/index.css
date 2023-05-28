@@ -10,3 +10,15 @@
   bottom: 1.2rem !important;
   background-color: transparent !important;
 }
+
+.react-flow__minimap {
+  margin: 0 !important;
+  margin-top: 0.2rem !important;
+  right: 0 !important;
+  height: max-content;
+}
+
+.react-flow__minimap > svg {
+  width: 150px !important;
+  height: 112.5px !important;
+}

@@ -1,4 +1,4 @@
-import { PLAY_ICON_SIZE } from '../constants/style';
+import { TOP_BAR_HEIGHT } from '../constants/style';
 import { playNode, setIsPlaying } from '../features/mainSlice';
 import { useAppDispatch, useAppSelector } from '../features/store';
 import { shorten } from '../utils/string';
@@ -10,16 +10,20 @@ import { ScopeIcon } from './icons/ScopeIcon';
 import { SkipToNextIcon } from './icons/SkipToNextIcon';
 import { SkipToPrevIcon } from './icons/SkipToPrevIcon';
 import * as S from '../styles/components/CurrentNodeInfo';
+import { MapIcon } from './icons/MapIcon';
+import { setShowMap } from '../features/uiSlice';
+import { EmptyMapIcon } from './icons/EmptyMapIcon';
 
 export function CurrentNodeInfo() {
   const dispatch = useAppDispatch();
   const { musicNodes, musics, pointer, isPlaying, reactFlowInstance } = useAppSelector((state) => state.main);
+  const { showMap } = useAppSelector((state) => state.ui);
 
   const currentMusicName = musics[musicNodes[pointer]?.musicId]?.name;
 
   return (
     <div>
-      <div style={{ flexGrow: 1, height: `calc(${PLAY_ICON_SIZE} + 2rem)`, paddingTop: '0.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center' }}>
+      <div style={{ flexGrow: 1, height: TOP_BAR_HEIGHT, paddingTop: '0.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div style={{ paddingRight: '0.3rem' }}>
             <S.CdIconDiv active={isPlaying}>
@@ -36,9 +40,12 @@ export function CurrentNodeInfo() {
           </IconDiv>
         </div>
       </div>
-      <IconDiv style={{ position: 'absolute', right: 0, top: 0 }} onClick={() => pointer && reactFlowInstance.fitView({ maxZoom: reactFlowInstance.getZoom(), duration: 1000, nodes: [{ id: pointer.toString() }] })}>
-        <ScopeIcon />
-      </IconDiv>
+      <div style={{ position: 'absolute', height: '100%', right: 0, top: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <IconDiv onClick={() => pointer && reactFlowInstance.fitView({ maxZoom: reactFlowInstance.getZoom(), duration: 1000, nodes: [{ id: pointer.toString() }] })}>
+          <ScopeIcon />
+        </IconDiv>
+        <IconDiv onClick={() => dispatch(setShowMap(!showMap))}>{showMap ? <MapIcon /> : <EmptyMapIcon />}</IconDiv>
+      </div>
     </div>
   );
 }
