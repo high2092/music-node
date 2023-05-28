@@ -69,18 +69,24 @@ export const mainSlice = createSlice({
   initialState,
   reducers: {
     addMusic(state, action: PayloadAction<Music>) {
-      const music = action.payload;
-      if (Object.values(state.musics).find(({ videoId }) => videoId === music.videoId)) return;
-      state.musics[music.id] = music;
-      state.musicSequence++;
+      const { id, name, videoId } = action.payload;
+      addMusicInternal(state, id, name, videoId);
     },
 
     createMusicNode(state, action: PayloadAction<MusicNode>) {
-      const musicNode = action.payload;
-      state.musicNodes[musicNode.id] = musicNode;
-      state.newNode = musicNode;
-      console.log(Object.values(state.musicNodes).length);
-      state.musicNodeSequence++;
+      const { id, musicId, position } = action.payload;
+      createMusicNodeInternal(state, id, musicId, position);
+    },
+
+    createMusicNodeByAnchor(state, action: PayloadAction<{ name: string; videoId: string; position: XYPosition }>) {
+      const { name, videoId, position } = action.payload;
+      let music = Object.values(state.musics).find((music) => music.videoId === videoId);
+      if (!music) {
+        const id = state.musicSequence;
+        music = { id, name, videoId };
+        addMusicInternal(state, id, name, videoId);
+      }
+      createMusicNodeInternal(state, state.musicNodeSequence, music.id, position);
     },
 
     connectNode(state, action: PayloadAction<ConnectNodePayload>) {
@@ -224,9 +230,24 @@ function getNextPointer(pointer: number, query: PlayQuery, musicNodes: Record<nu
   }
 }
 
+function addMusicInternal(state: MainState, id: number, name: string, videoId: string) {
+  const music = { id, name, videoId };
+  if (Object.values(state.musics).find(({ videoId }) => videoId === music.videoId)) return;
+  state.musics[id] = music;
+  state.musicSequence++;
+}
+
+function createMusicNodeInternal(state: MainState, id: number, musicId: number, position: XYPosition) {
+  const musicNode = { id, musicId, position, next: null };
+  state.musicNodes[id] = musicNode;
+  state.musicNodeSequence++;
+  state.newNode = musicNode;
+}
+
 export const {
   addMusic,
   createMusicNode,
+  createMusicNodeByAnchor,
   connectNode,
   moveNode,
   load,

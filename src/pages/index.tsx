@@ -5,7 +5,7 @@ import { SearchManager } from '../components/SearchManager';
 import * as S from '../styles/pages/index';
 import { useAppDispatch, useAppSelector } from '../features/store';
 import { LOCAL_STORAGE_KEY } from '../constants/interface';
-import { addMusic, createMusicNode, load, reset } from '../features/mainSlice';
+import { createMusicNodeByAnchor, load, reset } from '../features/mainSlice';
 import { Player } from '../components/Player';
 import { decodeV1, encodeV1 } from '../utils/encoding';
 import { IconDiv } from '../components/icons/IconDiv';
@@ -65,12 +65,8 @@ function Home() {
     }
 
     const { title: name } = await response.json();
-    const music = { id: musicSequence, name, videoId };
     const position = reactFlowInstance.project({ x: e.clientX, y: e.clientY });
-    const musicNode = { id: musicNodeSequence, musicId: music.id, position, next: null };
-
-    dispatch(addMusic(music));
-    dispatch(createMusicNode(musicNode));
+    dispatch(createMusicNodeByAnchor({ name, videoId, position }));
   };
 
   const handleFileInputChange = (e: React.ChangeEvent) => {
