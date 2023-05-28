@@ -29,18 +29,19 @@ interface GroupedMusicNode extends MusicNode {
   prev: number[];
   cycle: boolean;
   group: number;
+  depth: number;
 }
 
 function grouping(musicNodes: Record<number, MusicNode>) {
   const result: Record<number, GroupedMusicNode> = {};
   Object.values(musicNodes).forEach((musicNode) => {
-    result[musicNode.id] = { ...musicNode, visited: false, prev: [], cycle: false, group: null };
+    result[musicNode.id] = { ...musicNode, visited: false, prev: [], cycle: false, group: null, depth: 0 };
   });
 
   const roots: number[] = [];
   let seq = 1;
 
-  const dfs = ({ id, next }: MusicNode) => {
+  const dfs = ({ id, next }: MusicNode, depth: number) => {
     if (result[id].visited) {
       if (result[id].group === null) {
         result[id].group = seq++;
@@ -49,6 +50,7 @@ function grouping(musicNodes: Record<number, MusicNode>) {
       }
       return result[id].group;
     }
+    result[id].depth = depth;
     result[id].visited = true;
 
     if (!next) {
@@ -57,11 +59,11 @@ function grouping(musicNodes: Record<number, MusicNode>) {
     }
 
     result[next].prev.push(id);
-    return (result[id].group = dfs(result[next]));
+    return (result[id].group = dfs(result[next], depth + 1));
   };
 
   for (const id in musicNodes) {
-    dfs(musicNodes[id]);
+    dfs(musicNodes[id], 1);
   }
 
   return { result, roots };
@@ -69,13 +71,13 @@ function grouping(musicNodes: Record<number, MusicNode>) {
 
 function coloring(musicNodes: Record<number, GroupedMusicNode>, roots: number[]) {
   let color = DEFAULT_NODE_COLOR;
+  let groupSize = 2147483647;
 
   const result: Record<number, string> = {};
 
-  const dfs = ({ id, prev }: GroupedMusicNode) => {
+  const dfs = ({ id, prev, depth }: GroupedMusicNode) => {
     if (result[id]) return;
-    result[id] = color;
-    color = whitening(color, 0.11);
+    result[id] = whitening(color, 0.5 * (1 - depth / groupSize));
     prev.forEach((p) => dfs(musicNodes[p]));
   };
 
@@ -87,6 +89,7 @@ function coloring(musicNodes: Record<number, GroupedMusicNode>, roots: number[])
 
   for (const id of roots) {
     color = generateRandomHexColor();
+    groupSize = musicNodes[id].depth;
     (musicNodes[id].cycle ? cycleDfs : dfs)(musicNodes[id]);
   }
 
