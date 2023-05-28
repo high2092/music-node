@@ -9,6 +9,7 @@ export const Home = styled.div`
   background-position: center center;
   color: white;
   fill: white;
+  stroke: white;
 
   display: flex;
   flex-direction: column;

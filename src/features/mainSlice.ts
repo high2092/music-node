@@ -19,6 +19,7 @@ interface MainState {
   findMusicId: number;
   findDepth: number;
   foundNodeList: MusicNode[];
+  requireReactFlowRename: number;
 }
 
 const initialState: MainState = {
@@ -36,6 +37,7 @@ const initialState: MainState = {
   findMusicId: 0,
   findDepth: 0,
   foundNodeList: [],
+  requireReactFlowRename: null,
 };
 
 interface ConnectNodePayload {
@@ -46,6 +48,11 @@ interface ConnectNodePayload {
 interface MoveNodePayload {
   id: string;
   position: XYPosition;
+}
+
+interface RenameMusicPayload {
+  id: number;
+  name: string;
 }
 
 interface LoadPayload {
@@ -70,6 +77,7 @@ export const mainSlice = createSlice({
       const musicNode = action.payload;
       state.musicNodes[musicNode.id] = musicNode;
       state.newNode = musicNode;
+      console.log(Object.values(state.musicNodes).length);
       state.musicNodeSequence++;
     },
 
@@ -84,6 +92,16 @@ export const mainSlice = createSlice({
         if (!musicNode) return;
         musicNode.position = position;
       });
+    },
+
+    renameMusic(state, action: PayloadAction<RenameMusicPayload>) {
+      const { id, name } = action.payload;
+      state.musics[id].name = name;
+      state.requireReactFlowRename = id;
+    },
+
+    setRequireReactFlowRename(state, action: PayloadAction<number>) {
+      state.requireReactFlowRename = action.payload;
     },
 
     load(state, action: PayloadAction<LoadPayload>) {
@@ -196,5 +214,22 @@ function getNextPointer(pointer: number, query: PlayQuery, musicNodes: Record<nu
   }
 }
 
-export const { addMusic, createMusicNode, connectNode, moveNode, load, setRequireReactFlowUpdate, playNode, setRequirePlayerRewind, deleteNodes, deleteEdges, setReactFLowInstance, setIsPlaying, setIsLoading, findByMusicId, reset } =
-  mainSlice.actions;
+export const {
+  addMusic,
+  createMusicNode,
+  connectNode,
+  moveNode,
+  load,
+  setRequireReactFlowUpdate,
+  playNode,
+  setRequirePlayerRewind,
+  deleteNodes,
+  deleteEdges,
+  setReactFLowInstance,
+  setIsPlaying,
+  setIsLoading,
+  findByMusicId,
+  reset,
+  renameMusic,
+  setRequireReactFlowRename,
+} = mainSlice.actions;

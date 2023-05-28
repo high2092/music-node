@@ -1,8 +1,8 @@
 import 'reactflow/dist/style.css';
-import ReactFlow, { Node, Edge, useNodesState, useEdgesState, NodePositionChange, OnConnect, addEdge, OnNodesDelete, OnEdgesDelete, MiniMap } from 'reactflow';
+import ReactFlow, { Node, Edge, useNodesState, useEdgesState, NodePositionChange, OnConnect, addEdge, OnNodesDelete, OnEdgesDelete, MiniMap, NodeChange } from 'reactflow';
 import { convertMusicNodeToReactFlowNode, convertMusicNodesToReactFlowObjects } from '../utils/reactFlow';
 import { useAppDispatch, useAppSelector } from '../features/store';
-import { addMusic, connectNode, createMusicNode, deleteEdges, deleteNodes, moveNode, playNode, setReactFLowInstance, setRequireReactFlowUpdate } from '../features/mainSlice';
+import { addMusic, connectNode, createMusicNode, deleteEdges, deleteNodes, moveNode, playNode, setReactFLowInstance, setRequireReactFlowRename, setRequireReactFlowUpdate } from '../features/mainSlice';
 import { useEffect, useRef, useState } from 'react';
 import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
 import { ReactFlowObjectTypes } from '../constants/reactFlow';
@@ -10,7 +10,7 @@ import { TOP_BAR_HEIGHT } from '../constants/style';
 
 export function NodeManager() {
   const dispatch = useAppDispatch();
-  const { musicNodes, musics, requireReactFlowUpdate, newNode, reactFlowInstance, musicSequence, musicNodeSequence } = useAppSelector((state) => state.main);
+  const { musicNodes, musics, requireReactFlowUpdate, newNode, reactFlowInstance, musicSequence, musicNodeSequence, requireReactFlowRename } = useAppSelector((state) => state.main);
   const { showMap } = useAppSelector((state) => state.ui);
 
   const [latestClickedObjectType, setLatestClickedObjectType] = useState<string>();
@@ -27,6 +27,21 @@ export function NodeManager() {
     setEdges(edges);
     dispatch(setRequireReactFlowUpdate(false));
   }, [requireReactFlowUpdate]);
+
+  useEffect(() => {
+    if (requireReactFlowRename === null) return;
+
+    setNodes((nodes) => {
+      nodes.forEach((node) => {
+        if (musicNodes[Number(node.id)].musicId === requireReactFlowRename) {
+          node.data = { ...node.data, label: musics[requireReactFlowRename].name };
+        }
+      });
+      return [...nodes];
+    });
+
+    dispatch(setRequireReactFlowRename(null));
+  }, [requireReactFlowRename]);
 
   useEffect(() => {
     if (!newNode) return;
