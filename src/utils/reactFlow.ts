@@ -1,9 +1,10 @@
 import { Node, Edge } from 'reactflow';
 import { MusicNode } from '../types/musicNode';
 import { Music } from '../types/music';
+import { DEFAULT_NODE_COLOR } from '../constants/style';
 
-export function convertMusicNodeToReactFlowNode(musicNode: MusicNode, musics: Record<number, Music>): Node {
-  return { id: musicNode.id.toString(), position: musicNode.position, data: { label: musics[musicNode.musicId].name } };
+export function convertMusicNodeToReactFlowNode(musicNode: MusicNode, musics: Record<number, Music>, color?: string): Node {
+  return { id: musicNode.id.toString(), position: musicNode.position, data: { label: musics[musicNode.musicId].name }, style: { background: color ?? DEFAULT_NODE_COLOR } };
 }
 
 export function convertMusicNodesToReactFlowObjects(musicNodes: Record<number, MusicNode>, musics: Record<number, Music>) {
@@ -14,7 +15,7 @@ export function convertMusicNodesToReactFlowObjects(musicNodes: Record<number, M
   const colorMap = coloring(result, roots);
 
   Object.values(musicNodes).forEach(({ id, position, musicId, next }) => {
-    nodes.push({ id: id.toString(), position, data: { label: musics[musicId].name }, style: { background: colorMap[id] } });
+    nodes.push(convertMusicNodeToReactFlowNode({ id, position, musicId, next }, musics, colorMap[id]));
     if (next !== null) {
       edges.push({ id: `e${id}-${next}`, source: id.toString(), target: next.toString() });
     }
@@ -67,7 +68,7 @@ function grouping(musicNodes: Record<number, MusicNode>) {
 }
 
 function coloring(musicNodes: Record<number, GroupedMusicNode>, roots: number[]) {
-  let color = 'black';
+  let color = DEFAULT_NODE_COLOR;
 
   const result: Record<number, string> = {};
 
