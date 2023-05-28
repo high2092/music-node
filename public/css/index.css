@@ -5,6 +5,10 @@
   font-weight: 500;
 }
 
+body {
+  user-select: none;
+}
+
 .react-flow__panel {
   right: 0.5rem !important;
   bottom: 1.2rem !important;
