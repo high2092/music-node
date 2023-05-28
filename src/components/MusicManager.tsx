@@ -8,6 +8,7 @@ import { IconDiv } from './icons/IconDiv';
 import { ScopeIcon } from './icons/ScopeIcon';
 import * as S from '../styles/components/MusicManager';
 import { EditIcon } from './icons/EditIcon';
+import { BlankIcon } from './icons/BlankIcon';
 
 export function MusicManager() {
   const dispatch = useAppDispatch();
@@ -77,11 +78,9 @@ export function MusicManager() {
               ) : (
                 <div>
                   <div style={{ display: 'inline' }}>{name}</div>
-                  {id === hoveredMusicId && (
-                    <IconDiv style={{ marginLeft: '0.5rem', display: 'inline' }} onClick={() => setEditingMusicId(id)}>
-                      <EditIcon />
-                    </IconDiv>
-                  )}
+                  <IconDiv style={{ marginLeft: '0.5rem', display: 'inline' }} onClick={() => setEditingMusicId(id)}>
+                    {id === hoveredMusicId ? <EditIcon /> : <BlankIcon />}
+                  </IconDiv>
                 </div>
               )}
             </div>
