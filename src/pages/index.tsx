@@ -17,6 +17,8 @@ import { ExportIcon } from '../components/icons/ExportIcon';
 import { openModal } from '../features/modalSlice';
 import { ModalTypes } from '../types/modal';
 import { ResetIcon } from '../components/icons/ResetIcon';
+import { throttle } from 'lodash';
+import { 분, 초 } from '../constants/time';
 
 function Home() {
   const dispatch = useAppDispatch();
@@ -25,6 +27,11 @@ function Home() {
   const [isUiOpen, setIsUiOpen] = useState(true);
 
   const loadInputRef = useRef<HTMLInputElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout>(null);
+
+  useEffect(() => {
+    handleUiSectionMouseMove();
+  }, []);
 
   useEffect(() => {
     const code = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -94,6 +101,13 @@ function Home() {
     dispatch(reset());
   };
 
+  const handleUiSectionMouseMove = () => {
+    clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      setIsUiOpen(false);
+    }, 1 * 분);
+  };
+
   return (
     <S.Home onDrop={handleAnchorDrop}>
       <S.CurrentNodeInfoSection>
@@ -118,7 +132,7 @@ function Home() {
           </S.ButtonSection>
           <IconDiv onClick={() => setIsUiOpen(!isUiOpen)}>{isUiOpen ? <DownIcon /> : <UpIcon />}</IconDiv>
         </div>
-        <S.UiSection>
+        <S.UiSection onMouseMove={throttle(handleUiSectionMouseMove, 3 * 초)}>
           <S.NodeListSection>
             <MusicManager />
           </S.NodeListSection>
