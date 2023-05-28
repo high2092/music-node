@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { PLAYER_HIDE_CRITERIA } from '../../constants/style';
+import { UI_MINI_CRITERIA } from '../../constants/style';
 
 export const Home = styled.div`
   width: 100vw;
@@ -71,11 +71,10 @@ export const NodeListSection = styled.div`
 
 export const SearchSection = styled.div`
   flex: 8;
-`;
-
-export const PlayerSection = styled.div`
-  @media (max-width: ${PLAYER_HIDE_CRITERIA}) {
+  @media (max-width: ${UI_MINI_CRITERIA}) {
     display: none;
   }
 `;
+
+export const PlayerSection = styled.div``;
 // ~ UiSection
