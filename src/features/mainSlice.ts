@@ -53,7 +53,7 @@ interface LoadPayload {
   musicNodes: Record<number, MusicNode>;
 }
 
-type PlayQuery = 'next' | number;
+type PlayQuery = 'next' | 'skip' | number;
 
 export const mainSlice = createSlice({
   name: 'main',
@@ -103,7 +103,8 @@ export const mainSlice = createSlice({
     playNode(state, action: PayloadAction<PlayQuery>) {
       if (state.isLoading) return;
 
-      const next = getNextPointer(state.pointer, action.payload, state.musicNodes);
+      const query = action.payload;
+      const next = getNextPointer(state.pointer, query, state.musicNodes);
 
       if (next) {
         state.pointer = next;
@@ -112,8 +113,10 @@ export const mainSlice = createSlice({
         state.isLoading = true;
       } else {
         alert('마지막 노드입니다.');
-        state.pointer = null;
-        state.isPlaying = false;
+        if (query === 'next') {
+          state.pointer = null;
+          state.isPlaying = false;
+        }
       }
     },
 
@@ -183,7 +186,8 @@ export const mainSlice = createSlice({
 
 function getNextPointer(pointer: number, query: PlayQuery, musicNodes: Record<number, MusicNode>) {
   switch (query) {
-    case 'next': {
+    case 'next':
+    case 'skip': {
       return musicNodes[pointer]?.next ?? null;
     }
     default: {

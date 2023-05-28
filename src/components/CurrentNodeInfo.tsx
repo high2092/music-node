@@ -31,7 +31,7 @@ export function CurrentNodeInfo() {
         <div style={{ width: '6rem', display: 'flex', justifyContent: 'space-between' }}>
           <SkipToPrevIcon />
           <IconDiv onClick={() => pointer !== null && dispatch(setIsPlaying(!isPlaying))}>{currentMusicName && isPlaying ? <PauseIcon /> : <PlayIcon />}</IconDiv>
-          <IconDiv onClick={() => dispatch(playNode('next'))}>
+          <IconDiv onClick={() => pointer !== null && dispatch(playNode('skip'))}>
             <SkipToNextIcon />
           </IconDiv>
         </div>
