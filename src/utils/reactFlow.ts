@@ -74,7 +74,7 @@ function coloring(musicNodes: Record<number, GroupedMusicNode>, roots: number[])
   const dfs = ({ id, prev }: GroupedMusicNode) => {
     if (result[id]) return;
     result[id] = color;
-    color = whitening(color, 0.2);
+    color = whitening(color, 0.11);
     prev.forEach((p) => dfs(musicNodes[p]));
   };
 
@@ -92,14 +92,14 @@ function coloring(musicNodes: Record<number, GroupedMusicNode>, roots: number[])
   return result;
 }
 
-// 0 ~ 255
-const BRIGHT = 170;
+function generateRandomInt(min: number, max: number) {
+  return Math.ceil(min) + Math.floor(Math.random() * (max - min));
+}
 
 function generateRandomHexColor() {
-  const R = Math.floor(BRIGHT + Math.random() * (255 - BRIGHT)).toString(16);
-  const G = Math.floor(BRIGHT + Math.random() * (255 - BRIGHT)).toString(16);
-  const B = Math.floor(BRIGHT + Math.random() * (255 - BRIGHT)).toString(16);
-  return `#${[R, G, B].join('')}`;
+  return `#${Array.from({ length: 3 })
+    .map(() => generateRandomInt(170, 255).toString(16))
+    .join('')}`;
 }
 
 function whitening(color: string, ratio: number) {
