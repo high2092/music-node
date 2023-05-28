@@ -149,6 +149,10 @@ export const mainSlice = createSlice({
           if (musicNode.next === id) state.musicNodes[musicNode.id].next = null;
         });
         delete state.musicNodes[id];
+        if (state.pointer === id) {
+          state.pointer = null;
+          state.isPlaying = false;
+        }
       });
     },
 
