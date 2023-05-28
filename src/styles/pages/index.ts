@@ -17,7 +17,7 @@ export const Home = styled.div`
 
 // Home ~
 export const CurrentNodeInfoSection = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
   width: 100vw;
   z-index: 1;
@@ -33,7 +33,7 @@ export const PLAYER_HEIGHT_REM = 12;
 const UI_SECTION_HEIGHT_REM = PLAYER_HEIGHT_REM;
 
 export const UiSectionContainer = styled.div<{ open: boolean }>`
-  position: absolute;
+  position: fixed;
   bottom: ${({ open }) => (open ? 0 : `-${UI_SECTION_HEIGHT_REM}rem`)};
   transition: bottom 1s;
 
