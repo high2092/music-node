@@ -20,6 +20,7 @@ interface MainState {
   findDepth: number;
   foundNodeList: MusicNode[];
   requireReactFlowRename: number;
+  requireReactFlowNodeFind: number;
 }
 
 const initialState: MainState = {
@@ -38,6 +39,7 @@ const initialState: MainState = {
   findDepth: 0,
   foundNodeList: [],
   requireReactFlowRename: null,
+  requireReactFlowNodeFind: null,
 };
 
 interface ConnectNodePayload {
@@ -190,8 +192,12 @@ export const mainSlice = createSlice({
         alert('노드를 찾을 수 없어요.');
         return;
       }
-      reactFlowInstance.fitView({ maxZoom: reactFlowInstance.getZoom(), duration: 2000, nodes: [{ id: foundNodeList[state.findDepth].id.toString() }] });
+      state.requireReactFlowNodeFind = foundNodeList[state.findDepth].id;
       state.findDepth++;
+    },
+
+    setRequireReactFlowNodeFind(state, action: PayloadAction<number>) {
+      state.requireReactFlowNodeFind = action.payload;
     },
 
     reset(state) {
@@ -236,4 +242,5 @@ export const {
   reset,
   renameMusic,
   setRequireReactFlowRename,
+  setRequireReactFlowNodeFind,
 } = mainSlice.actions;

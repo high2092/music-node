@@ -2,20 +2,22 @@ import 'reactflow/dist/style.css';
 import ReactFlow, { Node, Edge, useNodesState, useEdgesState, NodePositionChange, OnConnect, addEdge, OnNodesDelete, OnEdgesDelete, MiniMap, NodeChange } from 'reactflow';
 import { convertMusicNodeToReactFlowNode, convertMusicNodesToReactFlowObjects } from '../utils/reactFlow';
 import { useAppDispatch, useAppSelector } from '../features/store';
-import { addMusic, connectNode, createMusicNode, deleteEdges, deleteNodes, moveNode, playNode, setReactFLowInstance, setRequireReactFlowRename, setRequireReactFlowUpdate } from '../features/mainSlice';
+import { addMusic, connectNode, createMusicNode, deleteEdges, deleteNodes, moveNode, playNode, setReactFLowInstance, setRequireReactFlowNodeFind, setRequireReactFlowRename, setRequireReactFlowUpdate } from '../features/mainSlice';
 import { useEffect, useRef, useState } from 'react';
 import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
 import { ReactFlowObjectTypes } from '../constants/reactFlow';
 import { TOP_BAR_HEIGHT } from '../constants/style';
+import { 초 } from '../constants/time';
 
 export function NodeManager() {
   const dispatch = useAppDispatch();
-  const { musicNodes, musics, requireReactFlowUpdate, newNode, reactFlowInstance, musicSequence, musicNodeSequence, requireReactFlowRename } = useAppSelector((state) => state.main);
+  const { musicNodes, musics, requireReactFlowUpdate, newNode, reactFlowInstance, musicSequence, musicNodeSequence, requireReactFlowRename, requireReactFlowNodeFind } = useAppSelector((state) => state.main);
   const { showMap } = useAppSelector((state) => state.ui);
 
   const [latestClickedObjectType, setLatestClickedObjectType] = useState<string>();
 
   const timeoutRef = useRef<NodeJS.Timeout>(null);
+  const findTimeoutRef = useRef<NodeJS.Timeout>(null);
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -42,6 +44,30 @@ export function NodeManager() {
 
     dispatch(setRequireReactFlowRename(null));
   }, [requireReactFlowRename]);
+
+  useEffect(() => {
+    if (!requireReactFlowNodeFind) return;
+
+    setNodes((nodes) => {
+      const prev = nodes.find((node) => node.style.outline);
+      if (prev) prev.style = { ...prev.style, outline: undefined };
+      const curr = nodes.find((node) => node.id === requireReactFlowNodeFind.toString());
+      curr.style = { ...curr.style, outline: '5px solid rgba(255, 255, 255, 0.8)' };
+      return [...nodes];
+    });
+
+    clearTimeout(findTimeoutRef.current);
+    findTimeoutRef.current = setTimeout(() => {
+      setNodes((nodes) => {
+        const curr = nodes.find((node) => node.id === requireReactFlowNodeFind.toString());
+        curr.style = { ...curr.style, outline: undefined };
+        return [...nodes];
+      });
+    }, 4 * 초);
+
+    reactFlowInstance.fitView({ maxZoom: reactFlowInstance.getZoom(), duration: 2000, nodes: [{ id: requireReactFlowNodeFind.toString() }] });
+    dispatch(setRequireReactFlowNodeFind(null));
+  }, [requireReactFlowNodeFind]);
 
   useEffect(() => {
     if (!newNode) return;

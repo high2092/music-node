@@ -1,5 +1,5 @@
 import { TOP_BAR_HEIGHT } from '../constants/style';
-import { playNode, setIsPlaying } from '../features/mainSlice';
+import { playNode, setIsPlaying, setRequireReactFlowNodeFind } from '../features/mainSlice';
 import { useAppDispatch, useAppSelector } from '../features/store';
 import { shorten } from '../utils/string';
 import { CdIcon } from './icons/CdIcon';
@@ -41,7 +41,7 @@ export function CurrentNodeInfo() {
         </div>
       </div>
       <div style={{ position: 'absolute', height: '100%', right: 0, top: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        <IconDiv onClick={() => pointer && reactFlowInstance.fitView({ maxZoom: reactFlowInstance.getZoom(), duration: 1000, nodes: [{ id: pointer.toString() }] })}>
+        <IconDiv onClick={() => pointer && dispatch(setRequireReactFlowNodeFind(pointer))}>
           <ScopeIcon />
         </IconDiv>
         <IconDiv onClick={() => dispatch(setShowMap(!showMap))}>{showMap ? <MapIcon /> : <EmptyMapIcon />}</IconDiv>
