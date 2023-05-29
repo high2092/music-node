@@ -5,4 +5,5 @@ export const EDIT_ICON_SIZE = '0.8rem';
 export const MODAL_DEFAULT_BORDER_RADIUS = '20px';
 export const TOP_BAR_HEIGHT = `calc(${PLAY_ICON_SIZE} + 2rem)`;
 export const DEFAULT_NODE_COLOR = 'white';
-export const UI_MINI_CRITERIA = '1000px';
+export const UI_MINI_CRITERIA_MAX_WIDTH = '1000px';
+export const UI_MINIMIZE_CRITERIA_MAX_WIDTH = '700px';

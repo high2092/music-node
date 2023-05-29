@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { UI_MINI_CRITERIA } from '../../constants/style';
+import { UI_MINIMIZE_CRITERIA_MAX_WIDTH, UI_MINI_CRITERIA_MAX_WIDTH } from '../../constants/style';
 
 export const Home = styled.div`
   width: 100vw;
@@ -57,9 +57,14 @@ export const UiSection = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
 
   display: flex;
+  justify-content: flex-end;
 
   & > * {
     padding: 0.5rem;
+  }
+
+  @media (max-width: ${UI_MINIMIZE_CRITERIA_MAX_WIDTH}) {
+    justify-content: center;
   }
 `;
 // ~ Home
@@ -67,11 +72,14 @@ export const UiSection = styled.div`
 // UiSection ~
 export const NodeListSection = styled.div`
   flex: 14;
+  @media (max-width: ${UI_MINIMIZE_CRITERIA_MAX_WIDTH}) {
+    display: none;
+  }
 `;
 
 export const SearchSection = styled.div`
   flex: 8;
-  @media (max-width: ${UI_MINI_CRITERIA}) {
+  @media (max-width: ${UI_MINI_CRITERIA_MAX_WIDTH}) {
     display: none;
   }
 `;
