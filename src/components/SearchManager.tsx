@@ -5,6 +5,8 @@ import { Music } from '../types/music';
 import { Div } from '../styles/common/Div';
 import * as S from '../styles/components/SearchManager';
 import { shorten } from '../utils/string';
+import { useAppDispatch, useAppSelector } from '../features/store';
+import { Tutorials, completeTutorial } from '../features/tutorialSlice';
 
 interface SearchResult {
   title: string;
@@ -12,6 +14,9 @@ interface SearchResult {
 }
 
 export function SearchManager() {
+  const dispatch = useAppDispatch();
+  const { tutorials } = useAppSelector((state) => state.tutorial);
+
   const { register, handleSubmit } = useForm();
   const [searchResultList, setSearchResultList] = useState<SearchResult[]>([]);
 
@@ -19,6 +24,7 @@ export function SearchManager() {
 
   const handleSearch = async ({ query }: FieldValues) => {
     setIsWaiting(true);
+    dispatch(completeTutorial(Tutorials.SEARCH));
     const response = await fetch(`/api/search-youtube?q=${query}`, { method: 'GET' });
 
     if (!response.ok) {
@@ -38,12 +44,12 @@ export function SearchManager() {
   return (
     <>
       <div onSubmit={handleSubmit(handleSearch)}>
-        <form style={{ display: 'flex' }}>
+        <S.SearchInputForm tutorial={tutorials[Tutorials.SEARCH]}>
           <input style={{ flexGrow: 1 }} {...register('query')} />
           <button style={{ width: 'max-content' }} disabled={isWaiting}>
             검색
           </button>
-        </form>
+        </S.SearchInputForm>
       </div>
       <S.SearchResultListContainer style={{ height: '88%' }}>
         {isWaiting ? (

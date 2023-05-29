@@ -174,6 +174,7 @@ export const mainSlice = createSlice({
 
     setReactFLowInstance(state, action: PayloadAction<ReactFlowInstance>) {
       state.reactFlowInstance = action.payload;
+      state.reactFlowInstance.zoomTo(1.7);
     },
 
     setIsPlaying(state, action: PayloadAction<boolean>) {

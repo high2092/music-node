@@ -9,10 +9,12 @@ import { ScopeIcon } from './icons/ScopeIcon';
 import * as S from '../styles/components/MusicManager';
 import { EditIcon } from './icons/EditIcon';
 import { BlankIcon } from './icons/BlankIcon';
+import { Tutorials } from '../features/tutorialSlice';
 
 export function MusicManager() {
   const dispatch = useAppDispatch();
   const { musics, musicSequence, findMusicId, findDepth, foundNodeList } = useAppSelector((state) => state.main);
+  const { tutorials } = useAppSelector((state) => state.tutorial);
 
   const [filterQuery, setFilterQuery] = useState('');
   const [hoveredMusicId, setHoveredMusicId] = useState<number>(null);
@@ -67,7 +69,7 @@ export function MusicManager() {
         <label style={{ width: 'max-content' }}>필터</label>
         <input onChange={(e) => setFilterQuery(e.target.value)} value={filterQuery} />
       </div>
-      <S.MusicList style={{ height: '88%' }} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
+      <S.MusicList style={{ height: '88%' }} tutorial={tutorials[Tutorials.CREATE_NODE]} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
         {filteredMusicList.map(({ id, name, videoId }) => (
           <Div key={`music-${id}`} style={{ justifyContent: 'space-between', alignItems: 'center' }} onMouseOver={(e) => handleMouseOver(e, id)} onDragStart={(e) => handleDragStart(e, id)} draggable>
             <div style={{ width: '100%' }}>

@@ -8,11 +8,13 @@ import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
 import { ReactFlowObjectTypes } from '../constants/reactFlow';
 import { TOP_BAR_HEIGHT } from '../constants/style';
 import { 초 } from '../constants/time';
+import { Tutorials, completeTutorial } from '../features/tutorialSlice';
 
 export function NodeManager() {
   const dispatch = useAppDispatch();
   const { musicNodes, musics, requireReactFlowUpdate, newNode, reactFlowInstance, musicSequence, musicNodeSequence, requireReactFlowRename, requireReactFlowNodeFind } = useAppSelector((state) => state.main);
   const { showMap } = useAppSelector((state) => state.ui);
+  const { tutorials } = useAppSelector((state) => state.tutorial);
 
   const [latestClickedObjectType, setLatestClickedObjectType] = useState<string>();
 
@@ -107,6 +109,8 @@ export function NodeManager() {
       const music = { id: musicSequence, name, videoId };
       dispatch(addMusic(music));
       musicId = music.id;
+    } else {
+      dispatch(completeTutorial(Tutorials.CREATE_NODE));
     }
     const position = reactFlowInstance.project({ x: e.clientX, y: e.clientY });
     const musicNode = { id: musicNodeSequence, musicId, position, next: null };
@@ -115,6 +119,7 @@ export function NodeManager() {
 
   const handleNodeDoubleClick = (e: React.MouseEvent, { id }: Node) => {
     dispatch(playNode(Number(id)));
+    dispatch(completeTutorial(Tutorials.PLAY));
   };
 
   const handleReactFlowMouseDownCapture = ({ target }) => {
@@ -139,6 +144,7 @@ export function NodeManager() {
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <ReactFlow
+        className={tutorials[Tutorials.PLAY] ? 'tutorial' : ''}
         nodes={nodes}
         edges={edges}
         onNodesChange={_onNodesChange}

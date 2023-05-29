@@ -19,10 +19,12 @@ import { ModalTypes } from '../types/modal';
 import { ResetIcon } from '../components/icons/ResetIcon';
 import { throttle } from 'lodash';
 import { 분, 초 } from '../constants/time';
+import { exitTutorial, startTutorial } from '../features/tutorialSlice';
 
 function Home() {
   const dispatch = useAppDispatch();
-  const { musics, musicNodes, reactFlowInstance, musicSequence, musicNodeSequence } = useAppSelector((state) => state.main);
+  const { musics, musicNodes, reactFlowInstance } = useAppSelector((state) => state.main);
+  const { tutorials } = useAppSelector((state) => state.tutorial);
 
   const [isUiOpen, setIsUiOpen] = useState(true);
 
@@ -31,6 +33,10 @@ function Home() {
 
   useEffect(() => {
     handleUiSectionMouseMove();
+  }, []);
+
+  useEffect(() => {
+    dispatch(startTutorial());
   }, []);
 
   useEffect(() => {
@@ -106,6 +112,11 @@ function Home() {
 
   return (
     <S.Home onDrop={handleAnchorDrop}>
+      {Object.values(tutorials).findIndex((tutorial) => tutorial) !== -1 && (
+        <div style={{ position: 'absolute', zIndex: 999, cursor: 'pointer' }} onClick={() => dispatch(exitTutorial())}>
+          튜토리얼 종료
+        </div>
+      )}
       <S.CurrentNodeInfoSection>
         <CurrentNodeInfo />
       </S.CurrentNodeInfoSection>
