@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from '../features/store';
 import { playNode, setIsLoading, setIsPlaying, setRequirePlayerRewind } from '../features/mainSlice';
 import { useEffect, useRef, useState } from 'react';
 import { PLAYER_HEIGHT_REM } from '../styles/pages';
+import { PlayerStatus } from '../constants/youtube';
 
 export function Player() {
   const dispatch = useAppDispatch();
@@ -42,7 +43,7 @@ export function Player() {
       <div hidden={pointer === null}>
         <YouTube
           videoId={videoId ?? ''}
-          opts={{ width, height, playerVars: { autoplay: 1, rel: 0 } }}
+          opts={{ width, height, playerVars: { rel: 0 } }}
           onReady={(e) => {
             playerRef.current = e.target;
             dispatch(setIsLoading(false));
@@ -53,6 +54,9 @@ export function Player() {
           onEnd={() => dispatch(playNode('next'))}
           onPause={() => dispatch(setIsPlaying(false))}
           onPlay={() => dispatch(setIsPlaying(true))}
+          onStateChange={(e) => {
+            if (e.data === PlayerStatus.UNSTARTED) e.target.playVideo();
+          }}
         />
       </div>
     </div>
