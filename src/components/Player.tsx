@@ -20,13 +20,12 @@ export function Player() {
   }, []);
 
   useEffect(() => {
-    if (isLoading) return;
     if (requirePlayerRewind) {
       playerRef.current.seekTo(0);
       playerRef.current.playVideo();
       dispatch(setRequirePlayerRewind(false));
     }
-  }, [isLoading]);
+  }, [requirePlayerRewind]);
 
   useEffect(() => {
     if (!playerRef.current) return;

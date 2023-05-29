@@ -133,10 +133,10 @@ export const mainSlice = createSlice({
       const next = getNextPointer(state.pointer, query, state.musicNodes);
 
       if (next) {
-        state.pointer = next;
-        state.requirePlayerRewind = true;
         state.reactFlowInstance.fitView({ maxZoom: state.reactFlowInstance.getZoom(), duration: 2000, nodes: [{ id: next.toString() }] });
-        if (state.musicNodes[next].musicId !== state.musicNodes[state.pointer].musicId) state.isLoading = true;
+        if (state.musicNodes[next].musicId !== state.musicNodes[state.pointer]?.musicId) state.isLoading = true;
+        else state.requirePlayerRewind = true;
+        state.pointer = next;
       } else {
         alert('마지막 노드입니다.');
         if (query === 'next') {
