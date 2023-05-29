@@ -6,7 +6,7 @@ import { PLAYER_HEIGHT_REM } from '../styles/pages';
 
 export function Player() {
   const dispatch = useAppDispatch();
-  const { musicNodes, musics, pointer, requirePlayerRewind, isPlaying } = useAppSelector((state) => state.main);
+  const { musicNodes, musics, pointer, requirePlayerRewind, isPlaying, isLoading } = useAppSelector((state) => state.main);
 
   const [height, setHeight] = useState(0);
   const width = height * 2;
@@ -20,12 +20,13 @@ export function Player() {
   }, []);
 
   useEffect(() => {
-    if (!requirePlayerRewind) return;
-
-    playerRef.current.seekTo(0);
-    playerRef.current.playVideo();
-    dispatch(setRequirePlayerRewind(false));
-  }, [requirePlayerRewind]);
+    if (isLoading) return;
+    if (requirePlayerRewind) {
+      playerRef.current.seekTo(0);
+      playerRef.current.playVideo();
+      dispatch(setRequirePlayerRewind(false));
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     if (!playerRef.current) return;
