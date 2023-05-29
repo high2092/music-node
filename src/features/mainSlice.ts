@@ -180,6 +180,11 @@ export const mainSlice = createSlice({
       state.isPlaying = action.payload;
     },
 
+    toggleIsPlaying(state) {
+      if (state.pointer === null || state.isLoading) return;
+      state.isPlaying = !state.isPlaying;
+    },
+
     setIsLoading(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload;
     },
@@ -258,6 +263,7 @@ export const {
   deleteEdges,
   setReactFLowInstance,
   setIsPlaying,
+  toggleIsPlaying,
   setIsLoading,
   findByMusicId,
   reset,

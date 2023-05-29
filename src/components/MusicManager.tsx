@@ -57,6 +57,7 @@ export function MusicManager() {
   };
 
   const handleRenameInputKeyDown = (e: React.KeyboardEvent) => {
+    e.stopPropagation();
     if (e.key !== 'Enter') return;
     const target = e.target as HTMLInputElement;
     dispatch(renameMusic({ id: editingMusicId, name: target.value }));
@@ -67,7 +68,7 @@ export function MusicManager() {
     <>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <label style={{ width: 'max-content' }}>필터</label>
-        <input onChange={(e) => setFilterQuery(e.target.value)} value={filterQuery} />
+        <input onChange={(e) => setFilterQuery(e.target.value)} onKeyDown={(e) => e.stopPropagation()} value={filterQuery} />
       </div>
       <S.MusicList style={{ height: '88%' }} tutorial={tutorials[Tutorials.CREATE_NODE]} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
         {filteredMusicList.map(({ id, name, videoId }) => (

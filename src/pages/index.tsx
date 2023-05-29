@@ -5,7 +5,7 @@ import { SearchManager } from '../components/SearchManager';
 import * as S from '../styles/pages/index';
 import { useAppDispatch, useAppSelector } from '../features/store';
 import { LOCAL_STORAGE_KEY } from '../constants/interface';
-import { createMusicNodeByAnchor, load, reset } from '../features/mainSlice';
+import { createMusicNodeByAnchor, load, reset, toggleIsPlaying } from '../features/mainSlice';
 import { Player } from '../components/Player';
 import { decodeV1, encodeV1 } from '../utils/encoding';
 import { IconDiv } from '../components/icons/IconDiv';
@@ -30,6 +30,19 @@ function Home() {
 
   const loadInputRef = useRef<HTMLInputElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout>(null);
+
+  useEffect(() => {
+    const handleSpaceKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== ' ') return;
+
+      dispatch(toggleIsPlaying());
+    };
+
+    const throttled = throttle(handleSpaceKeyDown, 0.2 * 초);
+
+    window.addEventListener('keydown', throttled);
+    return () => window.removeEventListener('keydown', throttled);
+  }, []);
 
   useEffect(() => {
     handleUiSectionMouseMove();

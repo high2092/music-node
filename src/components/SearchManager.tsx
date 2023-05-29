@@ -45,7 +45,7 @@ export function SearchManager() {
     <>
       <div onSubmit={handleSubmit(handleSearch)}>
         <S.SearchInputForm tutorial={tutorials[Tutorials.SEARCH]}>
-          <input style={{ flexGrow: 1 }} {...register('query')} />
+          <input style={{ flexGrow: 1 }} {...register('query')} onKeyDown={(e) => e.stopPropagation()} />
           <button style={{ width: 'max-content' }} disabled={isWaiting}>
             검색
           </button>
