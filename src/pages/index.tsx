@@ -36,7 +36,17 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    dispatch(startTutorial());
+    const code = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (!code) {
+      fetch('/data/demo.mnode', { method: 'GET' })
+        .then((response) => response.text())
+        .then((code) => {
+          const { musics, musicNodes } = decodeV1(code);
+          dispatch(load({ musics, musicNodes }));
+        });
+
+      dispatch(startTutorial());
+    }
   }, []);
 
   useEffect(() => {
