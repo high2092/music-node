@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 
 export const MusicList = styled.div<{ tutorial: boolean }>`
+  font-size: 0.7rem;
+
   overflow-y: scroll;
   -ms-overflow-style: none;
   scrollbar-width: none;

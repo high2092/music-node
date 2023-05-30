@@ -4,7 +4,6 @@ import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
 import { Music } from '../types/music';
 import { Div } from '../styles/common/Div';
 import * as S from '../styles/components/SearchManager';
-import { shorten } from '../utils/string';
 import { useAppDispatch, useAppSelector } from '../features/store';
 import { Tutorials, completeTutorial } from '../features/tutorialSlice';
 
@@ -58,7 +57,7 @@ export function SearchManager() {
           <S.SearchResultList style={{ height: '100%' }}>
             {searchResultList.map(({ title: name, videoId }, idx) => (
               <Div key={`searchResult-${videoId}-${idx}`} onDragStart={(e) => handleDragStart(e, { name, videoId })} draggable>
-                <div>{shorten(name, 50)}</div>
+                <div>{name}</div>
               </Div>
             ))}
           </S.SearchResultList>

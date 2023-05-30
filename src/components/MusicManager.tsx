@@ -81,7 +81,7 @@ export function MusicManager() {
               ) : (
                 <div>
                   <div style={{ display: 'inline' }}>{name}</div>
-                  <IconDiv style={{ marginLeft: '0.5rem', display: 'inline' }} onClick={() => setEditingMusicId(id)}>
+                  <IconDiv style={{ marginLeft: '0.5rem', display: 'inline', verticalAlign: 'middle' }} onClick={() => setEditingMusicId(id)}>
                     {id === hoveredMusicId ? <EditIcon /> : <BlankIcon />}
                   </IconDiv>
                 </div>
