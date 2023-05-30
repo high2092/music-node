@@ -67,7 +67,7 @@ export function NodeManager() {
       });
     }, 4 * 초);
 
-    reactFlowInstance.fitView({ maxZoom: reactFlowInstance.getZoom(), duration: 2000, nodes: [{ id: requireReactFlowNodeFind.toString() }] });
+    reactFlowInstance.fitView({ minZoom: 1, maxZoom: 1, duration: 2000, nodes: [{ id: requireReactFlowNodeFind.toString() }] });
     dispatch(setRequireReactFlowNodeFind(null));
   }, [requireReactFlowNodeFind]);
 
