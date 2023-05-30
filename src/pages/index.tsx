@@ -59,16 +59,12 @@ function Home() {
         });
 
       dispatch(startTutorial());
+    } else {
+      try {
+        const { musics, musicNodes } = decodeV1(code);
+        dispatch(load({ musics, musicNodes }));
+      } catch {}
     }
-  }, []);
-
-  useEffect(() => {
-    const code = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (!code) return;
-    try {
-      const { musics, musicNodes } = decodeV1(code);
-      dispatch(load({ musics, musicNodes }));
-    } catch {}
   }, []);
 
   useEffect(() => {

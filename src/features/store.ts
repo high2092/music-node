@@ -12,6 +12,7 @@ export const store = configureStore({
     ui: uiSlice.reducer,
     tutorial: tutorialSlice.reducer,
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
 });
 
 type RootState = ReturnType<typeof store.getState>;

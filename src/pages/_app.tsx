@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { store } from '../features/store';
 import { ModalContainer } from '../components/modal/ModalContainer';
 import Head from 'next/head';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
 function App({ Component, pageProps }) {
   return (
@@ -11,8 +12,10 @@ function App({ Component, pageProps }) {
       <Head>
         <title>Music Node</title>
       </Head>
-      <Component {...pageProps} />
-      <ModalContainer />
+      <ErrorBoundary>
+        <Component {...pageProps} />
+        <ModalContainer />
+      </ErrorBoundary>
     </Provider>
   );
 }
