@@ -144,6 +144,7 @@ export const mainSlice = createSlice({
       state.log.enqueue(`play node ${next} (query: ${query})`);
 
       if (next) {
+        if (!state.musicNodes[next]) return;
         state.reactFlowInstance.fitView({ maxZoom: state.reactFlowInstance.getZoom(), duration: 2000, nodes: [{ id: next.toString() }] });
         if (state.musicNodes[next].musicId !== state.musicNodes[state.pointer]?.musicId) state.isLoading = true;
         else state.requirePlayerRewind = true;
