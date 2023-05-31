@@ -29,7 +29,7 @@ export function Player() {
   }, [requirePlayerRewind]);
 
   useEffect(() => {
-    if (!playerRef.current) return;
+    if (!playerRef.current || isLoading) return;
 
     if (isPlaying) {
       playerRef.current.playVideo();
