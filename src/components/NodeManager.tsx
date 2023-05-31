@@ -83,10 +83,12 @@ export function NodeManager() {
 
     clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(async () => {
-      const nodeMoves = nodesChange.map((nodeChange) => {
-        const { id, position } = nodes.find((node) => node.id === nodeChange.id);
-        return { id, position };
-      });
+      const nodeMoves = nodesChange.reduce((acc, cur) => {
+        const node = nodes.find((node) => node.id === cur.id);
+        if (!node) return acc;
+        const { id, position } = node;
+        return acc.concat({ id, position });
+      }, []);
       dispatch(moveNode(nodeMoves));
     }, 500);
   };
