@@ -29,13 +29,12 @@ interface GroupedMusicNode extends MusicNode {
   prev: number[];
   cycle: boolean;
   group: number;
-  depth: number;
 }
 
 function grouping(musicNodes: Record<number, MusicNode>) {
   const result: Record<number, GroupedMusicNode> = {};
   Object.values(musicNodes).forEach((musicNode) => {
-    result[musicNode.id] = { ...musicNode, visited: false, prev: [], cycle: false, group: null, depth: 0 };
+    result[musicNode.id] = { ...musicNode, visited: false, prev: [], cycle: false, group: null };
   });
 
   const roots: number[] = [];
@@ -50,7 +49,6 @@ function grouping(musicNodes: Record<number, MusicNode>) {
       }
       return result[id].group;
     }
-    result[id].depth = depth;
     result[id].visited = true;
 
     if (!next) {
@@ -75,10 +73,25 @@ function coloring(musicNodes: Record<number, GroupedMusicNode>, roots: number[])
 
   const result: Record<number, string> = {};
 
-  const dfs = ({ id, prev, depth }: GroupedMusicNode) => {
+  const getGroupSize = (root: number) => {
+    let result = 0;
+
+    const dfs = (node: number, depth: number) => {
+      result = Math.max(result, depth);
+      musicNodes[node].prev.forEach((p) => {
+        dfs(p, depth + 1);
+      });
+    };
+
+    dfs(root, 1);
+
+    return result;
+  };
+
+  const dfs = ({ id, prev }: GroupedMusicNode, depth: number) => {
     if (result[id]) return;
-    result[id] = whitening(color, 0.5 * (1 - depth / groupSize));
-    prev.forEach((p) => dfs(musicNodes[p]));
+    result[id] = whitening(color, 0.55 * (depth / groupSize));
+    prev.forEach((p) => dfs(musicNodes[p], depth + 1));
   };
 
   const cycleDfs = ({ id, prev }: GroupedMusicNode) => {
@@ -89,8 +102,12 @@ function coloring(musicNodes: Record<number, GroupedMusicNode>, roots: number[])
 
   for (const id of roots) {
     color = generateRandomHexColor();
-    groupSize = musicNodes[id].depth;
-    (musicNodes[id].cycle ? cycleDfs : dfs)(musicNodes[id]);
+    if (musicNodes[id].cycle) {
+      cycleDfs(musicNodes[id]);
+    } else {
+      groupSize = getGroupSize(id);
+      dfs(musicNodes[id], 1);
+    }
   }
 
   return result;
@@ -102,7 +119,7 @@ function generateRandomInt(min: number, max: number) {
 
 function generateRandomHexColor() {
   return `#${Array.from({ length: 3 })
-    .map(() => generateRandomInt(170, 255).toString(16))
+    .map(() => generateRandomInt(145, 255).toString(16))
     .join('')}`;
 }
 
