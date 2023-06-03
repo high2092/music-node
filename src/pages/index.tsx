@@ -20,6 +20,7 @@ import { ResetIcon } from '../components/icons/ResetIcon';
 import { throttle } from 'lodash';
 import { 분, 초 } from '../constants/time';
 import { exitTutorial, startTutorial } from '../features/tutorialSlice';
+import { extractVideoId } from '../utils/youtube';
 
 function Home() {
   const dispatch = useAppDispatch();
@@ -76,12 +77,9 @@ function Home() {
 
   const handleAnchorDrop = async (e: React.DragEvent) => {
     const url = e.dataTransfer.getData('text/plain') || e.dataTransfer.getData('text/uri-list');
-    const regex = /^https?:\/\/(?:www\.)?youtube\.com\/watch\?v=([^&]+)/;
 
-    const match = url.match(regex);
-
-    if (!match) return;
-    const videoId = match[1];
+    const videoId = extractVideoId(url);
+    if (!videoId) return;
 
     const response = await fetch(`/api/video-title?videoId=${videoId}`);
     if (!response.ok) {
