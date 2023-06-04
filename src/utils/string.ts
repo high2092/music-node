@@ -9,3 +9,14 @@ export function shorten(text: string, maxLen?: number) {
   if (text.length + TAIL.length > maxLen - TAIL.length) return text.substring(0, maxLen - TAIL.length) + TAIL;
   return text;
 }
+
+export function decodeHtmlEntities(text: string) {
+  return text
+    .replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec))
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'");
+}

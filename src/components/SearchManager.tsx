@@ -6,6 +6,7 @@ import { Div } from '../styles/common/Div';
 import * as S from '../styles/components/SearchManager';
 import { useAppDispatch, useAppSelector } from '../features/store';
 import { Tutorials, completeTutorial } from '../features/tutorialSlice';
+import { decodeHtmlEntities } from '../utils/string';
 
 interface SearchResult {
   title: string;
@@ -32,7 +33,7 @@ export function SearchManager() {
     }
 
     const { items } = await response.json();
-    setSearchResultList(items.map(({ id: { videoId }, snippet: { title } }) => ({ title, videoId })));
+    setSearchResultList(items.map(({ id: { videoId }, snippet: { title } }) => ({ title: decodeHtmlEntities(title), videoId })));
     setIsWaiting(false);
   };
 
