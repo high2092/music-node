@@ -60,7 +60,7 @@ export const SearchResultListContainer = styled.div`
 `;
 
 export const SearchResultList = styled.div`
-  font-size: 0.7rem;
+  font-size: 0.85rem;
 
   overflow-y: scroll;
   -ms-overflow-style: none;
