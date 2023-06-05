@@ -25,6 +25,7 @@ export const MusicList = styled.div<{ tutorial: boolean }>`
           bottom: 3.1rem;
           width: max-content;
           content: '그래프 영역으로 드래그하여 노드를 추가할 수 있어요. 또는 유튜브 썸네일을 드래그해도 돼요.';
+          font-weight: bold;
           color: red;
         }
       }

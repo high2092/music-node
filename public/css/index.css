@@ -37,5 +37,6 @@ body {
   left: -0.5rem;
   width: max-content;
   content: '더블클릭하여 노드를 재생할 수 있어요.';
+  font-weight: bold;
   color: red;
 }

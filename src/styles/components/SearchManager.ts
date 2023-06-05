@@ -13,6 +13,7 @@ export const SearchInputForm = styled.form<{ tutorial: boolean }>`
           bottom: 1.5rem;
           width: max-content;
           content: '원하는 곡을 검색하고 검색 결과를 드래그하여 노드를 추가할 수 있어요.';
+          font-weight: bold;
           color: red;
         }
       `
