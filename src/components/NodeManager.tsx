@@ -2,7 +2,7 @@ import 'reactflow/dist/style.css';
 import ReactFlow, { Node, Edge, useNodesState, useEdgesState, NodePositionChange, OnConnect, addEdge, OnNodesDelete, OnEdgesDelete, MiniMap, NodeChange } from 'reactflow';
 import { convertMusicNodeToReactFlowNode, convertMusicNodesToReactFlowObjects } from '../utils/reactFlow';
 import { useAppDispatch, useAppSelector } from '../features/store';
-import { addMusic, connectNode, createMusicNode, deleteEdges, deleteNodes, moveNode, playNode, setReactFLowInstance, setRequireReactFlowNodeFind, setRequireReactFlowRename, setRequireReactFlowUpdate } from '../features/mainSlice';
+import { connectNode, createMusicNode, createMusicNodeByAnchor, deleteEdges, deleteNodes, moveNode, playNode, setReactFLowInstance, setRequireReactFlowNodeFind, setRequireReactFlowRename, setRequireReactFlowUpdate } from '../features/mainSlice';
 import { useEffect, useRef, useState } from 'react';
 import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
 import { ReactFlowObjectTypes } from '../constants/reactFlow';
@@ -12,7 +12,7 @@ import { Tutorials, completeTutorial } from '../features/tutorialSlice';
 
 export function NodeManager() {
   const dispatch = useAppDispatch();
-  const { musicNodes, musics, requireReactFlowUpdate, newNode, reactFlowInstance, musicSequence, musicNodeSequence, requireReactFlowRename, requireReactFlowNodeFind } = useAppSelector((state) => state.main);
+  const { musicNodes, musics, requireReactFlowUpdate, newNode, reactFlowInstance, musicNodeSequence, requireReactFlowRename, requireReactFlowNodeFind } = useAppSelector((state) => state.main);
   const { showMap } = useAppSelector((state) => state.ui);
   const { tutorials } = useAppSelector((state) => state.tutorial);
 
@@ -107,16 +107,13 @@ export function NodeManager() {
     const data = e.dataTransfer.getData(MUSIC_DATA_TRANSFER_KEY);
     if (!data) return;
     let { musicId, name, videoId } = JSON.parse(data);
+    const position = reactFlowInstance.project({ x: e.clientX, y: e.clientY });
     if (!musicId) {
-      const music = { id: musicSequence, name, videoId };
-      dispatch(addMusic(music));
-      musicId = music.id;
+      dispatch(createMusicNodeByAnchor({ name, videoId, position }));
     } else {
+      dispatch(createMusicNode({ id: musicNodeSequence, musicId, position, next: null }));
       dispatch(completeTutorial(Tutorials.CREATE_NODE));
     }
-    const position = reactFlowInstance.project({ x: e.clientX, y: e.clientY });
-    const musicNode = { id: musicNodeSequence, musicId, position, next: null };
-    dispatch(createMusicNode(musicNode));
   };
 
   const handleNodeDoubleClick = (e: React.MouseEvent, { id }: Node) => {
