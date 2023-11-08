@@ -9,6 +9,12 @@ import { ReactFlowObjectTypes } from '../constants/reactFlow';
 import { TOP_BAR_HEIGHT } from '../constants/style';
 import { 초 } from '../constants/time';
 import { Tutorials, completeTutorial } from '../features/tutorialSlice';
+import { CustomNode } from './CustomNode/CustomNode';
+import { setIsConnecting } from '../features/uiSlice';
+
+const nodeTypes = {
+  custom: CustomNode,
+};
 
 export function NodeManager() {
   const dispatch = useAppDispatch();
@@ -125,10 +131,17 @@ export function NodeManager() {
     for (const type of Object.values(ReactFlowObjectTypes)) {
       if (target.classList.value.includes(type)) {
         setLatestClickedObjectType(type);
+        if (type === 'source') {
+          dispatch(setIsConnecting(true));
+        }
         return;
       }
     }
     setLatestClickedObjectType(null);
+  };
+
+  const handleReactFlowMouseUpCapture = () => {
+    dispatch(setIsConnecting(false));
   };
 
   const handleNodesDelete: OnNodesDelete = (nodes: Node[]) => {
@@ -146,6 +159,7 @@ export function NodeManager() {
         className={tutorials[Tutorials.PLAY] ? 'tutorial' : ''}
         nodes={nodes}
         edges={edges}
+        nodeTypes={nodeTypes}
         onNodesChange={_onNodesChange}
         onEdgesChange={onEdgesChange}
         onNodesDelete={handleNodesDelete}
@@ -155,6 +169,7 @@ export function NodeManager() {
         onDrop={handleDrop}
         onNodeDoubleClick={handleNodeDoubleClick}
         onMouseDownCapture={handleReactFlowMouseDownCapture}
+        onMouseUpCapture={handleReactFlowMouseUpCapture}
         onInit={(instance) => dispatch(setReactFLowInstance(instance))}
       >
         {showMap && <MiniMap zoomable pannable position="top-right" style={{ top: TOP_BAR_HEIGHT }} nodeColor={(node) => node.style.color} maskColor="rgba(255, 255, 255, 0.2)" />}

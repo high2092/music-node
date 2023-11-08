@@ -2,10 +2,12 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 interface UiState {
   showMap: boolean;
+  isConnecting: boolean;
 }
 
 const initialState: UiState = {
   showMap: true,
+  isConnecting: false,
 };
 
 export const uiSlice = createSlice({
@@ -15,7 +17,10 @@ export const uiSlice = createSlice({
     setShowMap(state, action: PayloadAction<boolean>) {
       state.showMap = action.payload;
     },
+    setIsConnecting(state, action: PayloadAction<boolean>) {
+      state.isConnecting = action.payload;
+    },
   },
 });
 
-export const { setShowMap } = uiSlice.actions;
+export const { setShowMap, setIsConnecting } = uiSlice.actions;

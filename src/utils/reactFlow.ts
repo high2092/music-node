@@ -4,7 +4,7 @@ import { Music } from '../types/music';
 import { DEFAULT_NODE_COLOR, NODE_STYLE } from '../constants/style';
 
 export function convertMusicNodeToReactFlowNode(musicNode: MusicNode, musics: Record<number, Music>, color?: string): Node {
-  return { id: musicNode.id.toString(), position: musicNode.position, data: { label: musics[musicNode.musicId].name }, style: { ...NODE_STYLE, background: color ?? DEFAULT_NODE_COLOR } };
+  return { id: musicNode.id.toString(), position: musicNode.position, data: { label: musics[musicNode.musicId].name }, type: 'custom', style: { ...NODE_STYLE, background: color ?? DEFAULT_NODE_COLOR } };
 }
 
 export function convertMusicNodesToReactFlowObjects(musicNodes: Record<number, MusicNode>, musics: Record<number, Music>) {
