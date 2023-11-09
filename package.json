@@ -8,8 +8,6 @@
     "dev:nohot": "next build && next start"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.0",
-    "@emotion/styled": "^11.11.0",
     "@reduxjs/toolkit": "^1.9.5",
     "@types/lodash": "^4.14.195",
     "@vanilla-extract/css": "^1.13.0",
