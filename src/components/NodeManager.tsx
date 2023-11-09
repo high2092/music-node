@@ -3,7 +3,7 @@ import ReactFlow, { Node, Edge, useNodesState, useEdgesState, NodePositionChange
 import { convertMusicNodeToReactFlowNode, convertMusicNodesToReactFlowObjects } from '../utils/reactFlow';
 import { useAppDispatch, useAppSelector } from '../features/store';
 import { connectNode, createMusicNode, createMusicNodeByAnchor, deleteEdges, deleteNodes, moveNode, playNode, setReactFLowInstance, setRequireReactFlowNodeFind, setRequireReactFlowRename, setRequireReactFlowUpdate } from '../features/mainSlice';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
 import { ReactFlowObjectTypes } from '../constants/reactFlow';
 import { TOP_BAR_HEIGHT } from '../constants/style';
@@ -82,52 +82,62 @@ export function NodeManager() {
     setNodes((nodes) => nodes.concat(convertMusicNodeToReactFlowNode(newNode, musics)));
   }, [newNode]);
 
-  const _onNodesChange = (nodesChange: NodePositionChange[]) => {
-    onNodesChange(nodesChange);
+  const _onNodesChange = useCallback(
+    (nodesChange: NodePositionChange[]) => {
+      onNodesChange(nodesChange);
 
-    if (nodesChange[0].type !== 'position') return;
+      if (nodesChange[0].type !== 'position') return;
 
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(async () => {
+        const nodeMoves = nodesChange.reduce((acc, cur) => {
+          const node = nodes.find((node) => node.id === cur.id);
+          if (!node) return acc;
+          const { id, position } = node;
+          return acc.concat({ id, position });
+        }, []);
+        dispatch(moveNode(nodeMoves));
+      }, 500);
+    },
+    [timeoutRef.current]
+  );
+
+  const onConnect: OnConnect = useCallback(
+    (connection) => {
+      if (latestClickedObjectType === ReactFlowObjectTypes.EDGE_TARGET) return;
+      setEdges((eds) => {
+        eds = eds.filter((edge) => edge.source !== connection.source);
+        return addEdge(connection, eds);
+      });
+      dispatch(connectNode(connection));
+    },
+    [latestClickedObjectType]
+  );
+
+  const handleDrop = useCallback(
+    async (e: React.DragEvent) => {
+      e.preventDefault();
+      const data = e.dataTransfer.getData(MUSIC_DATA_TRANSFER_KEY);
+      if (!data) return;
+      let { musicId, name, videoId } = JSON.parse(data);
+      const position = reactFlowInstance.project({ x: e.clientX, y: e.clientY });
+      if (!musicId) {
+        dispatch(createMusicNodeByAnchor({ name, videoId, position }));
+      } else {
+        dispatch(createMusicNode({ id: musicNodeSequence, musicId, position, next: null }));
+        dispatch(completeTutorial(Tutorials.CREATE_NODE));
+      }
+    },
+    [reactFlowInstance]
+  );
+
+  const handleNodeDoubleClick = useCallback((e: React.MouseEvent, { id }: Node) => {
     clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(async () => {
-      const nodeMoves = nodesChange.reduce((acc, cur) => {
-        const node = nodes.find((node) => node.id === cur.id);
-        if (!node) return acc;
-        const { id, position } = node;
-        return acc.concat({ id, position });
-      }, []);
-      dispatch(moveNode(nodeMoves));
-    }, 500);
-  };
-
-  const onConnect: OnConnect = (connection) => {
-    if (latestClickedObjectType === ReactFlowObjectTypes.EDGE_TARGET) return;
-    setEdges((eds) => {
-      eds = eds.filter((edge) => edge.source !== connection.source);
-      return addEdge(connection, eds);
-    });
-    dispatch(connectNode(connection));
-  };
-
-  const handleDrop = async (e: React.DragEvent) => {
-    e.preventDefault();
-    const data = e.dataTransfer.getData(MUSIC_DATA_TRANSFER_KEY);
-    if (!data) return;
-    let { musicId, name, videoId } = JSON.parse(data);
-    const position = reactFlowInstance.project({ x: e.clientX, y: e.clientY });
-    if (!musicId) {
-      dispatch(createMusicNodeByAnchor({ name, videoId, position }));
-    } else {
-      dispatch(createMusicNode({ id: musicNodeSequence, musicId, position, next: null }));
-      dispatch(completeTutorial(Tutorials.CREATE_NODE));
-    }
-  };
-
-  const handleNodeDoubleClick = (e: React.MouseEvent, { id }: Node) => {
     dispatch(playNode(Number(id)));
     dispatch(completeTutorial(Tutorials.PLAY));
-  };
+  }, []);
 
-  const handleReactFlowMouseDownCapture = ({ target }) => {
+  const handleReactFlowMouseDownCapture = useCallback(({ target }) => {
     for (const type of Object.values(ReactFlowObjectTypes)) {
       if (target.classList.value.includes(type)) {
         setLatestClickedObjectType(type);
@@ -138,20 +148,20 @@ export function NodeManager() {
       }
     }
     setLatestClickedObjectType(null);
-  };
+  }, []);
 
-  const handleReactFlowMouseUpCapture = () => {
+  const handleReactFlowMouseUpCapture = useCallback(() => {
     dispatch(setIsConnecting(false));
-  };
+  }, []);
 
-  const handleNodesDelete: OnNodesDelete = (nodes: Node[]) => {
+  const handleNodesDelete: OnNodesDelete = useCallback((nodes: Node[]) => {
     const nodeIdList = nodes.map(({ id }) => Number(id));
     dispatch(deleteNodes(nodeIdList));
-  };
+  }, []);
 
-  const handleEdgesDelete: OnEdgesDelete = (nodes: Edge[]) => {
+  const handleEdgesDelete: OnEdgesDelete = useCallback((nodes: Edge[]) => {
     dispatch(deleteEdges(nodes.map(({ source }) => Number(source))));
-  };
+  }, []);
 
   return (
     <div style={{ width: '100%', height: '100%' }}>

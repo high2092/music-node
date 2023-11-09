@@ -1,8 +1,14 @@
 import { Handle, Position } from 'reactflow';
 import { useAppSelector } from '../../features/store';
 import { HANDLE_STYLE } from '../../constants/style';
+import React from 'react';
 
-export function CustomNode({ id, data }) {
+interface CustomNodeProps {
+  id: string;
+  data: any;
+}
+
+export const CustomNode = React.memo(function CustomNode({ id, data }: CustomNodeProps) {
   const { isConnecting } = useAppSelector((state) => state.ui);
 
   return (
@@ -12,4 +18,4 @@ export function CustomNode({ id, data }) {
       <Handle type="source" position={Position.Bottom} style={isConnecting ? HANDLE_STYLE : {}} />
     </>
   );
-}
+});
