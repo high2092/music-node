@@ -13,12 +13,4 @@ export const UI_MINIMIZE_CRITERIA_MAX_WIDTH = '600px';
 export const NODE_STYLE: CSSProperties = {
   border: '1px solid black',
   borderRadius: '1rem',
-
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-export const HANDLE_STYLE: CSSProperties = {
-  backgroundColor: 'transparent',
-  border: '1px solid transparent',
 };
