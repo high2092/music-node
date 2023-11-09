@@ -1,10 +1,10 @@
-import * as S from '../styles/pages/error';
+import * as S from '../styles/pages/error.css';
 
 function NotFoundPage() {
   return (
-    <S.ErrorPage>
+    <div className={S.errorPage}>
       <div>페이지를 찾을 수 없어요.</div>
-    </S.ErrorPage>
+    </div>
   );
 }
 

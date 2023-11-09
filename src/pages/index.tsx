@@ -1,17 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { MusicManager } from '../components/MusicManager';
-import { NodeManager } from '../components/NodeManager';
-import { SearchManager } from '../components/SearchManager';
-import * as S from '../styles/pages/index';
+import { MusicManager } from '../components/MusicManager/MusicManager';
+import { NodeManager } from '../components/NodeManager/NodeManager';
+import { SearchManager } from '../components/SearchManager/SearchManager';
 import { useAppDispatch, useAppSelector } from '../features/store';
 import { LOCAL_STORAGE_KEY } from '../constants/interface';
 import { createMusicNodeByAnchor, load, reset, toggleIsPlaying } from '../features/mainSlice';
-import { Player } from '../components/Player';
+import { Player } from '../components/MusicPlayer/MusicPlayer';
 import { decodeV1, encodeV1 } from '../utils/encoding';
-import { IconDiv } from '../components/icons/IconDiv';
 import { UpIcon } from '../components/icons/UpIcon';
 import { DownIcon } from '../components/icons/DownIcon';
-import { CurrentNodeInfo } from '../components/CurrentNodeInfo';
+import { CurrentNodeInfo } from '../components/CurrentNodeInfo/CurrentNodeInfo';
 import { ImportIcon } from '../components/icons/ImportIcon';
 import { ExportIcon } from '../components/icons/ExportIcon';
 import { openModal } from '../features/modalSlice';
@@ -21,6 +19,8 @@ import { throttle } from 'lodash';
 import { 분, 초 } from '../constants/time';
 import { exitTutorial, startTutorial } from '../features/tutorialSlice';
 import { extractVideoId } from '../utils/youtube';
+import { cursorPointer } from '../components/icons/CursorPointer.css';
+import { buttonSection, currentNodeInfo, homePage, nodeList, nodeManager, searchBox, uiSection, uiSectionContainer } from '../styles/pages/home.css';
 
 function Home() {
   const dispatch = useAppDispatch();
@@ -128,47 +128,49 @@ function Home() {
   };
 
   return (
-    <S.Home onDrop={handleAnchorDrop}>
+    <div className={homePage} onDrop={handleAnchorDrop}>
       {Object.values(tutorials).findIndex((tutorial) => tutorial) !== -1 && (
         <div style={{ position: 'absolute', zIndex: 999, cursor: 'pointer' }} onClick={() => dispatch(exitTutorial())}>
           튜토리얼 종료
         </div>
       )}
-      <S.CurrentNodeInfoSection>
+      <div className={currentNodeInfo}>
         <CurrentNodeInfo />
-      </S.CurrentNodeInfoSection>
-      <S.NodeManagerSection>
+      </div>
+      <div className={nodeManager}>
         <NodeManager />
-      </S.NodeManagerSection>
-      <S.UiSectionContainer open={isUiOpen}>
+      </div>
+      <div className={uiSectionContainer({ open: isUiOpen })}>
         <div>
           <input ref={loadInputRef} id="load" type="file" accept=".mnode" onChange={handleFileInputChange} hidden />
-          <S.ButtonSection>
-            <IconDiv onClick={() => loadInputRef.current?.click()}>
+          <div className={buttonSection}>
+            <div className={cursorPointer} onClick={() => loadInputRef.current?.click()}>
               <ImportIcon />
-            </IconDiv>
-            <IconDiv onClick={() => dispatch(openModal({ type: ModalTypes.EXPORT }))}>
+            </div>
+            <div className={cursorPointer} onClick={() => dispatch(openModal({ type: ModalTypes.EXPORT }))}>
               <ExportIcon />
-            </IconDiv>
-            <IconDiv onClick={handleResetButtonClick}>
+            </div>
+            <div className={cursorPointer} onClick={handleResetButtonClick}>
               <ResetIcon />
-            </IconDiv>
-          </S.ButtonSection>
-          <IconDiv onClick={() => setIsUiOpen(!isUiOpen)}>{isUiOpen ? <DownIcon /> : <UpIcon />}</IconDiv>
+            </div>
+          </div>
+          <div className={cursorPointer} onClick={() => setIsUiOpen(!isUiOpen)}>
+            {isUiOpen ? <DownIcon /> : <UpIcon />}
+          </div>
         </div>
-        <S.UiSection onMouseMove={throttle(handleUiSectionMouseMove, 3 * 초)}>
-          <S.NodeListSection>
+        <div className={uiSection} onMouseMove={throttle(handleUiSectionMouseMove, 3 * 초)}>
+          <div className={nodeList}>
             <MusicManager />
-          </S.NodeListSection>
-          <S.SearchSection>
+          </div>
+          <div className={searchBox}>
             <SearchManager />
-          </S.SearchSection>
-          <S.PlayerSection>
+          </div>
+          <div>
             <Player />
-          </S.PlayerSection>
-        </S.UiSection>
-      </S.UiSectionContainer>
-    </S.Home>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

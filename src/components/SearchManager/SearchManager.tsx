@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useForm, FieldValues } from 'react-hook-form';
-import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
-import { Music } from '../types/music';
-import { Div } from '../styles/common/Div';
-import * as S from '../styles/components/SearchManager';
-import { useAppDispatch, useAppSelector } from '../features/store';
-import { Tutorials, completeTutorial } from '../features/tutorialSlice';
-import { decodeHtmlEntities } from '../utils/string';
+import { MUSIC_DATA_TRANSFER_KEY } from '../../constants/interface';
+import { useAppDispatch, useAppSelector } from '../../features/store';
+import { Tutorials, completeTutorial } from '../../features/tutorialSlice';
+import { decodeHtmlEntities } from '../../utils/string';
+import { row } from '../../styles/components/row.css';
+import { searchResultContainer, spinner, spinnerContainer } from './SearchManager.css';
+import { musicList } from '../MusicManager/MusicManager.css';
 
 interface SearchResult {
   title: string;
@@ -43,36 +43,36 @@ export function SearchManager() {
 
   return (
     <>
-      <div onSubmit={handleSubmit(handleSearch)}>
-        <S.SearchInputForm tutorial={tutorials[Tutorials.SEARCH]}>
+      <form onSubmit={handleSubmit(handleSearch)}>
+        <div style={{ display: 'flex' }}>
           <input style={{ flexGrow: 1 }} {...register('query')} onKeyDown={(e) => e.stopPropagation()} />
           <button style={{ width: 'max-content' }} disabled={isWaiting}>
             검색
           </button>
-        </S.SearchInputForm>
-      </div>
-      <S.SearchResultListContainer style={{ height: '88%' }}>
+        </div>
+      </form>
+      <div className={searchResultContainer} style={{ height: '88%' }}>
         {isWaiting ? (
           <WaitingSearchSpinner />
         ) : (
-          <S.SearchResultList style={{ height: '100%' }}>
+          <div className={musicList} style={{ height: '100%' }}>
             {searchResultList.map(({ title: name, videoId }, idx) => (
-              <Div key={`searchResult-${videoId}-${idx}`} onDragStart={(e) => handleDragStart(e, { name, videoId })} draggable>
+              <div className={row} key={`searchResult-${videoId}-${idx}`} onDragStart={(e) => handleDragStart(e, { name, videoId })} draggable>
                 <div>{name}</div>
-              </Div>
+              </div>
             ))}
-          </S.SearchResultList>
+          </div>
         )}
-      </S.SearchResultListContainer>
+      </div>
     </>
   );
 }
 
 function WaitingSearchSpinner() {
   return (
-    <S.WaitingSearchSpinnerContainer>
-      <S.WaitingSearchSpinner />
-      <S.WaitingSearchSpinner delayed />
-    </S.WaitingSearchSpinnerContainer>
+    <div className={spinnerContainer}>
+      <div className={spinner({ delayed: false })} />
+      <div className={spinner({ delayed: true })} />
+    </div>
   );
 }

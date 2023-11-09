@@ -1,9 +1,9 @@
 import YouTube, { YouTubePlayer } from 'react-youtube';
-import { useAppDispatch, useAppSelector } from '../features/store';
-import { playNode, setIsLoading, setIsPlaying, setRequirePlayerRewind } from '../features/mainSlice';
+import { useAppDispatch, useAppSelector } from '../../features/store';
+import { playNode, setIsLoading, setIsPlaying, setRequirePlayerRewind } from '../../features/mainSlice';
 import { useEffect, useRef, useState } from 'react';
-import { PLAYER_HEIGHT_REM } from '../styles/pages';
-import { PlayerStatus } from '../constants/youtube';
+import { PLAYER_HEIGHT_REM } from '../../styles/pages/home.css';
+import { PlayerStatus } from '../../constants/youtube';
 
 export function Player() {
   const dispatch = useAppDispatch();

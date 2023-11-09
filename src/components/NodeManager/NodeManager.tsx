@@ -1,16 +1,16 @@
 import 'reactflow/dist/style.css';
 import ReactFlow, { Node, Edge, useNodesState, useEdgesState, NodePositionChange, OnConnect, addEdge, OnNodesDelete, OnEdgesDelete, MiniMap, NodeChange } from 'reactflow';
-import { convertMusicNodeToReactFlowNode, convertMusicNodesToReactFlowObjects } from '../utils/reactFlow';
-import { useAppDispatch, useAppSelector } from '../features/store';
-import { connectNode, createMusicNode, createMusicNodeByAnchor, deleteEdges, deleteNodes, moveNode, playNode, setReactFLowInstance, setRequireReactFlowNodeFind, setRequireReactFlowRename, setRequireReactFlowUpdate } from '../features/mainSlice';
+import { convertMusicNodeToReactFlowNode, convertMusicNodesToReactFlowObjects } from '../../utils/reactFlow';
+import { useAppDispatch, useAppSelector } from '../../features/store';
+import { connectNode, createMusicNode, createMusicNodeByAnchor, deleteEdges, deleteNodes, moveNode, playNode, setReactFLowInstance, setRequireReactFlowNodeFind, setRequireReactFlowRename, setRequireReactFlowUpdate } from '../../features/mainSlice';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
-import { ReactFlowObjectTypes } from '../constants/reactFlow';
-import { TOP_BAR_HEIGHT } from '../constants/style';
-import { 초 } from '../constants/time';
-import { Tutorials, completeTutorial } from '../features/tutorialSlice';
-import { CustomNode } from './CustomNode/CustomNode';
-import { setIsConnecting } from '../features/uiSlice';
+import { MUSIC_DATA_TRANSFER_KEY } from '../../constants/interface';
+import { ReactFlowObjectTypes } from '../../constants/reactFlow';
+import { TOP_BAR_HEIGHT } from '../../constants/style';
+import { 초 } from '../../constants/time';
+import { Tutorials, completeTutorial } from '../../features/tutorialSlice';
+import { CustomNode } from '../CustomNode/CustomNode';
+import { setIsConnecting } from '../../features/uiSlice';
 
 const nodeTypes = {
   custom: CustomNode,

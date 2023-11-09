@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import { MUSIC_DATA_TRANSFER_KEY } from '../constants/interface';
-import { addMusic, findByMusicId, renameMusic } from '../features/mainSlice';
-import { useAppDispatch, useAppSelector } from '../features/store';
-import { Div } from '../styles/common/Div';
-import { trim } from '../utils/string';
-import { IconDiv } from './icons/IconDiv';
-import { ScopeIcon } from './icons/ScopeIcon';
-import * as S from '../styles/components/MusicManager';
-import { EditIcon } from './icons/EditIcon';
-import { BlankIcon } from './icons/BlankIcon';
-import { Tutorials } from '../features/tutorialSlice';
+import { MUSIC_DATA_TRANSFER_KEY } from '../../constants/interface';
+import { addMusic, findByMusicId, renameMusic } from '../../features/mainSlice';
+import { useAppDispatch, useAppSelector } from '../../features/store';
+import { trim } from '../../utils/string';
+import { ScopeIcon } from '../icons/ScopeIcon';
+import { EditIcon } from '../icons/EditIcon';
+import { BlankIcon } from '../icons/BlankIcon';
+import { Tutorials } from '../../features/tutorialSlice';
+import { cursorPointer } from '../icons/CursorPointer.css';
+import { row } from '../../styles/components/row.css';
+import { musicList } from './MusicManager.css';
 
 export function MusicManager() {
   const dispatch = useAppDispatch();
@@ -64,15 +64,17 @@ export function MusicManager() {
     setEditingMusicId(null);
   };
 
+  // tutorial={tutorials[Tutorials.CREATE_NODE]}
+
   return (
     <>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <label style={{ width: 'max-content' }}>필터</label>
         <input onChange={(e) => setFilterQuery(e.target.value)} onKeyDown={(e) => e.stopPropagation()} value={filterQuery} />
       </div>
-      <S.MusicList style={{ height: '88%' }} tutorial={tutorials[Tutorials.CREATE_NODE]} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
+      <div className={musicList} style={{ height: '88%' }} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
         {filteredMusicList.map(({ id, name, videoId }) => (
-          <Div key={`music-${id}`} style={{ justifyContent: 'space-between', alignItems: 'center' }} onMouseOver={(e) => handleMouseOver(e, id)} onDragStart={(e) => handleDragStart(e, id)} draggable>
+          <div className={row} key={`music-${id}`} style={{ justifyContent: 'space-between', alignItems: 'center' }} onMouseOver={(e) => handleMouseOver(e, id)} onDragStart={(e) => handleDragStart(e, id)} draggable>
             <div style={{ width: '100%' }}>
               {id === editingMusicId ? (
                 <div style={{ display: 'flex' }}>
@@ -81,22 +83,22 @@ export function MusicManager() {
               ) : (
                 <div>
                   <div style={{ display: 'inline' }}>{name}</div>
-                  <IconDiv style={{ marginLeft: '0.5rem', display: 'inline', verticalAlign: 'middle' }} onClick={() => setEditingMusicId(id)}>
+                  <div className={cursorPointer} style={{ marginLeft: '0.5rem', display: 'inline', verticalAlign: 'middle' }} onClick={() => setEditingMusicId(id)}>
                     {id === hoveredMusicId ? <EditIcon /> : <BlankIcon />}
-                  </IconDiv>
+                  </div>
                 </div>
               )}
             </div>
             <div style={{ paddingLeft: '1rem', display: 'flex', alignItems: 'center' }}>
               <div style={{ fontSize: '0.8rem', paddingRight: '0.2rem' }}>{id === findMusicId ? `${findDepth}/${foundNodeList.length}` : ''}</div>
-              <IconDiv onClick={() => dispatch(findByMusicId(id))}>
+              <div className={cursorPointer} onClick={() => dispatch(findByMusicId(id))}>
                 <ScopeIcon />
-              </IconDiv>
+              </div>
               <div />
             </div>
-          </Div>
+          </div>
         ))}
-      </S.MusicList>
+      </div>
     </>
   );
 }

@@ -3,7 +3,7 @@ import '../../public/css/reset.css';
 import '../../public/css/reactflow.css';
 import { Provider } from 'react-redux';
 import { store } from '../features/store';
-import { ModalContainer } from '../components/modal/ModalContainer';
+import { ModalContainer } from '../components/modals/ModalContainer';
 import Head from 'next/head';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 
