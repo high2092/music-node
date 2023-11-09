@@ -1,5 +1,8 @@
 const TerserPlugin = require('terser-webpack-plugin');
 const withPWA = require('next-pwa');
+const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin');
+
+const withVanillaExtract = createVanillaExtractPlugin();
 
 const nextConfig = withPWA({
   dest: 'public',
@@ -24,4 +27,4 @@ const nextConfig = withPWA({
   },
 });
 
-module.exports = nextConfig;
+module.exports = withVanillaExtract(nextConfig);
