@@ -1,0 +1,61 @@
+import { NextApiRequest, NextApiResponse } from 'next';
+import axios from 'axios';
+import { serialize } from 'cookie';
+import jwt from 'jsonwebtoken';
+import { JWT_SECRET, REDIRECT_URI } from '../../../../constants/auth';
+import { db } from '../../../../../firebase/firestore';
+import { addDoc, collection, query, where, doc, getDocs, runTransaction } from 'firebase/firestore';
+
+const userDbRef = collection(db, 'user');
+const userSequenceRef = doc(db, 'app', 'user_sequence');
+
+const API_KEY = process.env.KAKAO_REST_API_KEY;
+
+export default async function kakaoOAuthCallback(req: NextApiRequest, res: NextApiResponse) {
+  const { code } = req.query;
+
+  const {
+    data: { access_token },
+  } = await axios.post('https://kauth.kakao.com/oauth/token', null, {
+    params: {
+      grant_type: 'authorization_code',
+      client_id: API_KEY,
+      redirect_uri: REDIRECT_URI,
+      code,
+    },
+  });
+
+  const {
+    data: { id: kakaoId },
+  } = await axios.get('https://kapi.kakao.com/v2/user/me', {
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+    },
+  });
+
+  // DB 검색
+  const q = query(userDbRef, where('kakaoId', '==', kakaoId));
+  const user = (await getDocs(q)).docs[0];
+  let userData = user?.data();
+
+  if (!user) {
+    // 회원가입
+    await runTransaction(db, async (transaction) => {
+      const { user_sequence } = (await transaction.get(userSequenceRef)).data();
+      transaction.set(userSequenceRef, { user_sequence: user_sequence + 1 });
+      userData = { id: user_sequence, kakaoId };
+      addDoc(userDbRef, userData);
+    });
+  }
+
+  const token = jwt.sign(userData, JWT_SECRET, { expiresIn: '1800s' });
+  const cookie = serialize('token', token, {
+    httpOnly: true,
+    sameSite: 'strict',
+    path: '/',
+    maxAge: 1800,
+  });
+  res.setHeader('Set-Cookie', cookie);
+
+  return res.redirect('/').end();
+}
