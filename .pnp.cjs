@@ -29,6 +29,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./",\
           "packageDependencies": [\
             ["@reduxjs/toolkit", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:1.9.5"],\
+            ["@types/cookie", "npm:0.5.4"],\
             ["@types/lodash", "npm:4.14.195"],\
             ["@types/node", "npm:20.2.3"],\
             ["@types/react", "npm:18.2.7"],\
@@ -36,6 +37,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vanilla-extract/next-plugin", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:2.3.1"],\
             ["@vanilla-extract/recipes", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:0.5.0"],\
             ["axios", "npm:1.6.1"],\
+            ["cookie", "npm:0.6.0"],\
             ["firebase", "npm:10.6.0"],\
             ["lodash", "npm:4.17.21"],\
             ["next", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:13.4.3"],\
@@ -4740,6 +4742,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@types/cookie", [\
+        ["npm:0.5.4", {\
+          "packageLocation": "./.yarn/cache/@types-cookie-npm-0.5.4-fa234f951d-bd9603ce5e.zip/node_modules/@types/cookie/",\
+          "packageDependencies": [\
+            ["@types/cookie", "npm:0.5.4"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@types/d3", [\
         ["npm:7.4.0", {\
           "packageLocation": "./.yarn/cache/@types-d3-npm-7.4.0-7025c582e3-d1383f5fca.zip/node_modules/@types/d3/",\
@@ -6054,6 +6065,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/convert-source-map-npm-2.0.0-7ab664dc4e-63ae9933be.zip/node_modules/convert-source-map/",\
           "packageDependencies": [\
             ["convert-source-map", "npm:2.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["cookie", [\
+        ["npm:0.6.0", {\
+          "packageLocation": "./.yarn/cache/cookie-npm-0.6.0-362d6a2e45-f56a7d32a0.zip/node_modules/cookie/",\
+          "packageDependencies": [\
+            ["cookie", "npm:0.6.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -8043,6 +8063,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["musicnode-demo", "workspace:."],\
             ["@reduxjs/toolkit", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:1.9.5"],\
+            ["@types/cookie", "npm:0.5.4"],\
             ["@types/lodash", "npm:4.14.195"],\
             ["@types/node", "npm:20.2.3"],\
             ["@types/react", "npm:18.2.7"],\
@@ -8050,6 +8071,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vanilla-extract/next-plugin", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:2.3.1"],\
             ["@vanilla-extract/recipes", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:0.5.0"],\
             ["axios", "npm:1.6.1"],\
+            ["cookie", "npm:0.6.0"],\
             ["firebase", "npm:10.6.0"],\
             ["lodash", "npm:4.17.21"],\
             ["next", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:13.4.3"],\
