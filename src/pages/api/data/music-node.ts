@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { XYPosition } from 'reactflow';
 import { MusicNode } from '../../../types/musicNode';
 import { Music } from '../../../types/music';
-import { addDoc, getDocs, query, runTransaction, where } from 'firebase/firestore';
+import { doc, getDocs, query, runTransaction, where } from 'firebase/firestore';
 import { db } from '../../../../firebase/firestore';
 import { authenticateToken } from '../../../utils/auth';
 import { HOST } from '../../../constants/auth';
@@ -59,10 +59,10 @@ export default async function postMusicNodeWithAnchor(req: PostMusicNodeWithAnch
 
         if (!music) {
           transaction.set(musicSequenceDbRef, { music_sequence: musicData.id + 1 });
-          addDoc(musicDbRef, musicData);
+          transaction.set(doc(musicDbRef), musicData);
         }
         transaction.set(musicNodeSequenceDbRef, { node_sequence: node_sequence + 1 });
-        addDoc(musicNodeDbRef, musicNode);
+        transaction.set(doc(musicNodeDbRef), musicNode);
       });
 
       return res.json({ music: musicData, musicNode });

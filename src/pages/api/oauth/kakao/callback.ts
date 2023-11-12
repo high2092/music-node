@@ -4,7 +4,7 @@ import { serialize } from 'cookie';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET, REDIRECT_URI } from '../../../../constants/auth';
 import { db } from '../../../../../firebase/firestore';
-import { addDoc, collection, query, where, doc, getDocs, runTransaction } from 'firebase/firestore';
+import { collection, query, where, doc, getDocs, runTransaction } from 'firebase/firestore';
 import { getMusicNodeSequenceDbRef, getMusicSequenceDbRef, getUserDbRef } from '../../../../utils/db';
 
 const userDbRef = collection(db, 'user');
@@ -45,7 +45,7 @@ export default async function kakaoOAuthCallback(req: NextApiRequest, res: NextA
       const { user_sequence } = (await transaction.get(userSequenceRef)).data();
       transaction.set(userSequenceRef, { user_sequence: user_sequence + 1 });
       userData = { id: user_sequence, kakaoId };
-      addDoc(userDbRef, userData);
+      transaction.set(doc(userDbRef), userData);
 
       const _userDbRef = getUserDbRef(user_sequence);
       const musicSequenceDbRef = getMusicSequenceDbRef(_userDbRef);

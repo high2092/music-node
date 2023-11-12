@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { addDoc, runTransaction } from 'firebase/firestore';
+import { doc, runTransaction } from 'firebase/firestore';
 import { authenticateToken } from '../../../utils/auth';
 import { getMusicNodeDbRef, getMusicNodeSequenceDbRef, getUserDbRef } from '../../../utils/db';
 import { db } from '../../../../firebase/firestore';
@@ -21,7 +21,7 @@ export default async function postMusicNode(req: NextApiRequest, res: NextApiRes
         musicNode.id = node_sequence;
 
         transaction.set(musicNodeSequenceDbRef, { node_sequence: node_sequence + 1 });
-        addDoc(musicNodeDbRef, musicNode);
+        transaction.set(doc(musicNodeDbRef), musicNode);
       });
 
       return res.json({ musicNode });
