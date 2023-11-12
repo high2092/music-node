@@ -111,12 +111,23 @@ export function NodeManager() {
   );
 
   const onConnect: OnConnect = useCallback(
-    (connection) => {
+    async (connection) => {
       if (latestClickedObjectType === ReactFlowObjectTypes.EDGE_TARGET) return;
       setEdges((eds) => {
         eds = eds.filter((edge) => edge.source !== connection.source);
         return addEdge(connection, eds);
       });
+
+      const response = await http.post('/api/data/connect-node', {
+        source: Number(connection.source),
+        target: Number(connection.target),
+      });
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      } else if (response.status !== 200) return;
+
       dispatch(connectNode(connection));
     },
     [latestClickedObjectType]
@@ -176,8 +187,16 @@ export function NodeManager() {
     dispatch(deleteNodes(nodeIdList));
   }, []);
 
-  const handleEdgesDelete: OnEdgesDelete = useCallback((nodes: Edge[]) => {
-    dispatch(deleteEdges(nodes.map(({ source }) => Number(source))));
+  const handleEdgesDelete: OnEdgesDelete = useCallback(async (nodes: Edge[]) => {
+    const sources = nodes.map(({ source }) => Number(source));
+    const response = await http.post('/api/data/disconnect-node', { sources });
+
+    if (response.status === 401) {
+      handleUnauthorized();
+      return;
+    } else if (response.status !== 200) return;
+
+    dispatch(deleteEdges(sources));
   }, []);
 
   return (
