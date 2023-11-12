@@ -17,6 +17,9 @@ import { LOCAL_STORAGE_KEY } from '../../constants/interface';
 import { decodeV1 } from '../../utils/encoding';
 import { handleUnauthorized, http } from '../../utils/api';
 import { useEffect, useState } from 'react';
+import { getCookie, setCookie } from '../../utils/cookie';
+
+const COOKIE_KEY = 'APPLY_LOCAL';
 
 export function CurrentNodeInfo() {
   const dispatch = useAppDispatch();
@@ -30,7 +33,8 @@ export function CurrentNodeInfo() {
 
   useEffect(() => {
     const code = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (code) setShowLocalDataHelpText(true);
+    const alreadyApplyLocal = getCookie(COOKIE_KEY);
+    if (!alreadyApplyLocal && code) setShowLocalDataHelpText(true);
   }, []);
 
   return (
@@ -76,7 +80,7 @@ export function CurrentNodeInfo() {
                 }
 
                 if (response.status === 200) {
-                  localStorage.removeItem(LOCAL_STORAGE_KEY);
+                  setCookie(COOKIE_KEY, '1');
                   setShowLocalDataHelpText(false);
                   dispatch(load({ musics, musicNodes }));
                 }
