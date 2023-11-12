@@ -1,7 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getDocs, query, setDoc, where } from 'firebase/firestore';
+import { QueryDocumentSnapshot, getDocs, query, where, writeBatch } from 'firebase/firestore';
 import { authenticateToken } from '../../../utils/auth';
 import { getMusicNodeDbRef, getUserDbRef } from '../../../utils/db';
+import { db } from '../../../../firebase/firestore';
+import { XYPosition } from 'reactflow';
 
 export default async function moveMusicNode(req: NextApiRequest, res: NextApiResponse) {
   const id = authenticateToken(req.cookies.token);
@@ -14,15 +16,22 @@ export default async function moveMusicNode(req: NextApiRequest, res: NextApiRes
 
       const musicNodeDbRef = getMusicNodeDbRef(getUserDbRef(id));
 
-      for (const { id: nodeId, position } of nodeMoves) {
-        const q = query(musicNodeDbRef, where('id', '==', nodeId));
-        const node = (await getDocs(q)).docs[0];
+      const batch = writeBatch(db);
 
-        if (node) {
-          setDoc(node.ref, { ...node.data(), position });
-          cnt++;
-        }
-      }
+      const nodes: [QueryDocumentSnapshot, XYPosition][] = await Promise.all(
+        nodeMoves.map(async ({ id, position }) => {
+          const q = query(musicNodeDbRef, where('id', '==', id));
+          const node = (await getDocs(q)).docs[0];
+          return [node, position];
+        })
+      );
+
+      nodes.forEach(([node, position]) => {
+        batch.set(node.ref, { ...node.data(), position });
+        cnt++;
+      });
+
+      batch.commit();
 
       return res.json({ count: cnt });
     }
