@@ -24,6 +24,7 @@ export function CurrentNodeInfo() {
   const { showMap } = useAppSelector((state) => state.ui);
 
   const [showLocalDataHelpText, setShowLocalDataHelpText] = useState(false);
+  const [isWaiting, setIsWaiting] = useState(false);
 
   const currentMusicName = musics[musicNodes[pointer]?.musicId]?.name;
 
@@ -54,31 +55,36 @@ export function CurrentNodeInfo() {
         </div>
       </div>
       <div style={{ position: 'absolute', height: '100%', left: 0, top: 0 }}>
-        {showLocalDataHelpText && (
-          <span
-            className={login}
-            onClick={async () => {
-              const code = localStorage.getItem(LOCAL_STORAGE_KEY);
+        {showLocalDataHelpText &&
+          (isWaiting ? (
+            <span>잠시만 기다려주세요...</span>
+          ) : (
+            <span
+              className={login}
+              onClick={async () => {
+                setIsWaiting(true);
 
-              const { musics, musicNodes } = decodeV1(code);
+                const code = localStorage.getItem(LOCAL_STORAGE_KEY);
 
-              const response = await http.post('/api/data/set', { musics: Object.values(musics), musicNodes: Object.values(musicNodes) });
+                const { musics, musicNodes } = decodeV1(code);
 
-              if (response.status === 401) {
-                handleUnauthorized();
-                return;
-              }
+                const response = await http.post('/api/data/set', { musics: Object.values(musics), musicNodes: Object.values(musicNodes) });
 
-              if (response.status === 200) {
-                localStorage.removeItem(LOCAL_STORAGE_KEY);
-                setShowLocalDataHelpText(false);
-                dispatch(load({ musics, musicNodes }));
-              }
-            }}
-          >
-            로컬 상태를 서버에 반영하기
-          </span>
-        )}
+                if (response.status === 401) {
+                  handleUnauthorized();
+                  return;
+                }
+
+                if (response.status === 200) {
+                  localStorage.removeItem(LOCAL_STORAGE_KEY);
+                  setShowLocalDataHelpText(false);
+                  dispatch(load({ musics, musicNodes }));
+                }
+              }}
+            >
+              로컬 상태를 서버에 반영하기
+            </span>
+          ))}
       </div>
       <div style={{ position: 'absolute', height: '100%', right: 0, top: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <div className={cursorPointer} onClick={() => pointer && dispatch(setRequireReactFlowNodeFind(pointer))}>
