@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { deleteDoc, getDocs, query, where } from 'firebase/firestore';
+import { QueryDocumentSnapshot, getDocs, query, where, writeBatch } from 'firebase/firestore';
 import { authenticateToken } from '../../../utils/auth';
 import { getMusicNodeDbRef, getUserDbRef } from '../../../utils/db';
+import { db } from '../../../../firebase/firestore';
 
 // INFO: DELETE body undefined 이슈로 인해 POST 메소드를 사용함
 export default async function deleteMusicNode(req: NextApiRequest, res: NextApiResponse) {
@@ -9,21 +10,35 @@ export default async function deleteMusicNode(req: NextApiRequest, res: NextApiR
 
   switch (req.method) {
     case 'POST': {
-      const { nodes } = req.body;
+      const { nodes: nodeIdList } = req.body;
 
       let cnt = 0;
 
       const musicNodeDbRef = getMusicNodeDbRef(getUserDbRef(id));
 
-      for (const nodeId of nodes) {
-        const q = query(musicNodeDbRef, where('id', '==', nodeId));
-        const node = (await getDocs(q)).docs[0];
+      const batch = writeBatch(db);
 
-        if (node) {
-          deleteDoc(node.ref);
-          cnt++;
-        }
-      }
+      const prevs: QueryDocumentSnapshot[] = await Promise.all(
+        nodeIdList.map(async (nodeId: number) => {
+          const q = query(musicNodeDbRef, where('next', '==', nodeId));
+          const node = (await getDocs(q)).docs[0];
+          return node;
+        })
+      );
+
+      prevs.forEach((prev) => batch.set(prev.ref, { ...prev.data(), next: null }));
+
+      const nodes: QueryDocumentSnapshot[] = await Promise.all(
+        nodeIdList.map(async (nodeId: number) => {
+          const q = query(musicNodeDbRef, where('id', '==', nodeId));
+          const node = (await getDocs(q)).docs[0];
+          return node;
+        })
+      );
+
+      nodes.forEach((node) => batch.delete(node.ref));
+
+      batch.commit();
 
       return res.json({ count: cnt });
     }
