@@ -74,6 +74,8 @@ export function CurrentNodeInfo() {
 
                 const response = await http.post('/api/data/set', { musics: Object.values(musics), musicNodes: Object.values(musicNodes) });
 
+                setShowLocalDataHelpText(false);
+
                 if (response.status === 401) {
                   handleUnauthorized();
                   return;
@@ -81,7 +83,6 @@ export function CurrentNodeInfo() {
 
                 if (response.status === 200) {
                   setCookie(COOKIE_KEY, '1');
-                  setShowLocalDataHelpText(false);
                   dispatch(load({ musics, musicNodes }));
                 }
               }}

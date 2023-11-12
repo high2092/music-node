@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { addDoc, deleteDoc, getDocs, setDoc } from 'firebase/firestore';
+import { doc, getDocs, writeBatch } from 'firebase/firestore';
 import { authenticateToken } from '../../../utils/auth';
 import { getMusicDbRef, getMusicNodeDbRef, getMusicNodeSequenceDbRef, getMusicSequenceDbRef, getUserDbRef } from '../../../utils/db';
+import { db } from '../../../../firebase/firestore';
 
 async function sleep(ms: number) {
   await new Promise((resolve) => setTimeout(resolve, ms));
@@ -23,25 +24,25 @@ export default async function set(req: NextApiRequest, res: NextApiResponse) {
       const music = (await getDocs(musicDbRef)).docs[0];
       if (music) return res.status(409).end();
 
-      deleteDoc(userDbRef);
-
       let music_sequence = 1;
       let node_sequence = 1;
 
+      const batch = writeBatch(db);
+
       for (const music of musics) {
-        addDoc(musicDbRef, music);
+        batch.set(doc(musicDbRef), music);
         music_sequence = Math.max(music.id, music_sequence + 1);
-        await sleep(10);
       }
 
       for (const node of musicNodes) {
-        addDoc(musicNodeDbRef, node);
+        batch.set(doc(musicNodeDbRef), node);
         node_sequence = Math.max(node.id, node_sequence + 1);
-        await sleep(10);
       }
 
-      setDoc(musicSequenceDbRef, { music_sequence });
-      setDoc(musicNodeSequenceDbRef, { node_sequence });
+      batch.set(musicSequenceDbRef, { music_sequence });
+      batch.set(musicNodeSequenceDbRef, { node_sequence });
+
+      await batch.commit();
 
       return res.end();
     }
