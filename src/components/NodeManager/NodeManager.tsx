@@ -1,8 +1,8 @@
 import 'reactflow/dist/style.css';
-import ReactFlow, { Node, Edge, useNodesState, useEdgesState, NodePositionChange, OnConnect, addEdge, OnNodesDelete, OnEdgesDelete, MiniMap, NodeChange } from 'reactflow';
+import ReactFlow, { Node, Edge, useNodesState, useEdgesState, NodePositionChange, OnConnect, addEdge, OnNodesDelete, OnEdgesDelete, MiniMap, NodeChange, XYPosition } from 'reactflow';
 import { convertMusicNodeToReactFlowNode, convertMusicNodesToReactFlowObjects } from '../../utils/reactFlow';
 import { useAppDispatch, useAppSelector } from '../../features/store';
-import { connectNode, createMusicNode, createMusicNodeByAnchor, deleteEdges, deleteNodes, moveNode, playNode, setReactFLowInstance, setRequireReactFlowNodeFind, setRequireReactFlowRename, setRequireReactFlowUpdate } from '../../features/mainSlice';
+import { connectNode, createMusicNodeV2, deleteEdges, deleteNodes, moveNode, playNode, setReactFLowInstance, setRequireReactFlowNodeFind, setRequireReactFlowRename, setRequireReactFlowUpdate } from '../../features/mainSlice';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { MUSIC_DATA_TRANSFER_KEY } from '../../constants/interface';
 import { ReactFlowObjectTypes } from '../../constants/reactFlow';
@@ -11,6 +11,7 @@ import { 초 } from '../../constants/time';
 import { Tutorials, completeTutorial } from '../../features/tutorialSlice';
 import { CustomNode } from '../CustomNode/CustomNode';
 import { setIsConnecting } from '../../features/uiSlice';
+import { handleUnauthorized, http } from '../../utils/api';
 
 const nodeTypes = {
   custom: CustomNode,
@@ -83,19 +84,26 @@ export function NodeManager() {
   }, [newNode]);
 
   const _onNodesChange = useCallback(
-    (nodesChange: NodePositionChange[]) => {
+    async (nodesChange: NodePositionChange[]) => {
       onNodesChange(nodesChange);
 
       if (nodesChange[0].type !== 'position') return;
 
       clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(async () => {
-        const nodeMoves = nodesChange.reduce((acc, cur) => {
+        const nodeMoves: { id: number; position: XYPosition }[] = nodesChange.reduce((acc, cur) => {
           const node = nodes.find((node) => node.id === cur.id);
           if (!node) return acc;
           const { id, position } = node;
-          return acc.concat({ id, position });
+          return acc.concat({ id: Number(id), position });
         }, []);
+
+        const response = await http.post('/api/data/move-node', { nodeMoves });
+
+        if (response.status === 401) {
+          handleUnauthorized();
+          return;
+        }
         dispatch(moveNode(nodeMoves));
       }, 500);
     },
@@ -119,14 +127,17 @@ export function NodeManager() {
       e.preventDefault();
       const data = e.dataTransfer.getData(MUSIC_DATA_TRANSFER_KEY);
       if (!data) return;
-      let { musicId, name, videoId } = JSON.parse(data);
+      const { musicId, name, videoId } = JSON.parse(data);
       const position = reactFlowInstance.project({ x: e.clientX, y: e.clientY });
-      if (!musicId) {
-        dispatch(createMusicNodeByAnchor({ name, videoId, position }));
-      } else {
-        dispatch(createMusicNode({ id: musicNodeSequence, musicId, position, next: null }));
-        dispatch(completeTutorial(Tutorials.CREATE_NODE));
+
+      const response = await http.post('/api/data/music-node', { musicId, name, videoId, position });
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
       }
+
+      const { music, musicNode } = await response.json();
+      dispatch(createMusicNodeV2({ music, musicNode }));
     },
     [reactFlowInstance]
   );
@@ -154,8 +165,14 @@ export function NodeManager() {
     dispatch(setIsConnecting(false));
   }, []);
 
-  const handleNodesDelete: OnNodesDelete = useCallback((nodes: Node[]) => {
+  const handleNodesDelete: OnNodesDelete = useCallback(async (nodes: Node[]) => {
     const nodeIdList = nodes.map(({ id }) => Number(id));
+
+    const response = await http.post('/api/data/delete-node', { nodes: nodeIdList });
+    if (response.status === 401) {
+      handleUnauthorized();
+      return;
+    }
     dispatch(deleteNodes(nodeIdList));
   }, []);
 

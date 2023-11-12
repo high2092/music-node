@@ -52,7 +52,7 @@ interface ConnectNodePayload {
 }
 
 interface MoveNodePayload {
-  id: string;
+  id: number;
   position: XYPosition;
 }
 
@@ -96,6 +96,14 @@ export const mainSlice = createSlice({
       createMusicNodeInternal(state, state.musicNodeSequence, music.id, position);
     },
 
+    createMusicNodeV2(state, action: PayloadAction<{ music: Music; musicNode: MusicNode }>) {
+      const { music, musicNode } = action.payload;
+
+      state.musics[music.id] = music;
+      state.musicNodes[musicNode.id] = musicNode;
+      state.newNode = musicNode;
+    },
+
     connectNode(state, action: PayloadAction<ConnectNodePayload>) {
       const { source, target } = action.payload;
       state.log.enqueue(`connect node ${source}-${target}`);
@@ -105,7 +113,7 @@ export const mainSlice = createSlice({
     moveNode(state, action: PayloadAction<MoveNodePayload[]>) {
       state.log.enqueue(`move node ${action.payload.map(({ id }) => id).join(' ')}`);
       action.payload.forEach(({ id, position }) => {
-        const musicNode = state.musicNodes[Number(id)];
+        const musicNode = state.musicNodes[id];
         if (!musicNode) return;
         musicNode.position = position;
       });
@@ -267,6 +275,7 @@ function createMusicNodeInternal(state: Draft<MainState>, id: number, musicId: n
 export const {
   addMusic,
   createMusicNode,
+  createMusicNodeV2,
   createMusicNodeByAnchor,
   connectNode,
   moveNode,

@@ -10,6 +10,7 @@ import { Tutorials } from '../../features/tutorialSlice';
 import { cursorPointer } from '../icons/CursorPointer.css';
 import { row } from '../../styles/components/row.css';
 import { musicList } from './MusicManager.css';
+import { handleUnauthorized, http } from '../../utils/api';
 
 export function MusicManager() {
   const dispatch = useAppDispatch();
@@ -38,15 +39,6 @@ export function MusicManager() {
     return () => window.removeEventListener('keydown', escapeRename);
   }, []);
 
-  const handleDrop = async (e: React.DragEvent) => {
-    e.preventDefault();
-    const data = e.dataTransfer.getData(MUSIC_DATA_TRANSFER_KEY);
-    const { name, videoId } = JSON.parse(data);
-    if (!name || !videoId) return;
-    const music = { id: musicSequence, name, videoId };
-    dispatch(addMusic(music));
-  };
-
   const handleDragStart = (e: React.DragEvent, id: number) => {
     e.dataTransfer.setData(MUSIC_DATA_TRANSFER_KEY, JSON.stringify({ musicId: id }));
   };
@@ -56,10 +48,17 @@ export function MusicManager() {
     setHoveredMusicId(id);
   };
 
-  const handleRenameInputKeyDown = (e: React.KeyboardEvent) => {
+  const handleRenameInputKeyDown = async (e: React.KeyboardEvent) => {
     e.stopPropagation();
     if (e.key !== 'Enter') return;
     const target = e.target as HTMLInputElement;
+
+    const response = await http.post('/api/data/rename-music', { id: editingMusicId, name: target.value });
+    if (response.status === 401) {
+      handleUnauthorized();
+      return;
+    } else if (response.status !== 200) return;
+
     dispatch(renameMusic({ id: editingMusicId, name: target.value }));
     setEditingMusicId(null);
   };
@@ -72,7 +71,7 @@ export function MusicManager() {
         <label style={{ width: 'max-content' }}>필터</label>
         <input onChange={(e) => setFilterQuery(e.target.value)} onKeyDown={(e) => e.stopPropagation()} value={filterQuery} />
       </div>
-      <div className={musicList} style={{ height: '88%' }} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
+      <div className={musicList} style={{ height: '88%' }}>
         {filteredMusicList.map(({ id, name, videoId }) => (
           <div className={row} key={`music-${id}`} style={{ justifyContent: 'space-between', alignItems: 'center' }} onMouseOver={(e) => handleMouseOver(e, id)} onDragStart={(e) => handleDragStart(e, id)} draggable>
             <div style={{ width: '100%' }}>

@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { JWT_SECRET, REDIRECT_URI } from '../../../../constants/auth';
 import { db } from '../../../../../firebase/firestore';
 import { addDoc, collection, query, where, doc, getDocs, runTransaction } from 'firebase/firestore';
+import { getMusicNodeSequenceDbRef, getMusicSequenceDbRef, getUserDbRef } from '../../../../utils/db';
 
 const userDbRef = collection(db, 'user');
 const userSequenceRef = doc(db, 'app', 'user_sequence');
@@ -45,15 +46,22 @@ export default async function kakaoOAuthCallback(req: NextApiRequest, res: NextA
       transaction.set(userSequenceRef, { user_sequence: user_sequence + 1 });
       userData = { id: user_sequence, kakaoId };
       addDoc(userDbRef, userData);
+
+      const _userDbRef = getUserDbRef(user_sequence);
+      const musicSequenceDbRef = getMusicSequenceDbRef(_userDbRef);
+      const musicNodeSequenceDbRef = getMusicNodeSequenceDbRef(_userDbRef);
+
+      transaction.set(musicSequenceDbRef, { music_sequence: 1 });
+      transaction.set(musicNodeSequenceDbRef, { node_sequence: 1 });
     });
   }
 
-  const token = jwt.sign(userData, JWT_SECRET, { expiresIn: '1800s' });
+  const token = jwt.sign(userData, JWT_SECRET, { expiresIn: '1d' });
   const cookie = serialize('token', token, {
     httpOnly: true,
     sameSite: 'strict',
     path: '/',
-    maxAge: 1800,
+    maxAge: 60 * 60 * 24,
   });
   res.setHeader('Set-Cookie', cookie);
 

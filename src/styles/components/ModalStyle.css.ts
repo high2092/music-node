@@ -5,4 +5,5 @@ export const modalStyle = style({
   backgroundColor: 'white',
   borderRadius: '20px',
   color: 'black',
+  wordBreak: 'keep-all',
 });

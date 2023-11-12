@@ -16,7 +16,7 @@ export function convertMusicNodesToReactFlowObjects(musicNodes: Record<number, M
 
   Object.values(musicNodes).forEach(({ id, position, musicId, next }) => {
     nodes.push(convertMusicNodeToReactFlowNode({ id, position, musicId, next }, musics, colorMap[id]));
-    if (next !== null) {
+    if (next) {
       edges.push({ id: `e${id}-${next}`, source: id.toString(), target: next.toString() });
     }
   });

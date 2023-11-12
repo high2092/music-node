@@ -27,3 +27,9 @@ export const cdIcon = recipe({
     },
   },
 });
+
+export const login = style({
+  color: 'white',
+  textDecoration: 'none',
+  cursor: 'pointer',
+});

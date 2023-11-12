@@ -1,7 +1,7 @@
 export const http = {
   async get(url: string) {
     const response = await fetch(url, { method: 'GET' });
-    return await response.json();
+    return response;
   },
 
   async post(url: string, payload?: Record<string, any>) {
@@ -12,6 +12,11 @@ export const http = {
       },
       body: JSON.stringify(payload ?? {}),
     });
-    return await response.json();
+
+    return response;
   },
 };
+
+export function handleUnauthorized() {
+  location.href = '/api/oauth/kakao';
+}
