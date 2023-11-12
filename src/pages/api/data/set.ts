@@ -3,6 +3,10 @@ import { addDoc, deleteDoc, getDocs, setDoc } from 'firebase/firestore';
 import { authenticateToken } from '../../../utils/auth';
 import { getMusicDbRef, getMusicNodeDbRef, getMusicNodeSequenceDbRef, getMusicSequenceDbRef, getUserDbRef } from '../../../utils/db';
 
+async function sleep(ms: number) {
+  await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export default async function set(req: NextApiRequest, res: NextApiResponse) {
   const id = authenticateToken(req.cookies.token);
 
@@ -27,11 +31,13 @@ export default async function set(req: NextApiRequest, res: NextApiResponse) {
       for (const music of musics) {
         addDoc(musicDbRef, music);
         music_sequence = Math.max(music.id, music_sequence + 1);
+        await sleep(10);
       }
 
       for (const node of musicNodes) {
         addDoc(musicNodeDbRef, node);
         node_sequence = Math.max(node.id, node_sequence + 1);
+        await sleep(10);
       }
 
       setDoc(musicSequenceDbRef, { music_sequence });
