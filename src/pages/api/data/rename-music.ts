@@ -3,7 +3,7 @@ import { getDocs, query, setDoc, where } from 'firebase/firestore';
 import { authenticateToken } from '../../../utils/auth';
 import { getMusicDbRef, getUserDbRef } from '../../../utils/db';
 
-export default async function renameMusicNode(req: NextApiRequest, res: NextApiResponse) {
+export default async function renameMusic(req: NextApiRequest, res: NextApiResponse) {
   const id = authenticateToken(req.cookies.token);
 
   switch (req.method) {
