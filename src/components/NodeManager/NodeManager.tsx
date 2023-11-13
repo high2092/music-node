@@ -17,7 +17,11 @@ const nodeTypes = {
   custom: CustomNode,
 };
 
-export function NodeManager() {
+interface NodeManagerProps {
+  readonly: boolean;
+}
+
+export function NodeManager({ readonly }: NodeManagerProps) {
   const dispatch = useAppDispatch();
   const { musicNodes, musics, requireReactFlowUpdate, newNode, reactFlowInstance, musicNodeSequence, requireReactFlowRename, requireReactFlowNodeFind } = useAppSelector((state) => state.main);
   const { showMap } = useAppSelector((state) => state.ui);
@@ -87,6 +91,7 @@ export function NodeManager() {
     async (nodesChange: NodePositionChange[]) => {
       onNodesChange(nodesChange);
 
+      if (readonly) return;
       if (nodesChange[0].type !== 'position') return;
 
       clearTimeout(timeoutRef.current);
@@ -118,15 +123,17 @@ export function NodeManager() {
         return addEdge(connection, eds);
       });
 
-      const response = await http.post('/api/data/connect-node', {
-        source: Number(connection.source),
-        target: Number(connection.target),
-      });
+      if (!readonly) {
+        const response = await http.post('/api/data/connect-node', {
+          source: Number(connection.source),
+          target: Number(connection.target),
+        });
 
-      if (response.status === 401) {
-        handleUnauthorized();
-        return;
-      } else if (response.status !== 200) return;
+        if (response.status === 401) {
+          handleUnauthorized();
+          return;
+        } else if (response.status !== 200) return;
+      }
 
       dispatch(connectNode(connection));
     },
@@ -135,6 +142,8 @@ export function NodeManager() {
 
   const handleDrop = useCallback(
     async (e: React.DragEvent) => {
+      if (readonly) return;
+
       e.preventDefault();
       const data = e.dataTransfer.getData(MUSIC_DATA_TRANSFER_KEY);
       if (!data) return;
@@ -179,22 +188,28 @@ export function NodeManager() {
   const handleNodesDelete: OnNodesDelete = useCallback(async (nodes: Node[]) => {
     const nodeIdList = nodes.map(({ id }) => Number(id));
 
-    const response = await http.post('/api/data/delete-node', { nodes: nodeIdList });
-    if (response.status === 401) {
-      handleUnauthorized();
-      return;
+    if (!readonly) {
+      const response = await http.post('/api/data/delete-node', { nodes: nodeIdList });
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
     }
+
     dispatch(deleteNodes(nodeIdList));
   }, []);
 
   const handleEdgesDelete: OnEdgesDelete = useCallback(async (nodes: Edge[]) => {
     const sources = nodes.map(({ source }) => Number(source));
-    const response = await http.post('/api/data/disconnect-node', { sources });
 
-    if (response.status === 401) {
-      handleUnauthorized();
-      return;
-    } else if (response.status !== 200) return;
+    if (!readonly) {
+      const response = await http.post('/api/data/disconnect-node', { sources });
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      } else if (response.status !== 200) return;
+    }
 
     dispatch(deleteEdges(sources));
   }, []);

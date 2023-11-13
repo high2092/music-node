@@ -1,6 +1,7 @@
 export const http = {
-  async get(url: string) {
-    const response = await fetch(url, { method: 'GET' });
+  async get(url: string, props?: RequestInit) {
+    props ??= {};
+    const response = await fetch(url, { method: 'GET', ...props });
     return response;
   },
 

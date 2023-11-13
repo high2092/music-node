@@ -4,7 +4,7 @@ import { authenticateToken } from '../../../utils/auth';
 import { getMusicNodeDbRef, getUserDbRef } from '../../../utils/db';
 
 export default async function connectNode(req: NextApiRequest, res: NextApiResponse) {
-  const id = authenticateToken(req.cookies.token);
+  const { id } = authenticateToken(req.cookies.token);
 
   switch (req.method) {
     case 'POST': {

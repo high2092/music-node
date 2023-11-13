@@ -24,7 +24,7 @@ interface PostMusicNodeWithAnchorResponse extends NextApiResponse {
 }
 
 export default async function postMusicNodeWithAnchor(req: PostMusicNodeWithAnchorRequest, res: PostMusicNodeWithAnchorResponse) {
-  const id = authenticateToken(req.cookies.token);
+  const { id } = authenticateToken(req.cookies.token);
 
   switch (req.method) {
     case 'POST': {

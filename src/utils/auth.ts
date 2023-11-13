@@ -6,15 +6,15 @@ type UserId = number;
 interface UserData {
   id: UserId;
   kakaoId: number;
+  username: string;
 }
 
-export function authenticateToken(token: string): UserId {
-  if (!token) throw new AuthenticationError();
-
-  const { id } = jwt.verify(token, JWT_SECRET) as UserData;
-  if (!id) throw new AuthenticationError();
-
-  return id;
+export function authenticateToken(token: string): UserData {
+  try {
+    return jwt.verify(token, JWT_SECRET) as UserData;
+  } catch {
+    return { id: undefined, kakaoId: undefined, username: undefined };
+  }
 }
 
 class AuthenticationError extends Error {}

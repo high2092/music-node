@@ -5,7 +5,7 @@ import { getMusicNodeDbRef, getMusicNodeSequenceDbRef, getUserDbRef } from '../.
 import { db } from '../../../../firebase/firestore';
 
 export default async function postMusicNode(req: NextApiRequest, res: NextApiResponse) {
-  const id = authenticateToken(req.cookies.token);
+  const { id } = authenticateToken(req.cookies.token);
 
   switch (req.method) {
     case 'POST': {

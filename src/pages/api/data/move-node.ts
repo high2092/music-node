@@ -6,7 +6,7 @@ import { db } from '../../../../firebase/firestore';
 import { XYPosition } from 'reactflow';
 
 export default async function moveMusicNode(req: NextApiRequest, res: NextApiResponse) {
-  const id = authenticateToken(req.cookies.token);
+  const { id } = authenticateToken(req.cookies.token);
 
   switch (req.method) {
     case 'POST': {

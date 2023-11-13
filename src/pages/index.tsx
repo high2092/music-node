@@ -3,7 +3,7 @@ import { MusicManager } from '../components/MusicManager/MusicManager';
 import { NodeManager } from '../components/NodeManager/NodeManager';
 import { SearchManager } from '../components/SearchManager/SearchManager';
 import { useAppDispatch, useAppSelector } from '../features/store';
-import { createMusicNodeV2, toggleIsPlaying } from '../features/mainSlice';
+import { createMusicNodeV2, load, toggleIsPlaying } from '../features/mainSlice';
 import { Player } from '../components/MusicPlayer/MusicPlayer';
 import { UpIcon } from '../components/icons/UpIcon';
 import { DownIcon } from '../components/icons/DownIcon';
@@ -14,19 +14,31 @@ import { exitTutorial } from '../features/tutorialSlice';
 import { extractVideoId } from '../utils/youtube';
 import { cursorPointer } from '../components/icons/CursorPointer.css';
 import { currentNodeInfo, homePage, nodeList, nodeManager, searchBox, uiSection, uiSectionContainer } from '../styles/pages/home.css';
-import { useData } from '../hooks/useData';
 import { handleUnauthorized, http } from '../utils/api';
+import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
+import { Music } from '../types/music';
+import { MusicNode } from '../types/musicNode';
+import { HOST } from '../constants/auth';
+import { parse, serialize } from 'cookie';
 
-function Home() {
+interface HomePageProps {
+  readonly: boolean;
+  musics: Record<number, Music>;
+  musicNodes: Record<number, MusicNode>;
+}
+
+function Home({ readonly, musics, musicNodes }: HomePageProps) {
   const dispatch = useAppDispatch();
   const { reactFlowInstance } = useAppSelector((state) => state.main);
   const { tutorials } = useAppSelector((state) => state.tutorial);
 
-  useData();
-
   const [isUiOpen, setIsUiOpen] = useState(true);
 
   const timeoutRef = useRef<NodeJS.Timeout>(null);
+
+  useEffect(() => {
+    dispatch(load({ musics, musicNodes }));
+  }, []);
 
   useEffect(() => {
     const handleSpaceKeyDown = (e: KeyboardEvent) => {
@@ -46,6 +58,8 @@ function Home() {
   }, []);
 
   const handleAnchorDrop = async (e: React.DragEvent) => {
+    if (readonly) return;
+
     const url = e.dataTransfer.getData('text/plain') || e.dataTransfer.getData('text/uri-list');
 
     const videoId = extractVideoId(url);
@@ -81,26 +95,68 @@ function Home() {
         <CurrentNodeInfo />
       </div>
       <div className={nodeManager}>
-        <NodeManager />
+        <NodeManager readonly={readonly} />
       </div>
+
       <div className={uiSectionContainer({ open: isUiOpen })}>
         <div className={cursorPointer} onClick={() => setIsUiOpen(!isUiOpen)}>
           {isUiOpen ? <DownIcon /> : <UpIcon />}
         </div>
         <div className={uiSection} onMouseMove={throttle(handleUiSectionMouseMove, 3 * 초)}>
-          <div className={nodeList}>
-            <MusicManager />
-          </div>
-          <div className={searchBox}>
-            <SearchManager />
-          </div>
-          <div>
-            <Player />
-          </div>
+          {!readonly && (
+            <>
+              <div className={nodeList}>
+                <MusicManager />
+              </div>
+              <div className={searchBox}>
+                <SearchManager />
+              </div>
+            </>
+          )}
+          <Player />
         </div>
       </div>
     </div>
   );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<HomePageProps>> {
+  const { token } = parse(context.req.headers.cookie);
+
+  const cookie = serialize('token', token, {
+    httpOnly: true,
+    maxAge: 60,
+  });
+
+  const response = await http.get(`${HOST}/api/data`, {
+    credentials: 'include',
+    headers: {
+      Cookie: cookie,
+    },
+  });
+
+  if (response.status !== 200) {
+    return {
+      props: {
+        readonly: true,
+        musics: {},
+        musicNodes: {},
+      },
+    };
+  }
+
+  const { musics: musicList, musicNodes: musicNodeList } = await response.json();
+
+  const musics = Object.fromEntries(musicList.map((music: Music) => [music.id, music]));
+  const musicNodes = Object.fromEntries(musicNodeList.map((musicNode: MusicNode) => [musicNode.id, musicNode]));
+
+  return {
+    props: {
+      readonly: false,
+      musics,
+      musicNodes,
+    },
+  };
 }
 
 export default Home;
