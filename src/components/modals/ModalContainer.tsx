@@ -4,6 +4,7 @@ import { ModalType, ModalTypes } from '../../types/modal';
 import { ExportModal } from './ExportModal';
 import { openModal } from '../../features/modalSlice';
 import { NoticeModal } from './NoticeModal/NoticeModal';
+import { HelpModal } from './HelpModal/HelpModal';
 
 type ModalComponents = {
   [key in ModalType]: (...params: any[]) => JSX.Element;
@@ -12,6 +13,7 @@ type ModalComponents = {
 const ModalComponents: ModalComponents = {
   [ModalTypes.EXPORT]: ExportModal,
   [ModalTypes.NOTICE]: NoticeModal,
+  [ModalTypes.HELP]: HelpModal,
 };
 
 const DEFAULT_MODAL_Z_INDEX = 1000;

@@ -20,6 +20,9 @@ import { useEffect, useState } from 'react';
 import { getCookie, setCookieDangerously } from '../../utils/cookie';
 import Link from 'next/link';
 import { HomeIcon } from '../icons/HomeIcon';
+import { HelpIcon } from '../icons/HelpIcon';
+import { openModal } from '../../features/modalSlice';
+import { ModalTypes } from '../../types/modal';
 
 const COOKIE_KEY = 'APPLY_LOCAL';
 
@@ -40,7 +43,7 @@ export function CurrentNodeInfo({ readonly }: CurrentNodeInfoProps) {
   useEffect(() => {
     const code = localStorage.getItem(LOCAL_STORAGE_KEY);
     const alreadyApplyLocal = getCookie(COOKIE_KEY);
-    if (!alreadyApplyLocal && code) setShowLocalDataHelpText(true);
+    if (!alreadyApplyLocal && code && !readonly) setShowLocalDataHelpText(true);
   }, []);
 
   return (
@@ -70,9 +73,8 @@ export function CurrentNodeInfo({ readonly }: CurrentNodeInfoProps) {
             <HomeIcon />
           </Link>
         )}
-        {showLocalDataHelpText &&
-          !readonly &&
-          (isWaiting ? (
+        {showLocalDataHelpText ? (
+          isWaiting ? (
             <span>잠시만 기다려주세요...</span>
           ) : (
             <span
@@ -101,7 +103,12 @@ export function CurrentNodeInfo({ readonly }: CurrentNodeInfoProps) {
             >
               로컬 상태를 서버에 반영하기
             </span>
-          ))}
+          )
+        ) : (
+          <div style={{ position: 'absolute', bottom: 0, left: 2 }} className={login} onClick={() => dispatch(openModal({ type: ModalTypes.HELP }))}>
+            <HelpIcon />
+          </div>
+        )}
       </div>
       <div style={{ position: 'absolute', height: '100%', right: 0, top: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <div className={cursorPointer} onClick={() => pointer && dispatch(setRequireReactFlowNodeFind(pointer))}>
