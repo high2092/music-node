@@ -21,6 +21,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
 
   const cookie = serialize('token', token, {
     httpOnly: true,
+    secure: true,
     maxAge: 60,
   });
 

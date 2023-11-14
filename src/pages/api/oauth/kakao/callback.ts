@@ -59,6 +59,7 @@ export default async function kakaoOAuthCallback(req: NextApiRequest, res: NextA
   const token = await generateToken(userData);
   const cookie = serialize('token', token, {
     httpOnly: true,
+    secure: true,
     sameSite: 'strict',
     path: '/',
     maxAge: 60 * 60 * 24,

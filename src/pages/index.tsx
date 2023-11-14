@@ -92,7 +92,7 @@ function Home({ readonly, musics, musicNodes }: HomePageProps) {
         </div>
       )}
       <div className={currentNodeInfo}>
-        <CurrentNodeInfo />
+        <CurrentNodeInfo readonly={readonly} />
       </div>
       <div className={nodeManager}>
         <NodeManager readonly={readonly} />
@@ -125,6 +125,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
 
   const cookie = serialize('token', token, {
     httpOnly: true,
+    secure: true,
     maxAge: 60,
   });
 

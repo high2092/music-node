@@ -17,11 +17,15 @@ import { LOCAL_STORAGE_KEY } from '../../constants/interface';
 import { decodeV1 } from '../../utils/encoding';
 import { handleUnauthorized, http } from '../../utils/api';
 import { useEffect, useState } from 'react';
-import { getCookie, setCookie } from '../../utils/cookie';
+import { getCookie, setCookieDangerously } from '../../utils/cookie';
 
 const COOKIE_KEY = 'APPLY_LOCAL';
 
-export function CurrentNodeInfo() {
+interface CurrentNodeInfoProps {
+  readonly: boolean;
+}
+
+export function CurrentNodeInfo({ readonly }: CurrentNodeInfoProps) {
   const dispatch = useAppDispatch();
   const { musicNodes, musics, pointer, isPlaying, reactFlowInstance } = useAppSelector((state) => state.main);
   const { showMap } = useAppSelector((state) => state.ui);
@@ -60,6 +64,7 @@ export function CurrentNodeInfo() {
       </div>
       <div style={{ position: 'absolute', height: '100%', left: 0, top: 0 }}>
         {showLocalDataHelpText &&
+          !readonly &&
           (isWaiting ? (
             <span>잠시만 기다려주세요...</span>
           ) : (
@@ -74,6 +79,7 @@ export function CurrentNodeInfo() {
 
                 const response = await http.post('/api/data/set', { musics: Object.values(musics), musicNodes: Object.values(musicNodes) });
 
+                setCookieDangerously(COOKIE_KEY, '1');
                 setShowLocalDataHelpText(false);
 
                 if (response.status === 401) {
@@ -82,7 +88,6 @@ export function CurrentNodeInfo() {
                 }
 
                 if (response.status === 200) {
-                  setCookie(COOKIE_KEY, '1');
                   dispatch(load({ musics, musicNodes }));
                 }
               }}
