@@ -30,7 +30,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@reduxjs/toolkit", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:1.9.5"],\
             ["@types/cookie", "npm:0.5.4"],\
-            ["@types/jsonwebtoken", "npm:9.0.5"],\
             ["@types/lodash", "npm:4.14.195"],\
             ["@types/node", "npm:20.2.3"],\
             ["@types/react", "npm:18.2.7"],\
@@ -40,7 +39,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["axios", "npm:1.6.1"],\
             ["cookie", "npm:0.6.0"],\
             ["firebase", "npm:10.6.0"],\
-            ["jsonwebtoken", "npm:9.0.2"],\
+            ["jose", "npm:5.1.1"],\
             ["lodash", "npm:4.17.21"],\
             ["next", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:13.4.3"],\
             ["next-pwa", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:5.6.0"],\
@@ -5124,16 +5123,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["@types/jsonwebtoken", [\
-        ["npm:9.0.5", {\
-          "packageLocation": "./.yarn/cache/@types-jsonwebtoken-npm-9.0.5-523ec98552-07ab6fee60.zip/node_modules/@types/jsonwebtoken/",\
-          "packageDependencies": [\
-            ["@types/jsonwebtoken", "npm:9.0.5"],\
-            ["@types/node", "npm:20.2.4"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
       ["@types/lodash", [\
         ["npm:4.14.195", {\
           "packageLocation": "./.yarn/cache/@types-lodash-npm-4.14.195-a2a8254638-39b75ca635.zip/node_modules/@types/lodash/",\
@@ -5784,15 +5773,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["buffer-equal-constant-time", [\
-        ["npm:1.0.1", {\
-          "packageLocation": "./.yarn/cache/buffer-equal-constant-time-npm-1.0.1-41826f3419-80bb945f5d.zip/node_modules/buffer-equal-constant-time/",\
-          "packageDependencies": [\
-            ["buffer-equal-constant-time", "npm:1.0.1"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
       ["buffer-from", [\
         ["npm:1.1.2", {\
           "packageLocation": "./.yarn/cache/buffer-from-npm-1.1.2-03d2f20d7e-0448524a56.zip/node_modules/buffer-from/",\
@@ -6374,16 +6354,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["dir-glob", "npm:3.0.1"],\
             ["path-type", "npm:4.0.0"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["ecdsa-sig-formatter", [\
-        ["npm:1.0.11", {\
-          "packageLocation": "./.yarn/cache/ecdsa-sig-formatter-npm-1.0.11-b6784e7852-207f9ab1c2.zip/node_modules/ecdsa-sig-formatter/",\
-          "packageDependencies": [\
-            ["ecdsa-sig-formatter", "npm:1.0.11"],\
-            ["safe-buffer", "npm:5.2.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -7625,6 +7595,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["jose", [\
+        ["npm:5.1.1", {\
+          "packageLocation": "./.yarn/cache/jose-npm-5.1.1-f3cb9e07bf-3a18d85dd1.zip/node_modules/jose/",\
+          "packageDependencies": [\
+            ["jose", "npm:5.1.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["js-tokens", [\
         ["npm:4.0.0", {\
           "packageLocation": "./.yarn/cache/js-tokens-npm-4.0.0-0ac852e9e2-8a95213a5a.zip/node_modules/js-tokens/",\
@@ -7713,48 +7692,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["jsonwebtoken", [\
-        ["npm:9.0.2", {\
-          "packageLocation": "./.yarn/cache/jsonwebtoken-npm-9.0.2-42c6b14d02-fc739a6a8b.zip/node_modules/jsonwebtoken/",\
-          "packageDependencies": [\
-            ["jsonwebtoken", "npm:9.0.2"],\
-            ["jws", "npm:3.2.2"],\
-            ["lodash.includes", "npm:4.3.0"],\
-            ["lodash.isboolean", "npm:3.0.3"],\
-            ["lodash.isinteger", "npm:4.0.4"],\
-            ["lodash.isnumber", "npm:3.0.3"],\
-            ["lodash.isplainobject", "npm:4.0.6"],\
-            ["lodash.isstring", "npm:4.0.1"],\
-            ["lodash.once", "npm:4.1.1"],\
-            ["ms", "npm:2.1.3"],\
-            ["semver", "npm:7.5.4"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["jwa", [\
-        ["npm:1.4.1", {\
-          "packageLocation": "./.yarn/cache/jwa-npm-1.4.1-4f19d6572c-ff30ea7c2d.zip/node_modules/jwa/",\
-          "packageDependencies": [\
-            ["jwa", "npm:1.4.1"],\
-            ["buffer-equal-constant-time", "npm:1.0.1"],\
-            ["ecdsa-sig-formatter", "npm:1.0.11"],\
-            ["safe-buffer", "npm:5.2.1"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["jws", [\
-        ["npm:3.2.2", {\
-          "packageLocation": "./.yarn/cache/jws-npm-3.2.2-c1ae59c7af-f0213fe5b7.zip/node_modules/jws/",\
-          "packageDependencies": [\
-            ["jws", "npm:3.2.2"],\
-            ["jwa", "npm:1.4.1"],\
-            ["safe-buffer", "npm:5.2.1"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
       ["leven", [\
         ["npm:3.1.0", {\
           "packageLocation": "./.yarn/cache/leven-npm-3.1.0-b7697736a3-638401d534.zip/node_modules/leven/",\
@@ -7826,69 +7763,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/lodash.debounce-npm-4.0.8-f1d6e09799-a3f527d22c.zip/node_modules/lodash.debounce/",\
           "packageDependencies": [\
             ["lodash.debounce", "npm:4.0.8"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["lodash.includes", [\
-        ["npm:4.3.0", {\
-          "packageLocation": "./.yarn/cache/lodash.includes-npm-4.3.0-3a2f6fa22c-71092c1305.zip/node_modules/lodash.includes/",\
-          "packageDependencies": [\
-            ["lodash.includes", "npm:4.3.0"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["lodash.isboolean", [\
-        ["npm:3.0.3", {\
-          "packageLocation": "./.yarn/cache/lodash.isboolean-npm-3.0.3-b575b41488-b70068b4a8.zip/node_modules/lodash.isboolean/",\
-          "packageDependencies": [\
-            ["lodash.isboolean", "npm:3.0.3"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["lodash.isinteger", [\
-        ["npm:4.0.4", {\
-          "packageLocation": "./.yarn/cache/lodash.isinteger-npm-4.0.4-42add9f4e1-6034821b3f.zip/node_modules/lodash.isinteger/",\
-          "packageDependencies": [\
-            ["lodash.isinteger", "npm:4.0.4"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["lodash.isnumber", [\
-        ["npm:3.0.3", {\
-          "packageLocation": "./.yarn/cache/lodash.isnumber-npm-3.0.3-b3bb5f7347-913784275b.zip/node_modules/lodash.isnumber/",\
-          "packageDependencies": [\
-            ["lodash.isnumber", "npm:3.0.3"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["lodash.isplainobject", [\
-        ["npm:4.0.6", {\
-          "packageLocation": "./.yarn/cache/lodash.isplainobject-npm-4.0.6-d73937742f-29c6351f28.zip/node_modules/lodash.isplainobject/",\
-          "packageDependencies": [\
-            ["lodash.isplainobject", "npm:4.0.6"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["lodash.isstring", [\
-        ["npm:4.0.1", {\
-          "packageLocation": "./.yarn/cache/lodash.isstring-npm-4.0.1-721fee791c-eaac87ae96.zip/node_modules/lodash.isstring/",\
-          "packageDependencies": [\
-            ["lodash.isstring", "npm:4.0.1"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["lodash.once", [\
-        ["npm:4.1.1", {\
-          "packageLocation": "./.yarn/cache/lodash.once-npm-4.1.1-d8ba329ead-d768fa9f9b.zip/node_modules/lodash.once/",\
-          "packageDependencies": [\
-            ["lodash.once", "npm:4.1.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -8200,7 +8074,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["musicnode-demo", "workspace:."],\
             ["@reduxjs/toolkit", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:1.9.5"],\
             ["@types/cookie", "npm:0.5.4"],\
-            ["@types/jsonwebtoken", "npm:9.0.5"],\
             ["@types/lodash", "npm:4.14.195"],\
             ["@types/node", "npm:20.2.3"],\
             ["@types/react", "npm:18.2.7"],\
@@ -8210,7 +8083,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["axios", "npm:1.6.1"],\
             ["cookie", "npm:0.6.0"],\
             ["firebase", "npm:10.6.0"],\
-            ["jsonwebtoken", "npm:9.0.2"],\
+            ["jose", "npm:5.1.1"],\
             ["lodash", "npm:4.17.21"],\
             ["next", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:13.4.3"],\
             ["next-pwa", "virtual:d7a028f5c67c30aabed510c8543d01d24a8ab4955d111b8e02faf50f91a4d9ebbb320f2b79dc20180bd748cb424d0606b77175c424a9bf4fd926518a4e57e0ef#npm:5.6.0"],\
@@ -9302,14 +9175,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/semver-npm-7.5.1-0736382fb9-d16dbedad5.zip/node_modules/semver/",\
           "packageDependencies": [\
             ["semver", "npm:7.5.1"],\
-            ["lru-cache", "npm:6.0.0"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["npm:7.5.4", {\
-          "packageLocation": "./.yarn/cache/semver-npm-7.5.4-c4ad957fcd-12d8ad952f.zip/node_modules/semver/",\
-          "packageDependencies": [\
-            ["semver", "npm:7.5.4"],\
             ["lru-cache", "npm:6.0.0"]\
           ],\
           "linkType": "HARD"\
