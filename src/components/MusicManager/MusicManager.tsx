@@ -67,9 +67,12 @@ export function MusicManager() {
 
   return (
     <>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <label style={{ width: 'max-content' }}>필터</label>
-        <input onChange={(e) => setFilterQuery(e.target.value)} onKeyDown={(e) => e.stopPropagation()} value={filterQuery} />
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>내 음악목록</div>
+        <div>
+          <label style={{ width: 'max-content' }}>필터</label>
+          <input onChange={(e) => setFilterQuery(e.target.value)} onKeyDown={(e) => e.stopPropagation()} value={filterQuery} />
+        </div>
       </div>
       <div className={musicList} style={{ height: '88%' }}>
         {filteredMusicList.map(({ id, name, videoId }) => (
