@@ -30,6 +30,7 @@ export const description = style({
 
 export const nextButton = recipe({
   base: {
+    padding: '0 0.5rem',
     display: 'flex',
     alignItems: 'center',
     cursor: 'pointer',
