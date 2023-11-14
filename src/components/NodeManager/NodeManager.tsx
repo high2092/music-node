@@ -142,9 +142,10 @@ export function NodeManager({ readonly }: NodeManagerProps) {
 
   const handleDrop = useCallback(
     async (e: React.DragEvent) => {
+      e.preventDefault();
+
       if (readonly) return;
 
-      e.preventDefault();
       const data = e.dataTransfer.getData(MUSIC_DATA_TRANSFER_KEY);
       if (!data) return;
       const { musicId, name, videoId } = JSON.parse(data);
