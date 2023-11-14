@@ -12,7 +12,7 @@ import { MapIcon } from '../icons/MapIcon';
 import { setShowMap } from '../../features/uiSlice';
 import { EmptyMapIcon } from '../icons/EmptyMapIcon';
 import { cursorPointer } from '../icons/CursorPointer.css';
-import { cdIcon, login } from './CurrentNodeInfo.css';
+import { cdIcon, helpButton, login } from './CurrentNodeInfo.css';
 import { LOCAL_STORAGE_KEY } from '../../constants/interface';
 import { decodeV1 } from '../../utils/encoding';
 import { handleUnauthorized, http } from '../../utils/api';
@@ -30,6 +30,8 @@ interface CurrentNodeInfoProps {
   readonly: boolean;
 }
 
+const TUTORIAL_COOKIE_KEY = 'MNODE_VISIT';
+
 export function CurrentNodeInfo({ readonly }: CurrentNodeInfoProps) {
   const dispatch = useAppDispatch();
   const { musicNodes, musics, pointer, isPlaying, reactFlowInstance } = useAppSelector((state) => state.main);
@@ -37,8 +39,14 @@ export function CurrentNodeInfo({ readonly }: CurrentNodeInfoProps) {
 
   const [showLocalDataHelpText, setShowLocalDataHelpText] = useState(false);
   const [isWaiting, setIsWaiting] = useState(false);
+  const [tutorial, setTutorial] = useState(false);
 
   const currentMusicName = musics[musicNodes[pointer]?.musicId]?.name;
+
+  useEffect(() => {
+    const visited = getCookie(TUTORIAL_COOKIE_KEY);
+    if (!visited) setTutorial(true);
+  }, []);
 
   useEffect(() => {
     const code = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -105,7 +113,15 @@ export function CurrentNodeInfo({ readonly }: CurrentNodeInfoProps) {
             </span>
           )
         ) : (
-          <div style={{ position: 'absolute', bottom: 0, left: 2 }} className={login} onClick={() => dispatch(openModal({ type: ModalTypes.HELP }))}>
+          <div
+            style={{ position: 'absolute', bottom: 0, left: 2 }}
+            className={helpButton({ tutorial })}
+            onClick={() => {
+              setTutorial(false);
+              setCookieDangerously(TUTORIAL_COOKIE_KEY, '1');
+              dispatch(openModal({ type: ModalTypes.HELP }));
+            }}
+          >
             <HelpIcon />
           </div>
         )}

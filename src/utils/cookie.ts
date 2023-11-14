@@ -4,5 +4,5 @@ export function getCookie(key: string) {
 }
 
 export function setCookieDangerously(key: string, value: string) {
-  document.cookie = `${key}=${value} expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+  document.cookie = `${key}=${value}; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
 }
