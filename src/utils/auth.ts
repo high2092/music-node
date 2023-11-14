@@ -1,20 +1,21 @@
-import jwt from 'jsonwebtoken';
+import { SignJWT, jwtVerify } from 'jose';
 import { JWT_SECRET } from '../constants/auth';
 
 type UserId = number;
 
-interface UserData {
+export interface UserData {
   id: UserId;
   kakaoId: number;
-  username: string;
+  username?: string;
 }
 
-export function authenticateToken(token: string): UserData {
-  try {
-    return jwt.verify(token, JWT_SECRET) as UserData;
-  } catch {
-    return { id: undefined, kakaoId: undefined, username: undefined };
-  }
+export async function authenticateToken(token: string): Promise<UserData> {
+  const { payload } = await jwtVerify(token, new TextEncoder().encode(JWT_SECRET));
+  const { id, kakaoId, username } = payload as unknown as UserData;
+  return { id, kakaoId, username };
 }
 
-class AuthenticationError extends Error {}
+export async function generateToken(data: UserData): Promise<string> {
+  const iat = Math.floor(Date.now() / 1000);
+  return await new SignJWT({ ...data }).setProtectedHeader({ alg: 'HS256', typ: 'JWT' }).setExpirationTime('1d').setIssuedAt(iat).setNotBefore(iat).sign(new TextEncoder().encode(JWT_SECRET));
+}

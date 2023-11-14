@@ -4,7 +4,7 @@ import { authenticateToken } from '../../../utils/auth';
 import { getMusicDbRef, getUserDbRef } from '../../../utils/db';
 
 export default async function renameMusic(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = authenticateToken(req.cookies.token);
+  const { id } = await authenticateToken(req.cookies.token);
 
   switch (req.method) {
     case 'POST': {

@@ -6,7 +6,7 @@ import { db } from '../../../../firebase/firestore';
 
 // INFO: DELETE body undefined 이슈로 인해 POST 메소드를 사용함
 export default async function deleteMusicNode(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = authenticateToken(req.cookies.token);
+  const { id } = await authenticateToken(req.cookies.token);
 
   switch (req.method) {
     case 'POST': {

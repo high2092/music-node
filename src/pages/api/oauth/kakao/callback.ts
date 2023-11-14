@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
 import { serialize } from 'cookie';
-import jwt from 'jsonwebtoken';
-import { JWT_SECRET, REDIRECT_URI } from '../../../../constants/auth';
+import { REDIRECT_URI } from '../../../../constants/auth';
 import { db } from '../../../../../firebase/firestore';
 import { collection, query, where, doc, getDocs, runTransaction } from 'firebase/firestore';
 import { getMusicNodeSequenceDbRef, getMusicSequenceDbRef, getUserDbRef } from '../../../../utils/db';
+import { UserData, generateToken } from '../../../../utils/auth';
 
 const userDbRef = collection(db, 'user');
 const userSequenceRef = doc(db, 'app', 'user_sequence');
@@ -37,7 +37,7 @@ export default async function kakaoOAuthCallback(req: NextApiRequest, res: NextA
   // DB 검색
   const q = query(userDbRef, where('kakaoId', '==', kakaoId));
   const user = (await getDocs(q)).docs[0];
-  let userData = user?.data();
+  let userData = user?.data() as UserData;
 
   if (!user) {
     // 회원가입
@@ -56,7 +56,7 @@ export default async function kakaoOAuthCallback(req: NextApiRequest, res: NextA
     });
   }
 
-  const token = jwt.sign(userData, JWT_SECRET, { expiresIn: '1d' });
+  const token = await generateToken(userData);
   const cookie = serialize('token', token, {
     httpOnly: true,
     sameSite: 'strict',

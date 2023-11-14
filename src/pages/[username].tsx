@@ -31,7 +31,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     },
   });
 
-  const { username } = await authResponse.json();
+  const { username } = authResponse.status === 200 ? await authResponse.json() : { username: undefined };
 
   if (context.params.username === username) {
     return {
