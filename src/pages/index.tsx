@@ -20,6 +20,7 @@ import { Music } from '../types/music';
 import { MusicNode } from '../types/musicNode';
 import { HOST } from '../constants/auth';
 import { parse, serialize } from 'cookie';
+import { LoginModal } from '../components/modals/SignUpModal/LoginModal';
 
 interface HomePageProps {
   readonly: boolean;
@@ -35,6 +36,14 @@ function Home({ readonly, musics, musicNodes }: HomePageProps) {
   const [isUiOpen, setIsUiOpen] = useState(true);
 
   const timeoutRef = useRef<NodeJS.Timeout>(null);
+
+  const [showLogin, setShowLogin] = useState(false);
+
+  useEffect(() => {
+    http.get('/api/auth').then((response) => {
+      if (response.status === 401 && readonly === false) setShowLogin(true);
+    });
+  }, []);
 
   useEffect(() => {
     dispatch(load({ musics, musicNodes }));
@@ -116,6 +125,7 @@ function Home({ readonly, musics, musicNodes }: HomePageProps) {
           <Player />
         </div>
       </div>
+      {showLogin && <LoginModal zIndex={592} />}
     </div>
   );
 }
@@ -139,7 +149,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
   if (response.status !== 200) {
     return {
       props: {
-        readonly: true,
+        readonly: false,
         musics: {},
         musicNodes: {},
       },

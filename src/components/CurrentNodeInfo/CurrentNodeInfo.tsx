@@ -18,6 +18,8 @@ import { decodeV1 } from '../../utils/encoding';
 import { handleUnauthorized, http } from '../../utils/api';
 import { useEffect, useState } from 'react';
 import { getCookie, setCookieDangerously } from '../../utils/cookie';
+import Link from 'next/link';
+import { HomeIcon } from '../icons/HomeIcon';
 
 const COOKIE_KEY = 'APPLY_LOCAL';
 
@@ -63,6 +65,11 @@ export function CurrentNodeInfo({ readonly }: CurrentNodeInfoProps) {
         </div>
       </div>
       <div style={{ position: 'absolute', height: '100%', left: 0, top: 0 }}>
+        {readonly && (
+          <Link href="/" className={login}>
+            <HomeIcon />
+          </Link>
+        )}
         {showLocalDataHelpText &&
           !readonly &&
           (isWaiting ? (
