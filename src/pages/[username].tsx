@@ -17,7 +17,7 @@ function Other({ readonly, musics, musicNodes }: OtherPageProps) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<OtherPageProps>> {
-  const { token } = parse(context.req.headers.cookie);
+  const { token } = parse(context.req.headers?.cookie ?? '');
 
   const cookie = serialize('token', token, {
     httpOnly: true,

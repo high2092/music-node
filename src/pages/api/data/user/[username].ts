@@ -6,7 +6,7 @@ import { authenticateToken } from '../../../../utils/auth';
 const userDbRef = collection(db, 'user');
 
 export default async function musicNodeData(req: NextApiRequest, res: NextApiResponse) {
-  const { username } = await authenticateToken(req.cookies.token);
+  const username = await getUsername(req.cookies.token);
 
   // 공개 여부 검사
   const q = query(userDbRef, where('username', '==', req.query.username));
@@ -29,4 +29,13 @@ export default async function musicNodeData(req: NextApiRequest, res: NextApiRes
   const musicNodes = (await getDocs(musicNodeDbRef)).docs.map((doc) => doc.data());
 
   return res.json({ musics, musicNodes });
+}
+
+async function getUsername(token: string): Promise<string> {
+  try {
+    const { username } = await authenticateToken(token);
+    return username;
+  } catch {
+    return '';
+  }
 }

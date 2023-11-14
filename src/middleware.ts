@@ -13,5 +13,16 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/api/data/:path*', '/api/auth'],
+  matcher: [
+    '/api/auth',
+    '/api/data/connect-node',
+    '/api/data/delete-node',
+    '/api/data/disconnect-node',
+    '/api/data',
+    '/api/data/move-node',
+    '/api/data/music-node',
+    '/api/data/node',
+    '/api/data/rename-music',
+    '/api/data/set',
+  ],
 };

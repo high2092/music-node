@@ -121,7 +121,7 @@ function Home({ readonly, musics, musicNodes }: HomePageProps) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<HomePageProps>> {
-  const { token } = parse(context.req.headers.cookie);
+  const { token } = parse(context.req.headers?.cookie ?? '');
 
   const cookie = serialize('token', token, {
     httpOnly: true,
