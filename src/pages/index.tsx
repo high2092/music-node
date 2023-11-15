@@ -19,6 +19,7 @@ import { Music } from '../types/music';
 import { MusicNode } from '../types/musicNode';
 import { LoginModal } from '../components/modals/SignUpModal/LoginModal';
 import { preload } from '../utils/ux';
+import { Spinner } from '../components/LoadingSpinner/LoadingSpinner';
 
 interface HomePageProps {
   username?: string;
@@ -117,7 +118,12 @@ function Home({ username: paramUsername }: HomePageProps) {
     }, 1 * 분);
   };
 
-  if (!mounted) return <div className={homePage} />;
+  if (!mounted)
+    return (
+      <div className={homePage}>
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className={homePage} onDrop={handleAnchorDrop}>
