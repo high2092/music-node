@@ -35,7 +35,7 @@ function Home({ username: paramUsername }: HomePageProps) {
   const timeoutRef = useRef<NodeJS.Timeout>(null);
 
   const [showLogin, setShowLogin] = useState(false);
-  const [readonly, setReadonly] = useState(false);
+  const [readonly, setReadonly] = useState(true);
 
   const [mounted, setMounted] = useState(false);
 
@@ -44,9 +44,8 @@ function Home({ username: paramUsername }: HomePageProps) {
 
     const { username: myName } = authResponse.status === 200 ? await authResponse.json() : { username: undefined };
 
-    setReadonly(!!paramUsername);
-
     if (!paramUsername) {
+      setReadonly(false);
       if (!myName) {
         setShowLogin(true);
         return;
@@ -67,6 +66,7 @@ function Home({ username: paramUsername }: HomePageProps) {
 
   useEffect(() => {
     dispatch(load({ musics: {}, musicNodes: {} }));
+    if (process.env.NODE_ENV === 'development') return;
     fetchData().then(() => setMounted(true));
   }, []);
 
