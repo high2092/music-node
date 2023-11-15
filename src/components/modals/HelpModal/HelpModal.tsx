@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { PreparedModalProps } from '../../../types/modal';
 import { CenteredModal } from '../Modal/Modal';
 import { container, content, description, image, navigator, nextButton } from './HelpModal.css';
+import { preload } from '../../../utils/ux';
 
 export function HelpModal({ zIndex }: PreparedModalProps) {
   useEffect(() => {}, []);
@@ -87,18 +88,5 @@ function DisconnectNode() {
         연결선을 <span>클릭</span>하고 <span>백스페이스</span> 키를 눌러 노드 연결을 끊을 수 있어요
       </div>
     </div>
-  );
-}
-
-async function preload(pathList: string[]) {
-  await Promise.all(
-    pathList.map(
-      (path) =>
-        new Promise<void>((resolve) => {
-          const image = new Image();
-          image.onload = image.onerror = () => resolve();
-          image.src = `/image/guide/${path}.gif`;
-        })
-    )
   );
 }

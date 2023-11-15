@@ -18,6 +18,7 @@ import { handleUnauthorized, http } from '../utils/api';
 import { Music } from '../types/music';
 import { MusicNode } from '../types/musicNode';
 import { LoginModal } from '../components/modals/SignUpModal/LoginModal';
+import { preload } from '../utils/ux';
 
 interface HomePageProps {
   username?: string;
@@ -66,6 +67,10 @@ function Home({ username: paramUsername }: HomePageProps) {
   useEffect(() => {
     dispatch(load({ musics: {}, musicNodes: {} }));
     fetchData().then(() => setMounted(true));
+  }, []);
+
+  useEffect(() => {
+    preload(['add-node-2']);
   }, []);
 
   useEffect(() => {
