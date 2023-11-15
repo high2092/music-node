@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { MusicManager } from '../components/MusicManager/MusicManager';
 import { NodeManager } from '../components/NodeManager/NodeManager';
 import { SearchManager } from '../components/SearchManager/SearchManager';
@@ -15,20 +15,15 @@ import { extractVideoId } from '../utils/youtube';
 import { cursorPointer } from '../components/icons/CursorPointer.css';
 import { currentNodeInfo, homePage, nodeList, nodeManager, searchBox, uiSection, uiSectionContainer } from '../styles/pages/home.css';
 import { handleUnauthorized, http } from '../utils/api';
-import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import { Music } from '../types/music';
 import { MusicNode } from '../types/musicNode';
-import { HOST } from '../constants/auth';
-import { parse, serialize } from 'cookie';
 import { LoginModal } from '../components/modals/SignUpModal/LoginModal';
 
 interface HomePageProps {
-  readonly: boolean;
-  musics: Record<number, Music>;
-  musicNodes: Record<number, MusicNode>;
+  username?: string;
 }
 
-function Home({ readonly, musics, musicNodes }: HomePageProps) {
+function Home({ username: paramUsername }: HomePageProps) {
   const dispatch = useAppDispatch();
   const { reactFlowInstance } = useAppSelector((state) => state.main);
   const { tutorials } = useAppSelector((state) => state.tutorial);
@@ -38,15 +33,39 @@ function Home({ readonly, musics, musicNodes }: HomePageProps) {
   const timeoutRef = useRef<NodeJS.Timeout>(null);
 
   const [showLogin, setShowLogin] = useState(false);
+  const [readonly, setReadonly] = useState(false);
 
-  useEffect(() => {
-    http.get('/api/auth').then((response) => {
-      if (response.status === 401 && readonly === false) setShowLogin(true);
-    });
+  const [mounted, setMounted] = useState(false);
+
+  const fetchData = useCallback(async () => {
+    const authResponse = await http.get('/api/auth');
+
+    const { username: myName } = authResponse.status === 200 ? await authResponse.json() : { username: undefined };
+
+    setReadonly(!!paramUsername);
+
+    if (!paramUsername) {
+      if (!myName) {
+        setShowLogin(true);
+        return;
+      }
+    }
+
+    const response = await http.get(paramUsername ? `/api/data/user/${paramUsername}` : '/api/data');
+
+    if (response.status !== 200) return;
+
+    const { musics: musicList, musicNodes: musicNodeList } = await response.json();
+
+    const musics = Object.fromEntries(musicList.map((music: Music) => [music.id, music]));
+    const musicNodes = Object.fromEntries(musicNodeList.map((musicNode: MusicNode) => [musicNode.id, musicNode]));
+
+    dispatch(load({ musics, musicNodes }));
   }, []);
 
   useEffect(() => {
-    dispatch(load({ musics, musicNodes }));
+    dispatch(load({ musics: {}, musicNodes: {} }));
+    fetchData().then(() => setMounted(true));
   }, []);
 
   useEffect(() => {
@@ -93,6 +112,8 @@ function Home({ readonly, musics, musicNodes }: HomePageProps) {
     }, 1 * 분);
   };
 
+  if (!mounted) return <div className={homePage} />;
+
   return (
     <div className={homePage} onDrop={handleAnchorDrop}>
       {Object.values(tutorials).findIndex((tutorial) => tutorial) !== -1 && (
@@ -128,46 +149,6 @@ function Home({ readonly, musics, musicNodes }: HomePageProps) {
       {showLogin && <LoginModal zIndex={592} />}
     </div>
   );
-}
-
-export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<HomePageProps>> {
-  const { token } = parse(context.req.headers?.cookie ?? '');
-
-  const cookie = serialize('token', token, {
-    httpOnly: true,
-    secure: true,
-    maxAge: 60,
-  });
-
-  const response = await http.get(`${HOST}/api/data`, {
-    credentials: 'include',
-    headers: {
-      Cookie: cookie,
-    },
-  });
-
-  if (response.status !== 200) {
-    return {
-      props: {
-        readonly: false,
-        musics: {},
-        musicNodes: {},
-      },
-    };
-  }
-
-  const { musics: musicList, musicNodes: musicNodeList } = await response.json();
-
-  const musics = Object.fromEntries(musicList.map((music: Music) => [music.id, music]));
-  const musicNodes = Object.fromEntries(musicNodeList.map((musicNode: MusicNode) => [musicNode.id, musicNode]));
-
-  return {
-    props: {
-      readonly: false,
-      musics,
-      musicNodes,
-    },
-  };
 }
 
 export default Home;

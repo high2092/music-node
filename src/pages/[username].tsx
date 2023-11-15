@@ -1,22 +1,20 @@
+import { parse, serialize } from 'cookie';
 import Home from '.';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
-import { Music } from '../types/music';
-import { MusicNode } from '../types/musicNode';
-import { parse, serialize } from 'cookie';
-import { HOST } from '../constants/auth';
 import { http } from '../utils/api';
+import { HOST } from '../constants/auth';
 
 interface OtherPageProps {
-  readonly: boolean;
-  musics: Record<number, Music>;
-  musicNodes: Record<number, MusicNode>;
+  username: string;
 }
 
-function Other({ readonly, musics, musicNodes }: OtherPageProps) {
-  return <Home readonly={readonly} musics={musics} musicNodes={musicNodes} />;
+function Other({ username }: OtherPageProps) {
+  return <Home username={username} />;
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<OtherPageProps>> {
+  const username = context.params.username as string;
+
   const { token } = parse(context.req.headers?.cookie ?? '');
 
   const cookie = serialize('token', token, {
@@ -32,9 +30,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
     },
   });
 
-  const { username } = authResponse.status === 200 ? await authResponse.json() : { username: undefined };
+  const { username: myName } = authResponse.status === 200 ? await authResponse.json() : { username: undefined };
 
-  if (context.params.username === username) {
+  if (username === myName) {
     return {
       redirect: {
         destination: '/',
@@ -42,36 +40,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
       },
     };
   }
-
-  const response = await http.get(`${HOST}/api/data/user/${context.params.username}`, {
-    credentials: 'include',
-    headers: {
-      Cookie: cookie,
-    },
-  });
-
-  if (response.status !== 200) {
-    return {
-      props: {
-        readonly: true,
-        musics: {},
-        musicNodes: {},
-      },
-    };
-  }
-
-  const { musics: musicList, musicNodes: musicNodeList } = await response.json();
-
-  const musics = Object.fromEntries(musicList.map((music: Music) => [music.id, music]));
-  const musicNodes = Object.fromEntries(musicNodeList.map((musicNode: MusicNode) => [musicNode.id, musicNode]));
-
-  return {
-    props: {
-      readonly: true,
-      musics,
-      musicNodes,
-    },
-  };
+  return { props: { username } };
 }
 
 export default Other;
