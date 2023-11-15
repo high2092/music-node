@@ -12,5 +12,6 @@ export default async function musicNodeData(req: NextApiRequest, res: NextApiRes
   const musics = (await getDocs(musicDbRef)).docs.map((doc) => doc.data());
   const musicNodes = (await getDocs(musicNodeDbRef)).docs.map((doc) => doc.data());
 
+  res.setHeader('Cache-Control', 'max-age=10');
   return res.json({ musics, musicNodes });
 }
