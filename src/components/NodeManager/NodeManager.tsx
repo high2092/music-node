@@ -171,6 +171,10 @@ export function NodeManager({ readonly }: NodeManagerProps) {
     [reactFlowInstance, inProgress]
   );
 
+  const handleNodeClick = useCallback(() => {
+    clearTimeout(timeoutRef.current);
+  }, []);
+
   const handleNodeDoubleClick = useCallback((e: React.MouseEvent, { id }: Node) => {
     clearTimeout(timeoutRef.current);
     dispatch(playNode(Number(id)));
@@ -236,6 +240,7 @@ export function NodeManager({ readonly }: NodeManagerProps) {
         onConnect={onConnect}
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
+        onClick={handleNodeClick}
         onNodeDoubleClick={handleNodeDoubleClick}
         onMouseDownCapture={handleReactFlowMouseDownCapture}
         onMouseUpCapture={handleReactFlowMouseUpCapture}
