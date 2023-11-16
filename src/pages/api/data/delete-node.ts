@@ -18,13 +18,15 @@ export default async function deleteMusicNode(req: NextApiRequest, res: NextApiR
 
       const batch = writeBatch(db);
 
-      const prevs: QueryDocumentSnapshot[] = await Promise.all(
-        nodeIdList.map(async (nodeId: number) => {
-          const q = query(musicNodeDbRef, where('next', '==', nodeId));
-          const node = (await getDocs(q)).docs[0];
-          return node;
-        })
-      );
+      const prevs: QueryDocumentSnapshot[] = (
+        await Promise.all(
+          nodeIdList.map(async (nodeId: number) => {
+            const q = query(musicNodeDbRef, where('next', '==', nodeId));
+            const node = (await getDocs(q)).docs[0];
+            return node;
+          })
+        )
+      ).filter((node) => node);
 
       prevs.forEach((prev) => batch.set(prev.ref, { ...prev.data(), next: null }));
 
