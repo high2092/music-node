@@ -66,7 +66,7 @@ function Home({ username: paramUsername }: HomePageProps) {
 
   useEffect(() => {
     dispatch(load({ musics: {}, musicNodes: {} }));
-    if (process.env.NODE_ENV === 'development') return;
+    // if (process.env.NODE_ENV === 'development') return;
     fetchData().then(() => dispatch(setMounted(true)));
   }, []);
 
@@ -151,16 +151,12 @@ function Home({ username: paramUsername }: HomePageProps) {
           {isUiOpen ? <DownIcon /> : <UpIcon />}
         </div>
         <div className={uiSection} onMouseMove={throttle(handleUiSectionMouseMove, 3 * 초)}>
-          {!readonly && (
-            <>
-              <div className={nodeList}>
-                <MusicManager />
-              </div>
-              <div className={searchBox}>
-                <SearchManager />
-              </div>
-            </>
-          )}
+          <div className={nodeList}>
+            <MusicManager readonly={readonly} />
+          </div>
+          <div className={searchBox}>
+            <SearchManager readonly={readonly} />
+          </div>
           <Player />
         </div>
       </div>

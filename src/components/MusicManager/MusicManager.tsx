@@ -12,7 +12,11 @@ import { row } from '../../styles/components/row.css';
 import { musicList } from './MusicManager.css';
 import { handleUnauthorized, http } from '../../utils/api';
 
-export function MusicManager() {
+interface MusicManagerProps {
+  readonly: boolean;
+}
+
+export function MusicManager({ readonly }: MusicManagerProps) {
   const dispatch = useAppDispatch();
   const { musics, musicSequence, findMusicId, findDepth, foundNodeList } = useAppSelector((state) => state.main);
   const { tutorials } = useAppSelector((state) => state.tutorial);
@@ -68,7 +72,7 @@ export function MusicManager() {
   return (
     <>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>내 음악목록</div>
+        <div>{`${readonly ? '' : '내 '}음악목록`}</div>
         <div>
           <label style={{ width: 'max-content' }}>필터</label>
           <input onChange={(e) => setFilterQuery(e.target.value)} onKeyDown={(e) => e.stopPropagation()} value={filterQuery} />
@@ -85,8 +89,14 @@ export function MusicManager() {
               ) : (
                 <div>
                   <div style={{ display: 'inline' }}>{name}</div>
-                  <div className={cursorPointer} style={{ marginLeft: '0.5rem', display: 'inline', verticalAlign: 'middle' }} onClick={() => setEditingMusicId(id)}>
-                    {id === hoveredMusicId ? <EditIcon /> : <BlankIcon />}
+                  <div style={{ marginLeft: '0.5rem', display: 'inline', verticalAlign: 'middle' }}>
+                    {id === hoveredMusicId && !readonly ? (
+                      <span className={cursorPointer} onClick={() => setEditingMusicId(id)}>
+                        <EditIcon />
+                      </span>
+                    ) : (
+                      <BlankIcon />
+                    )}
                   </div>
                 </div>
               )}

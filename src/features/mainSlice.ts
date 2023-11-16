@@ -46,6 +46,11 @@ const initialState: MainState = {
   log: new CircularQueue<string>(20),
 };
 
+interface CreateNodePayload {
+  musicId: number;
+  position: XYPosition;
+}
+
 interface ConnectNodePayload {
   source: string;
   target: string;
@@ -78,10 +83,10 @@ export const mainSlice = createSlice({
       addMusicInternal(state, id, name, videoId);
     },
 
-    createMusicNode(state, action: PayloadAction<MusicNode>) {
-      const { id, musicId, position } = action.payload;
-      state.log.enqueue(`create node ${id}`);
-      createMusicNodeInternal(state, id, musicId, position);
+    createMusicNode(state, action: PayloadAction<CreateNodePayload>) {
+      const { musicId, position } = action.payload;
+      state.log.enqueue(`create node ${state.musicNodeSequence}`);
+      createMusicNodeInternal(state, musicId, position);
     },
 
     createMusicNodeByAnchor(state, action: PayloadAction<{ name: string; videoId: string; position: XYPosition }>) {
@@ -93,7 +98,7 @@ export const mainSlice = createSlice({
         music = { id, name, videoId };
         addMusicInternal(state, id, name, videoId);
       }
-      createMusicNodeInternal(state, state.musicNodeSequence, music.id, position);
+      createMusicNodeInternal(state, music.id, position);
     },
 
     createMusicNodeV2(state, action: PayloadAction<{ music: Music; musicNode: MusicNode }>) {
@@ -265,9 +270,9 @@ function addMusicInternal(state: Draft<MainState>, id: number, name: string, vid
   state.musicSequence++;
 }
 
-function createMusicNodeInternal(state: Draft<MainState>, id: number, musicId: number, position: XYPosition) {
-  const musicNode = { id, musicId, position, next: null };
-  state.musicNodes[id] = musicNode;
+function createMusicNodeInternal(state: Draft<MainState>, musicId: number, position: XYPosition) {
+  const musicNode = { id: state.musicNodeSequence, musicId, position, next: null };
+  state.musicNodes[musicNode.id] = musicNode;
   state.musicNodeSequence++;
   state.newNode = musicNode;
 }

@@ -13,7 +13,11 @@ interface SearchResult {
   videoId: string;
 }
 
-export function SearchManager() {
+interface SearchManagerProps {
+  readonly: boolean;
+}
+
+export function SearchManager({ readonly }: SearchManagerProps) {
   const dispatch = useAppDispatch();
   const { tutorials } = useAppSelector((state) => state.tutorial);
 
@@ -47,15 +51,17 @@ export function SearchManager() {
         <div style={{ paddingRight: '0.5rem', wordBreak: 'keep-all' }}>유튜브 검색</div>
         <form onSubmit={handleSubmit(handleSearch)} style={{ flexGrow: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <input style={{ flexGrow: 1 }} {...register('query')} onKeyDown={(e) => e.stopPropagation()} />
-            <button style={{ width: 'max-content' }} disabled={isWaiting}>
+            <input style={{ flexGrow: 1 }} {...register('query')} onKeyDown={(e) => e.stopPropagation()} disabled={readonly} />
+            <button style={{ width: 'max-content' }} disabled={readonly || isWaiting}>
               검색
             </button>
           </div>
         </form>
       </div>
       <div className={searchResultContainer} style={{ height: '88%' }}>
-        {isWaiting ? (
+        {readonly ? (
+          <div style={{ textAlign: 'center', wordBreak: 'keep-all' }}>자신의 플레이리스트에서만 이용할 수 있어요</div>
+        ) : isWaiting ? (
           <WaitingSearchSpinner />
         ) : (
           <div className={musicList} style={{ height: '100%' }}>

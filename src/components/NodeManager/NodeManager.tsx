@@ -2,7 +2,7 @@ import 'reactflow/dist/style.css';
 import ReactFlow, { Node, Edge, useNodesState, useEdgesState, NodePositionChange, OnConnect, addEdge, OnNodesDelete, OnEdgesDelete, MiniMap, NodeChange, XYPosition } from 'reactflow';
 import { convertMusicNodeToReactFlowNode, convertMusicNodesToReactFlowObjects } from '../../utils/reactFlow';
 import { useAppDispatch, useAppSelector } from '../../features/store';
-import { connectNode, createMusicNodeV2, deleteEdges, deleteNodes, moveNode, playNode, setReactFLowInstance, setRequireReactFlowNodeFind, setRequireReactFlowRename, setRequireReactFlowUpdate } from '../../features/mainSlice';
+import { connectNode, createMusicNode, createMusicNodeV2, deleteEdges, deleteNodes, moveNode, playNode, setReactFLowInstance, setRequireReactFlowNodeFind, setRequireReactFlowRename, setRequireReactFlowUpdate } from '../../features/mainSlice';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { MUSIC_DATA_TRANSFER_KEY } from '../../constants/interface';
 import { ReactFlowObjectTypes } from '../../constants/reactFlow';
@@ -143,7 +143,6 @@ export function NodeManager({ readonly }: NodeManagerProps) {
     async (e: React.DragEvent) => {
       e.preventDefault();
 
-      if (readonly) return;
       if (inProgress) return;
 
       const data = e.dataTransfer.getData(MUSIC_DATA_TRANSFER_KEY);
@@ -156,14 +155,18 @@ export function NodeManager({ readonly }: NodeManagerProps) {
         const { musicId, name, videoId } = JSON.parse(data);
         const position = reactFlowInstance.project({ x: e.clientX, y: e.clientY });
 
-        const response = await http.post('/api/data/music-node', { musicId, name, videoId, position });
-        if (response.status === 401) {
-          handleUnauthorized();
-          return;
-        }
+        if (readonly) {
+          dispatch(createMusicNode({ musicId, position }));
+        } else {
+          const response = await http.post('/api/data/music-node', { musicId, name, videoId, position });
+          if (response.status === 401) {
+            handleUnauthorized();
+            return;
+          }
 
-        const { music, musicNode } = await response.json();
-        dispatch(createMusicNodeV2({ music, musicNode }));
+          const { music, musicNode } = await response.json();
+          dispatch(createMusicNodeV2({ music, musicNode }));
+        }
       } finally {
         dispatch(setInProgress(false));
       }
