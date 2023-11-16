@@ -2,20 +2,27 @@ import { UI_MINIMIZE_CRITERIA_MAX_WIDTH, UI_MINI_CRITERIA_MAX_WIDTH } from '../.
 import { style } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
 
-export const homePage = style({
-  width: '100vw',
-  height: '100vh',
+export const homePage = recipe({
+  base: {
+    width: '100vw',
+    height: '100vh',
 
-  background: 'url(/image/background.jpg)',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center center',
+    background: 'url(/image/background.jpg)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center center',
 
-  color: 'white',
-  fill: 'white',
-  stroke: 'white',
+    color: 'white',
+    fill: 'white',
+    stroke: 'white',
 
-  display: 'flex',
-  flexDirection: 'column',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  variants: {
+    inProgress: {
+      true: 'progress',
+    },
+  },
 });
 
 // Home ~

@@ -27,6 +27,10 @@ body {
   height: 112.5px !important;
 }
 
+.progress * {
+  cursor: progress !important;
+}
+
 .tutorial .react-flow__node:first-child {
   outline: 3px solid red;
 }

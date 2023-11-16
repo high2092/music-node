@@ -10,7 +10,7 @@ import { TOP_BAR_HEIGHT } from '../../constants/style';
 import { 초 } from '../../constants/time';
 import { Tutorials, completeTutorial } from '../../features/tutorialSlice';
 import { CustomNode } from '../CustomNode/CustomNode';
-import { setIsConnecting } from '../../features/uiSlice';
+import { setInProgress, setIsConnecting } from '../../features/uiSlice';
 import { handleUnauthorized, http } from '../../utils/api';
 
 const nodeTypes = {
@@ -24,8 +24,7 @@ interface NodeManagerProps {
 export function NodeManager({ readonly }: NodeManagerProps) {
   const dispatch = useAppDispatch();
   const { musicNodes, musics, requireReactFlowUpdate, newNode, reactFlowInstance, musicNodeSequence, requireReactFlowRename, requireReactFlowNodeFind } = useAppSelector((state) => state.main);
-  const { showMap } = useAppSelector((state) => state.ui);
-  const { tutorials } = useAppSelector((state) => state.tutorial);
+  const { showMap, inProgress } = useAppSelector((state) => state.ui);
 
   const [latestClickedObjectType, setLatestClickedObjectType] = useState<string>();
 
@@ -145,22 +144,31 @@ export function NodeManager({ readonly }: NodeManagerProps) {
       e.preventDefault();
 
       if (readonly) return;
+      if (inProgress) return;
 
       const data = e.dataTransfer.getData(MUSIC_DATA_TRANSFER_KEY);
       if (!data) return;
-      const { musicId, name, videoId } = JSON.parse(data);
-      const position = reactFlowInstance.project({ x: e.clientX, y: e.clientY });
 
-      const response = await http.post('/api/data/music-node', { musicId, name, videoId, position });
-      if (response.status === 401) {
-        handleUnauthorized();
-        return;
+      e.stopPropagation();
+      dispatch(setInProgress(true));
+
+      try {
+        const { musicId, name, videoId } = JSON.parse(data);
+        const position = reactFlowInstance.project({ x: e.clientX, y: e.clientY });
+
+        const response = await http.post('/api/data/music-node', { musicId, name, videoId, position });
+        if (response.status === 401) {
+          handleUnauthorized();
+          return;
+        }
+
+        const { music, musicNode } = await response.json();
+        dispatch(createMusicNodeV2({ music, musicNode }));
+      } finally {
+        dispatch(setInProgress(false));
       }
-
-      const { music, musicNode } = await response.json();
-      dispatch(createMusicNodeV2({ music, musicNode }));
     },
-    [reactFlowInstance]
+    [reactFlowInstance, inProgress]
   );
 
   const handleNodeDoubleClick = useCallback((e: React.MouseEvent, { id }: Node) => {
@@ -218,7 +226,6 @@ export function NodeManager({ readonly }: NodeManagerProps) {
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <ReactFlow
-        className={tutorials[Tutorials.PLAY] ? 'tutorial' : ''}
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}

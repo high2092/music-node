@@ -20,7 +20,7 @@ import { MusicNode } from '../types/musicNode';
 import { LoginModal } from '../components/modals/SignUpModal/LoginModal';
 import { preload } from '../utils/ux';
 import { Spinner } from '../components/LoadingSpinner/LoadingSpinner';
-import { setMounted } from '../features/uiSlice';
+import { setInProgress, setMounted } from '../features/uiSlice';
 
 interface HomePageProps {
   username?: string;
@@ -29,7 +29,7 @@ interface HomePageProps {
 function Home({ username: paramUsername }: HomePageProps) {
   const dispatch = useAppDispatch();
   const { reactFlowInstance } = useAppSelector((state) => state.main);
-  const { mounted } = useAppSelector((state) => state.ui);
+  const { inProgress, mounted } = useAppSelector((state) => state.ui);
   const { tutorials } = useAppSelector((state) => state.tutorial);
 
   const [isUiOpen, setIsUiOpen] = useState(true);
@@ -93,22 +93,29 @@ function Home({ username: paramUsername }: HomePageProps) {
 
   const handleAnchorDrop = async (e: React.DragEvent) => {
     if (readonly) return;
+    if (inProgress) return;
 
     const url = e.dataTransfer.getData('text/plain') || e.dataTransfer.getData('text/uri-list');
 
     const videoId = extractVideoId(url);
     if (!videoId) return;
 
-    const position = reactFlowInstance.project({ x: e.clientX, y: e.clientY });
+    dispatch(setInProgress(true));
 
-    const response = await http.post('/api/data/music-node', { videoId, position });
-    if (response.status === 401) {
-      handleUnauthorized();
-      return;
+    try {
+      const position = reactFlowInstance.project({ x: e.clientX, y: e.clientY });
+
+      const response = await http.post('/api/data/music-node', { videoId, position });
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+
+      const { music, musicNode } = await response.json();
+      dispatch(createMusicNodeV2({ music, musicNode }));
+    } finally {
+      dispatch(setInProgress(false));
     }
-
-    const { music, musicNode } = await response.json();
-    dispatch(createMusicNodeV2({ music, musicNode }));
   };
 
   const handleUiSectionMouseMove = () => {
@@ -120,13 +127,13 @@ function Home({ username: paramUsername }: HomePageProps) {
 
   if (!mounted)
     return (
-      <div className={homePage}>
+      <div className={homePage()}>
         <Spinner />
       </div>
     );
 
   return (
-    <div className={homePage} onDrop={handleAnchorDrop}>
+    <div className={homePage({ inProgress })} onDrop={handleAnchorDrop}>
       {Object.values(tutorials).findIndex((tutorial) => tutorial) !== -1 && (
         <div style={{ position: 'absolute', zIndex: 999, cursor: 'pointer' }} onClick={() => dispatch(exitTutorial())}>
           튜토리얼 종료
