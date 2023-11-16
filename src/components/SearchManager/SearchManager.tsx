@@ -46,8 +46,8 @@ export function SearchManager() {
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div style={{ paddingRight: '0.5rem', wordBreak: 'keep-all' }}>유튜브 검색</div>
         <form onSubmit={handleSubmit(handleSearch)} style={{ flexGrow: 1 }}>
-          <div style={{ display: 'flex' }}>
-            <input style={{ flexGrow: 1 }} {...register('query')} onKeyDown={(e) => e.stopPropagation()} placeholder={'예시) 별모래 해변 OST'} />
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <input style={{ flexGrow: 1 }} {...register('query')} onKeyDown={(e) => e.stopPropagation()} />
             <button style={{ width: 'max-content' }} disabled={isWaiting}>
               검색
             </button>
