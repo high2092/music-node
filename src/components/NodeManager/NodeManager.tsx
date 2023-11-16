@@ -64,7 +64,7 @@ export function NodeManager({ readonly }: NodeManagerProps) {
       const prev = nodes.find((node) => node.style.outline);
       if (prev) prev.style = { ...prev.style, outline: undefined };
       const curr = nodes.find((node) => node.id === requireReactFlowNodeFind.toString());
-      curr.style = { ...curr.style, outline: '5px solid rgba(255, 255, 255, 0.8)' };
+      if (curr) curr.style = { ...curr.style, outline: '5px solid rgba(255, 255, 255, 0.8)' };
       return [...nodes];
     });
 
@@ -72,7 +72,7 @@ export function NodeManager({ readonly }: NodeManagerProps) {
     findTimeoutRef.current = setTimeout(() => {
       setNodes((nodes) => {
         const curr = nodes.find((node) => node.id === requireReactFlowNodeFind.toString());
-        curr.style = { ...curr.style, outline: undefined };
+        if (curr) curr.style = { ...curr.style, outline: undefined };
         return [...nodes];
       });
     }, 4 * 초);
