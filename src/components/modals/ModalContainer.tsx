@@ -20,11 +20,12 @@ const DEFAULT_MODAL_Z_INDEX = 1000;
 
 export const ModalContainer = () => {
   const dispatch = useAppDispatch();
+  const { mounted } = useAppSelector((state) => state.ui);
   const { modals } = useAppSelector((state) => state.modal);
 
   useEffect(() => {
-    dispatch(openModal({ type: ModalTypes.NOTICE }));
-  }, []);
+    if (mounted) dispatch(openModal({ type: ModalTypes.NOTICE }));
+  }, [mounted]);
 
   return (
     <div onClick={(e) => e.stopPropagation()}>

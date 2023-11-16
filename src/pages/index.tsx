@@ -20,6 +20,7 @@ import { MusicNode } from '../types/musicNode';
 import { LoginModal } from '../components/modals/SignUpModal/LoginModal';
 import { preload } from '../utils/ux';
 import { Spinner } from '../components/LoadingSpinner/LoadingSpinner';
+import { setMounted } from '../features/uiSlice';
 
 interface HomePageProps {
   username?: string;
@@ -28,6 +29,7 @@ interface HomePageProps {
 function Home({ username: paramUsername }: HomePageProps) {
   const dispatch = useAppDispatch();
   const { reactFlowInstance } = useAppSelector((state) => state.main);
+  const { mounted } = useAppSelector((state) => state.ui);
   const { tutorials } = useAppSelector((state) => state.tutorial);
 
   const [isUiOpen, setIsUiOpen] = useState(true);
@@ -36,8 +38,6 @@ function Home({ username: paramUsername }: HomePageProps) {
 
   const [showLogin, setShowLogin] = useState(false);
   const [readonly, setReadonly] = useState(true);
-
-  const [mounted, setMounted] = useState(false);
 
   const fetchData = useCallback(async () => {
     const authResponse = await http.get('/api/auth');
@@ -67,7 +67,7 @@ function Home({ username: paramUsername }: HomePageProps) {
   useEffect(() => {
     dispatch(load({ musics: {}, musicNodes: {} }));
     if (process.env.NODE_ENV === 'development') return;
-    fetchData().then(() => setMounted(true));
+    fetchData().then(() => dispatch(setMounted(true)));
   }, []);
 
   useEffect(() => {

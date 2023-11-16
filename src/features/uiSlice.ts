@@ -3,11 +3,13 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 interface UiState {
   showMap: boolean;
   isConnecting: boolean;
+  mounted: boolean;
 }
 
 const initialState: UiState = {
   showMap: true,
   isConnecting: false,
+  mounted: false,
 };
 
 export const uiSlice = createSlice({
@@ -20,7 +22,10 @@ export const uiSlice = createSlice({
     setIsConnecting(state, action: PayloadAction<boolean>) {
       state.isConnecting = action.payload;
     },
+    setMounted(state, action: PayloadAction<boolean>) {
+      state.mounted = action.payload;
+    },
   },
 });
 
-export const { setShowMap, setIsConnecting } = uiSlice.actions;
+export const { setShowMap, setIsConnecting, setMounted } = uiSlice.actions;
