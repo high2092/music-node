@@ -1,5 +1,5 @@
 import { TOP_BAR_HEIGHT } from '../../constants/style';
-import { load, playNode, setIsPlaying, setRequireReactFlowNodeFind } from '../../features/mainSlice';
+import { load, playNode, setIsPlaying, setRequirePlayerRewind, setRequireReactFlowNodeFind } from '../../features/mainSlice';
 import { useAppDispatch, useAppSelector } from '../../features/store';
 import { shorten } from '../../utils/string';
 import { CdIcon } from '../icons/CdIcon';
@@ -66,7 +66,9 @@ export function CurrentNodeInfo({ readonly }: CurrentNodeInfoProps) {
           <div style={{ marginTop: '0.2rem' }}>{currentMusicName ? shorten(currentMusicName) : '재생 중인 노드가 없어요'}</div>
         </div>
         <div style={{ width: '6rem', display: 'flex', justifyContent: 'space-between' }}>
-          <SkipToPrevIcon />
+          <div className={cursorPointer} onClick={() => pointer !== null && dispatch(setRequirePlayerRewind(true))}>
+            <SkipToPrevIcon />
+          </div>
           <div className={cursorPointer} onClick={() => pointer !== null && dispatch(setIsPlaying(!isPlaying))}>
             {isPlaying ? <PauseIcon /> : <PlayIcon />}
           </div>
