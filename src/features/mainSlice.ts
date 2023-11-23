@@ -164,7 +164,6 @@ export const mainSlice = createSlice({
         else state.requirePlayerRewind = true;
         state.pointer = next;
       } else {
-        alert('마지막 노드입니다.');
         if (query === 'next') {
           state.pointer = null;
           state.isPlaying = false;
