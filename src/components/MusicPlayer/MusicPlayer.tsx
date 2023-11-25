@@ -55,7 +55,10 @@ export function Player() {
           onPause={() => dispatch(setIsPlaying(false))}
           onPlay={() => dispatch(setIsPlaying(true))}
           onStateChange={(e) => {
-            if (e.data === PlayerStatus.UNSTARTED) e.target.playVideo();
+            if (e.data === PlayerStatus.UNSTARTED) {
+              e.target.seekTo(0);
+              e.target.playVideo();
+            }
           }}
         />
       </div>
