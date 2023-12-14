@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { MUSIC_DATA_TRANSFER_KEY } from '../../constants/interface';
 import { addMusic, findByMusicId, renameMusic } from '../../features/mainSlice';
 import { useAppDispatch, useAppSelector } from '../../features/store';
@@ -25,7 +25,7 @@ export function MusicManager({ readonly }: MusicManagerProps) {
   const [hoveredMusicId, setHoveredMusicId] = useState<number>(null);
   const [editingMusicId, setEditingMusicId] = useState<number>(null);
 
-  const filteredMusicList = Object.values(musics).filter(({ name }) => trim(name).includes(trim(filterQuery)));
+  const filteredMusicList = useMemo(() => Object.values(musics).filter(({ name }) => trim(name).includes(trim(filterQuery))), [filterQuery]);
 
   useEffect(() => {
     const resetHover = () => {
