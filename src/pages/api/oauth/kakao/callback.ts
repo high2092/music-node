@@ -3,9 +3,9 @@ import axios from 'axios';
 import { serialize } from 'cookie';
 import { REDIRECT_URI } from '../../../../constants/auth';
 import { db } from '../../../../../firebase/firestore';
-import { collection, query, where, doc, getDocs, runTransaction } from 'firebase/firestore';
+import { collection, query, where, doc, getDocs, runTransaction, setDoc } from 'firebase/firestore';
 import { getMusicNodeSequenceDbRef, getMusicSequenceDbRef, getUserDbRef } from '../../../../utils/db';
-import { UserData, generateToken } from '../../../../utils/auth';
+import { UserData, generateRefreshToken, generateToken } from '../../../../utils/auth';
 
 const userDbRef = collection(db, 'user');
 const userSequenceRef = doc(db, 'app', 'user_sequence');
@@ -57,6 +57,10 @@ export default async function kakaoOAuthCallback(req: NextApiRequest, res: NextA
   }
 
   const token = await generateToken(userData);
+  const newRefresh = generateRefreshToken();
+
+  await setDoc(user.ref, { ...userData, refreshToken: newRefresh });
+
   const cookie = serialize('token', token, {
     httpOnly: true,
     secure: true,
@@ -64,7 +68,16 @@ export default async function kakaoOAuthCallback(req: NextApiRequest, res: NextA
     path: '/',
     maxAge: 60 * 60 * 24,
   });
-  res.setHeader('Set-Cookie', cookie);
+
+  const cookie2 = serialize('refresh', newRefresh, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict',
+    path: '/',
+    maxAge: 60 * 60 * 24 * 14,
+  });
+
+  res.setHeader('Set-Cookie', [cookie, cookie2]);
 
   return res.redirect('/').end();
 }

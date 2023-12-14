@@ -10,7 +10,7 @@ import { Tutorials } from '../../features/tutorialSlice';
 import { cursorPointer } from '../icons/CursorPointer.css';
 import { row } from '../../styles/components/row.css';
 import { musicList } from './MusicManager.css';
-import { handleUnauthorized, http } from '../../utils/api';
+import { handleUnauthorized, http, retry } from '../../utils/api';
 
 interface MusicManagerProps {
   readonly: boolean;
@@ -57,7 +57,7 @@ export function MusicManager({ readonly }: MusicManagerProps) {
     if (e.key !== 'Enter') return;
     const target = e.target as HTMLInputElement;
 
-    const response = await http.post('/api/data/rename-music', { id: editingMusicId, name: target.value });
+    const response = await retry(() => http.post('/api/data/rename-music', { id: editingMusicId, name: target.value }));
     if (response.status === 401) {
       handleUnauthorized();
       return;

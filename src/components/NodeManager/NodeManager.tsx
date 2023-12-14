@@ -11,7 +11,7 @@ import { 초 } from '../../constants/time';
 import { Tutorials, completeTutorial } from '../../features/tutorialSlice';
 import { CustomNode } from '../CustomNode/CustomNode';
 import { setInProgress, setIsConnecting } from '../../features/uiSlice';
-import { handleUnauthorized, http } from '../../utils/api';
+import { handleUnauthorized, http, retry } from '../../utils/api';
 
 const nodeTypes = {
   custom: CustomNode,
@@ -102,7 +102,7 @@ export function NodeManager({ readonly }: NodeManagerProps) {
           return acc.concat({ id: Number(id), position });
         }, []);
 
-        const response = await http.post('/api/data/move-node', { nodeMoves });
+        const response = await retry(() => http.post('/api/data/move-node', { nodeMoves }));
 
         if (response.status === 401) {
           handleUnauthorized();
@@ -123,10 +123,12 @@ export function NodeManager({ readonly }: NodeManagerProps) {
       });
 
       if (!readonly) {
-        const response = await http.post('/api/data/connect-node', {
-          source: Number(connection.source),
-          target: Number(connection.target),
-        });
+        const response = await retry(() =>
+          http.post('/api/data/connect-node', {
+            source: Number(connection.source),
+            target: Number(connection.target),
+          })
+        );
 
         if (response.status === 401) {
           handleUnauthorized();
@@ -158,7 +160,7 @@ export function NodeManager({ readonly }: NodeManagerProps) {
         if (readonly) {
           dispatch(createMusicNode({ musicId, position }));
         } else {
-          const response = await http.post('/api/data/music-node', { musicId, name, videoId, position });
+          const response = await retry(() => http.post('/api/data/music-node', { musicId, name, videoId, position }));
           if (response.status === 401) {
             handleUnauthorized();
             return;
@@ -205,7 +207,7 @@ export function NodeManager({ readonly }: NodeManagerProps) {
     const nodeIdList = nodes.map(({ id }) => Number(id));
 
     if (!readonly) {
-      const response = await http.post('/api/data/delete-node', { nodes: nodeIdList });
+      const response = await retry(() => http.post('/api/data/delete-node', { nodes: nodeIdList }));
       if (response.status === 401) {
         handleUnauthorized();
         return;
@@ -219,7 +221,7 @@ export function NodeManager({ readonly }: NodeManagerProps) {
     const sources = nodes.map(({ source }) => Number(source));
 
     if (!readonly) {
-      const response = await http.post('/api/data/disconnect-node', { sources });
+      const response = await retry(() => http.post('/api/data/disconnect-node', { sources }));
 
       if (response.status === 401) {
         handleUnauthorized();

@@ -14,7 +14,7 @@ import { exitTutorial } from '../features/tutorialSlice';
 import { extractVideoId } from '../utils/youtube';
 import { cursorPointer } from '../components/icons/CursorPointer.css';
 import { currentNodeInfo, homePage, nodeList, nodeManager, searchBox, uiSection, uiSectionContainer } from '../styles/pages/home.css';
-import { handleUnauthorized, http } from '../utils/api';
+import { handleUnauthorized, http, retry } from '../utils/api';
 import { Music } from '../types/music';
 import { MusicNode } from '../types/musicNode';
 import { LoginModal } from '../components/modals/SignUpModal/LoginModal';
@@ -40,7 +40,7 @@ function Home({ username: paramUsername }: HomePageProps) {
   const [readonly, setReadonly] = useState(true);
 
   const fetchData = useCallback(async () => {
-    const authResponse = await http.get('/api/auth');
+    const authResponse = await retry(() => http.get('/api/auth'));
 
     const { username: myName } = authResponse.status === 200 ? await authResponse.json() : { username: undefined };
 
@@ -52,7 +52,7 @@ function Home({ username: paramUsername }: HomePageProps) {
       }
     }
 
-    const response = await http.get(paramUsername ? `/api/data/user/${paramUsername}` : '/api/data');
+    const response = await retry(() => http.get(paramUsername ? `/api/data/user/${paramUsername}` : '/api/data'));
 
     if (response.status !== 200) return;
 
@@ -105,7 +105,7 @@ function Home({ username: paramUsername }: HomePageProps) {
     try {
       const position = reactFlowInstance.project({ x: e.clientX, y: e.clientY });
 
-      const response = await http.post('/api/data/music-node', { videoId, position });
+      const response = await retry(() => http.post('/api/data/music-node', { videoId, position }));
       if (response.status === 401) {
         handleUnauthorized();
         return;

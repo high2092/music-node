@@ -15,7 +15,7 @@ import { cursorPointer } from '../icons/CursorPointer.css';
 import { cdIcon, helpButton, login } from './CurrentNodeInfo.css';
 import { LOCAL_STORAGE_KEY } from '../../constants/interface';
 import { decodeV1 } from '../../utils/encoding';
-import { handleUnauthorized, http } from '../../utils/api';
+import { handleUnauthorized, http, retry } from '../../utils/api';
 import { useEffect, useState } from 'react';
 import { getCookie, setCookieDangerously } from '../../utils/cookie';
 import Link from 'next/link';
@@ -96,7 +96,7 @@ export function CurrentNodeInfo({ readonly }: CurrentNodeInfoProps) {
 
                 const { musics, musicNodes } = decodeV1(code);
 
-                const response = await http.post('/api/data/set', { musics: Object.values(musics), musicNodes: Object.values(musicNodes) });
+                const response = await retry(() => http.post('/api/data/set', { musics: Object.values(musics), musicNodes: Object.values(musicNodes) }));
 
                 setCookieDangerously(COOKIE_KEY, '1');
                 setShowLocalDataHelpText(false);

@@ -1,5 +1,6 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { JWT_SECRET } from '../constants/auth';
+import { v4 } from 'uuid';
 
 type UserId = number;
 
@@ -18,4 +19,9 @@ export async function authenticateToken(token: string): Promise<UserData> {
 export async function generateToken(data: UserData): Promise<string> {
   const iat = Math.floor(Date.now() / 1000);
   return await new SignJWT({ ...data }).setProtectedHeader({ alg: 'HS256', typ: 'JWT' }).setExpirationTime('1d').setIssuedAt(iat).setNotBefore(iat).sign(new TextEncoder().encode(JWT_SECRET));
+}
+
+export function generateRefreshToken() {
+  const refreshToken = v4();
+  return refreshToken;
 }

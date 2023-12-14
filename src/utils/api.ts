@@ -21,3 +21,15 @@ export const http = {
 export function handleUnauthorized() {
   location.href = '/api/oauth/kakao';
 }
+
+export async function retry(api: () => Promise<Response>) {
+  const response = await api();
+  if (response.status === 401) {
+    const refreshResponse = await fetch('/api/auth/refresh');
+    if (refreshResponse.status === 200) {
+      return await api();
+    }
+  }
+
+  return response;
+}
