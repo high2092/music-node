@@ -24,7 +24,8 @@
     "react-hook-form": "^7.43.9",
     "react-redux": "^8.0.5",
     "react-youtube": "^10.1.0",
-    "reactflow": "^11.7.2"
+    "reactflow": "^11.7.2",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/cookie": "^0.5.4",
