@@ -34,18 +34,22 @@ export default async function kakaoOAuthCallback(req: NextApiRequest, res: NextA
     },
   });
 
+  const now = new Date().toLocaleString();
+
   // DB 검색
   const q = query(userDbRef, where('kakaoId', '==', kakaoId));
   const user = (await getDocs(q)).docs[0];
-  let userData = user?.data() as UserData;
+  let userRef = user?.ref;
+  let userData = user?.data() as UserData & { createdAt: string };
 
-  if (!user) {
+  if (!userRef) {
     // 회원가입
     await runTransaction(db, async (transaction) => {
       const { user_sequence } = (await transaction.get(userSequenceRef)).data();
       transaction.set(userSequenceRef, { user_sequence: user_sequence + 1 });
-      userData = { id: user_sequence, kakaoId };
-      transaction.set(doc(userDbRef), userData);
+      userRef = doc(userDbRef);
+      userData = { id: user_sequence, kakaoId, createdAt: now };
+      transaction.set(userRef, userData);
 
       const _userDbRef = getUserDbRef(user_sequence);
       const musicSequenceDbRef = getMusicSequenceDbRef(_userDbRef);
@@ -59,7 +63,7 @@ export default async function kakaoOAuthCallback(req: NextApiRequest, res: NextA
   const token = await generateToken(userData);
   const newRefresh = generateRefreshToken();
 
-  await setDoc(user.ref, { ...userData, refreshToken: newRefresh });
+  await setDoc(userRef, { ...userData, refreshToken: newRefresh, updatedAt: now });
 
   const cookie = serialize('token', token, {
     httpOnly: true,
