@@ -42,11 +42,9 @@ function Home({ username: paramUsername }: HomePageProps) {
   const fetchData = useCallback(async () => {
     const authResponse = await retry(() => http.get('/api/auth'));
 
-    const { username: myName } = authResponse.status === 200 ? await authResponse.json() : { username: undefined };
-
     if (!paramUsername) {
       setReadonly(false);
-      if (!myName) {
+      if (authResponse.status !== 200) {
         setShowLogin(true);
         return;
       }
