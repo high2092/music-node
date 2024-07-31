@@ -7,7 +7,7 @@ export const homePage = recipe({
     width: '100vw',
     height: '100vh',
 
-    background: 'url(/image/background.jpg)',
+    background: 'url(/image/background/11.gif)',
     backgroundSize: 'cover',
     backgroundPosition: 'center center',
 
@@ -17,6 +17,18 @@ export const homePage = recipe({
 
     display: 'flex',
     flexDirection: 'column',
+
+    position: 'relative',
+    isolation: 'isolate',
+
+    ':after': {
+      content: '',
+      position: 'absolute',
+      background: 'black',
+      zIndex: -1,
+      inset: 0,
+      opacity: 0.4,
+    },
   },
   variants: {
     inProgress: {
