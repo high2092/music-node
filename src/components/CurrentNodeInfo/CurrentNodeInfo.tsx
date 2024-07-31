@@ -28,11 +28,12 @@ const COOKIE_KEY = 'APPLY_LOCAL';
 
 interface CurrentNodeInfoProps {
   readonly: boolean;
+  isLoggedIn: boolean;
 }
 
 const TUTORIAL_COOKIE_KEY = 'MNODE_VISIT';
 
-export function CurrentNodeInfo({ readonly }: CurrentNodeInfoProps) {
+export function CurrentNodeInfo({ readonly, isLoggedIn }: CurrentNodeInfoProps) {
   const dispatch = useAppDispatch();
   const { musicNodes, musics, pointer, isPlaying, reactFlowInstance } = useAppSelector((state) => state.main);
   const { showMap } = useAppSelector((state) => state.ui);
@@ -78,10 +79,16 @@ export function CurrentNodeInfo({ readonly }: CurrentNodeInfoProps) {
         </div>
       </div>
       <div style={{ position: 'absolute', height: '100%', left: 0, top: 0 }}>
-        {readonly && (
+        {readonly ? (
           <Link href="/" className={login}>
             <HomeIcon />
           </Link>
+        ) : (
+          isLoggedIn && (
+            <Link href={'/api/oauth/kakao/logout'} className={login}>
+              로그아웃
+            </Link>
+          )
         )}
         {showLocalDataHelpText ? (
           isWaiting ? (

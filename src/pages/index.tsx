@@ -138,7 +138,7 @@ function Home({ username: paramUsername }: HomePageProps) {
         </div>
       )}
       <div className={currentNodeInfo}>
-        <CurrentNodeInfo readonly={readonly} />
+        <CurrentNodeInfo readonly={readonly} isLoggedIn={!showLogin} />
       </div>
       <div className={nodeManager}>
         <NodeManager readonly={readonly} />
