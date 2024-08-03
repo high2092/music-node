@@ -1,10 +1,15 @@
-.customNode {
-  padding: 10px;
+.react-flow__node-custom {
+  padding: 9px;
+  border: 1px solid transparent;
+  border-top: 3px solid transparent;
+  padding-bottom: 11px;
   width: 140px;
   min-width: 6rem;
   min-height: 1.2rem;
+  opacity: 0.8;
 
-  border-radius: 3px;
+  border-radius: 16px;
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 2px 10px 0px;
 
   font-size: 13px;
   color: #222;
