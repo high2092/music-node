@@ -7,7 +7,7 @@ export const homePage = recipe({
     width: '100vw',
     height: '100vh',
 
-    background: 'url(/image/background/11.gif)',
+    background: 'url(/image/background/30.jpeg)',
     backgroundSize: 'cover',
     backgroundPosition: 'center center',
 
@@ -27,7 +27,7 @@ export const homePage = recipe({
       background: 'black',
       zIndex: -1,
       inset: 0,
-      opacity: 0.4,
+      opacity: 0.2,
     },
   },
   variants: {
