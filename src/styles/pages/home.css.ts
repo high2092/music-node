@@ -21,14 +21,14 @@ export const homePage = recipe({
     position: 'relative',
     isolation: 'isolate',
 
-    ':after': {
-      content: '',
-      position: 'absolute',
-      background: 'black',
-      zIndex: -1,
-      inset: 0,
-      opacity: 0.2,
-    },
+    // ':after': {
+    //   content: '',
+    //   position: 'absolute',
+    //   background: 'black',
+    //   zIndex: -1,
+    //   inset: 0,
+    //   opacity: 0.2,
+    // },
   },
   variants: {
     inProgress: {

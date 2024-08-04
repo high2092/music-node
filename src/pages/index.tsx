@@ -21,6 +21,7 @@ import { LoginModal } from '../components/modals/SignUpModal/LoginModal';
 import { preload } from '../utils/ux';
 import { Spinner } from '../components/LoadingSpinner/LoadingSpinner';
 import { setInProgress, setMounted } from '../features/uiSlice';
+import { Background } from '../components/background/ui';
 
 interface HomePageProps {
   username?: string;
@@ -126,12 +127,14 @@ function Home({ username: paramUsername }: HomePageProps) {
   if (!mounted)
     return (
       <div className={homePage()}>
+        <Background />
         <Spinner />
       </div>
     );
 
   return (
     <div className={homePage({ inProgress })} onDrop={handleAnchorDrop}>
+      <Background />
       {Object.values(tutorials).findIndex((tutorial) => tutorial) !== -1 && (
         <div style={{ position: 'absolute', zIndex: 999, cursor: 'pointer' }} onClick={() => dispatch(exitTutorial())}>
           튜토리얼 종료
