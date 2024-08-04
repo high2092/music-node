@@ -4,6 +4,8 @@ import { playNode, setIsLoading, setIsPlaying, setRequirePlayerRewind } from '..
 import { useEffect, useRef, useState } from 'react';
 import { PLAYER_HEIGHT_REM } from '../../styles/pages/home.css';
 import { PlayerStatus } from '../../constants/youtube';
+import { throttle } from 'lodash';
+import { 초 } from '../../constants/time';
 
 export function Player() {
   const dispatch = useAppDispatch();
@@ -37,6 +39,31 @@ export function Player() {
       playerRef.current.pauseVideo();
     }
   }, [isPlaying]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const player = playerRef.current;
+
+      if (document.activeElement.tagName !== 'BODY') return;
+      if (!player) return;
+
+      switch (e.key) {
+        case 'ArrowUp': {
+          player.setVolume(player.getVolume() + 10);
+          break;
+        }
+        case 'ArrowDown': {
+          player.setVolume(player.getVolume() - 10);
+          break;
+        }
+      }
+    };
+
+    const throttled = throttle(handleKeyDown, 0.1 * 초);
+
+    window.addEventListener('keydown', throttled);
+    return () => window.removeEventListener('keydown', throttled);
+  }, []);
 
   return (
     <div style={{ width, height, background: 'black' }}>
